@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_buttons"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom|center"
+    android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/workout_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WORKOUT" />
+
+    <Button
+        android:id="@+id/figure_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="FIGURE" />
+
+    <Button
+        android:id="@+id/history_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="HISTORY" />
+
+    <Button
+        android:id="@+id/summary_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SUMMARY" />
+</LinearLayout>
