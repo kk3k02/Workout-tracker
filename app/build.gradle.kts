@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("kotlin-kapt")
 }
 
 android {
@@ -38,9 +39,17 @@ android {
         compose = true
         viewBinding = true
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.3.0"
+    }
 }
 
 dependencies {
+
+    // Room Database
+    implementation(libs.room.runtime)
+    implementation(libs.androidx.core.ktx.v1131)
+    kapt(libs.androidx.room.compiler)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
