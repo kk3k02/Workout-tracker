@@ -13,6 +13,22 @@
         android:theme="@style/Theme.WorkoutTracker"
         tools:targetApi="31">
         <activity
+            android:name=".SummaryActivity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false" />
+        <activity
+            android:name=".HistoryActivity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false" />
+        <activity
+            android:name=".FigureActivity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false" />
+        <activity
+            android:name=".WorkoutActivity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
