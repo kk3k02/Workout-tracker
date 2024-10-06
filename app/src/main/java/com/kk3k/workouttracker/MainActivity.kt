@@ -1,36 +1,43 @@
 package com.kk3k.workouttracker
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
+import com.kk3k.workouttracker.databinding.ActivityMainBinding
 
 
 class MainActivity : ComponentActivity() {
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.main)
-    }
 
-    override fun onStart() {
-        super.onStart()
-    }
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-    override fun onResume() {
-        super.onResume()
-    }
+        // Workout Button Listener
+        binding.workoutButton.setOnClickListener{
+            val explicitIntent = Intent(applicationContext, WorkoutActivity::class.java)
+            startActivity(explicitIntent)
+        }
 
-    override fun onPause() {
-        super.onPause()
-    }
+        // Figure Button Listener
+        binding.figureButton.setOnClickListener{
+            val explicitIntent = Intent(applicationContext, FigureActivity::class.java)
+            startActivity(explicitIntent)
+        }
 
-    override fun onStop() {
-        super.onStop()
-    }
+        // History Button Listener
+        binding.historyButton.setOnClickListener{
+            val explicitIntent = Intent(applicationContext, HistoryActivity::class.java)
+            startActivity(explicitIntent)
+        }
 
-    override fun onRestart() {
-        super.onRestart()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
+        // Summary Button Listener
+        binding.summaryButton.setOnClickListener{
+            val explicitIntent = Intent(applicationContext, SummaryActivity::class.java)
+            startActivity(explicitIntent)
+        }
     }
 }
