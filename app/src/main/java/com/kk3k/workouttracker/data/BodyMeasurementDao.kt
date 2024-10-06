@@ -8,25 +8,24 @@ import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface AppDio {
-
+interface BodyMeasurementDao {
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Interface for bodyMeasurement table
 
     @Insert // Insert record
-    fun insertMeasurement(measurement: BodyMeasurement)
+    suspend fun insert(measurement: BodyMeasurement)
 
     @Delete // Delete record
-    fun deleteMeasurement(measurement: BodyMeasurement)
+    suspend fun delete(measurement: BodyMeasurement)
 
     @Update // Update record
-    fun updateMeasurement(measurement: BodyMeasurement)
+    suspend fun update(measurement: BodyMeasurement)
 
     @Query("SELECT * FROM bodyMeasurement") // Get all the records
-    fun getAllMeasurements(): Flow<List<BodyMeasurement>>
+    fun getAll(): Flow<List<BodyMeasurement>>
 
     @Query("DELETE FROM bodyMeasurement") // Clean bodyMeasurement table
-    fun dropBodyMeasurement()
+    suspend fun drop()
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 }
