@@ -26,5 +26,5 @@ data class Set(
     val workoutId: Int, // Workout object ID
     val exerciseId: Int, // Exercise object ID
     val repetitions: Int, // Exercise repetitions in one set
-    val weight: Float // Weight used in exercise
+    val weight: Float? = null // Weight used in exercise
 )

@@ -10,5 +10,5 @@ data class Workout(
     @PrimaryKey(autoGenerate = true) val uid: Int = 0, // Object ID
     val date: Date, // Date of workout
     val duration: Duration, // Workout duration
-    val notes: String // Notes about workout
+    val notes: String? = null // Notes about workout
 )
