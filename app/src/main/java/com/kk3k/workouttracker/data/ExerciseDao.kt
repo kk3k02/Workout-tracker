@@ -22,10 +22,10 @@ interface ExerciseDao {
     suspend fun update(exercise: Exercise)
 
     @Query("SELECT * FROM exercise") // Get all the records
-    fun getAll(): Flow<List<Exercise>>
+    fun getAllExercises(): Flow<List<Exercise>>
 
     @Query("DELETE FROM exercise") // Clean Exercise table
-    suspend fun drop()
+    suspend fun dropExercises()
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 }

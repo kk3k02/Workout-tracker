@@ -22,10 +22,10 @@ interface BodyMeasurementDao {
     suspend fun update(measurement: BodyMeasurement)
 
     @Query("SELECT * FROM bodyMeasurement") // Get all the records
-    fun getAll(): Flow<List<BodyMeasurement>>
+    fun getAllMeasurements(): Flow<List<BodyMeasurement>>
 
     @Query("DELETE FROM bodyMeasurement") // Clean bodyMeasurement table
-    suspend fun drop()
+    suspend fun dropMeasurements()
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 }

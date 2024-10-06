@@ -22,10 +22,10 @@ interface SetDao {
     suspend fun update(set: Set)
 
     @Query("SELECT * FROM 'set'") // Get all the records
-    fun getAll(): Flow<List<Set>>
+    fun getAllSets(): Flow<List<Set>>
 
     @Query("DELETE FROM `set`") // Clean 'set' table
-    suspend fun drop()
+    suspend fun dropSets()
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 }
