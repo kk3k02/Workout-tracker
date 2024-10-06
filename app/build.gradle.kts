@@ -51,6 +51,11 @@ dependencies {
     implementation(libs.androidx.core.ktx.v1131)
     kapt(libs.androidx.room.compiler)
 
+    // Photo handling
+    implementation(libs.coil)
+    implementation(libs.coil.gif)
+    implementation(libs.coil.svg)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
