@@ -2,6 +2,8 @@ package com.kk3k.workouttracker
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.kk3k.workouttracker.databinding.ActivityMainBinding
 
 

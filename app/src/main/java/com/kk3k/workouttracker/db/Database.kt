@@ -3,7 +3,7 @@ package com.kk3k.workouttracker.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.kk3k.workouttracker.db.dao.BodyMeasurementDao
+import com.kk3k.workouttracker.db.dao.MeasurementDao
 import com.kk3k.workouttracker.db.dao.ExerciseDao
 import com.kk3k.workouttracker.db.dao._SetDao
 import com.kk3k.workouttracker.db.dao.WorkoutDao
@@ -24,14 +24,15 @@ import com.kk3k.workouttracker.db.entities.Workout
     version = 1
 )
 @TypeConverters(Converters::class)
-abstract class AppDatabase: RoomDatabase() {
+abstract class Database: RoomDatabase() {
     companion object {
         const val NAME = "APP_DB"
     }
 
-    abstract fun getMeasurementDao(): BodyMeasurementDao
+    abstract fun getMeasurementDao(): MeasurementDao
     abstract fun getExerciseDao(): ExerciseDao
     abstract fun getSetDao(): _SetDao
     abstract fun getWorkoutDao(): WorkoutDao
+
 }
 

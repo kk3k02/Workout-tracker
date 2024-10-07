@@ -7,6 +7,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.kk3k.workouttracker.db.entities._Set
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface _SetDao {
@@ -23,7 +24,7 @@ interface _SetDao {
     suspend fun update(set: _Set)
 
     @Query("SELECT * FROM 'set'") // Get all the records
-    fun getAllSets(): LiveData<List<_Set>>
+    fun getAllSets(): Flow<List<_Set>>
 
     @Query("DELETE FROM `set`") // Clean 'set' table
     suspend fun dropSets(): Int

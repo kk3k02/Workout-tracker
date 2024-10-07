@@ -7,6 +7,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.kk3k.workouttracker.db.entities.Exercise
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ExerciseDao {
@@ -23,7 +24,7 @@ interface ExerciseDao {
     suspend fun update(exercise: Exercise)
 
     @Query("SELECT * FROM exercise") // Get all the records
-    fun getAllExercises(): LiveData<List<Exercise>>
+    fun getAllExercises(): Flow<List<Exercise>>
 
     @Query("DELETE FROM exercise") // Clean Exercise table
     suspend fun dropExercises(): Int
