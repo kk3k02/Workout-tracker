@@ -25,8 +25,8 @@ interface BodyMeasurementDao {
     @Query("SELECT * FROM body_measurement") // Get all the records
     fun getAllMeasurements(): LiveData<List<BodyMeasurement>>
 
-//    @Query("DELETE FROM bodyMeasurement") // Clean bodyMeasurement table
-//    suspend fun dropMeasurements(): Int
+    @Query("DELETE FROM body_measurement") // Clean bodyMeasurement table
+    suspend fun dropMeasurements(): Int
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 }

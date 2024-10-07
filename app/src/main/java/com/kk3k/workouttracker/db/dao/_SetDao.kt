@@ -25,8 +25,8 @@ interface _SetDao {
     @Query("SELECT * FROM 'set'") // Get all the records
     fun getAllSets(): LiveData<List<_Set>>
 
-//    @Query("DELETE FROM `set`") // Clean 'set' table
-//    suspend fun dropSets(): Int
+    @Query("DELETE FROM `set`") // Clean 'set' table
+    suspend fun dropSets(): Int
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 }

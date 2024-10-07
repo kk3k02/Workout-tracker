@@ -25,8 +25,8 @@ interface WorkoutDao {
     @Query("SELECT * FROM workout") // Get all the records
     fun getAllWorkouts(): LiveData<List<Workout>>
 
-//    @Query("DELETE FROM workout") // Clean workout table
-//    suspend fun dropWorkouts(): Int
+    @Query("DELETE FROM workout") // Clean workout table
+    suspend fun dropWorkouts(): Int
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 }
