@@ -1,5 +1,6 @@
-package com.kk3k.workouttracker.data
+package com.kk3k.workouttracker.db.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -24,10 +25,10 @@ enum class TargetMuscle {
 
 @Entity(tableName = "exercise") // Table name
 data class Exercise(
-    @PrimaryKey(autoGenerate = true) val uid: Int = 0, // Object ID,
-    val name: String, // Exercise name
-    val type: ExerciseType, // Type of exercise
-    val targetMuscle: TargetMuscle, // Target muscle in exercise
-    val description: String, // Description of exercise
-    val image: ByteArray? = null // Exercise image
+    @PrimaryKey(autoGenerate = true) var uid: Int = 0, // Object ID,
+    @ColumnInfo(name = "name") var name: String, // Exercise name
+    @ColumnInfo(name = "type") var type: ExerciseType, // Type of exercise
+    @ColumnInfo(name = "target_muscle") var targetMuscle: TargetMuscle, // Target muscle in exercise
+    @ColumnInfo(name = "description") var description: String, // Description of exercise
+    @ColumnInfo(name = "image") var image: ByteArray? = null // Exercise image
 )

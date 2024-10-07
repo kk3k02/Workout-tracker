@@ -11,23 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WorkoutTracker"
+        android:name=".MainApplication"
         tools:targetApi="31">
-        <activity
-            android:name=".SummaryActivity"
-            android:theme="@style/Theme.AppCompat"
-            android:exported="false" />
-        <activity
-            android:name=".HistoryActivity"
-            android:theme="@style/Theme.AppCompat"
-            android:exported="false" />
-        <activity
-            android:name=".FigureActivity"
-            android:theme="@style/Theme.AppCompat"
-            android:exported="false" />
-        <activity
-            android:name=".WorkoutActivity"
-            android:theme="@style/Theme.AppCompat"
-            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

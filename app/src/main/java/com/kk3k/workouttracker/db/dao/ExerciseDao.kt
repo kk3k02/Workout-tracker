@@ -1,11 +1,12 @@
-package com.kk3k.workouttracker.data
+package com.kk3k.workouttracker.db.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import kotlinx.coroutines.flow.Flow
+import com.kk3k.workouttracker.db.entities.Exercise
 
 @Dao
 interface ExerciseDao {
@@ -22,10 +23,10 @@ interface ExerciseDao {
     suspend fun update(exercise: Exercise)
 
     @Query("SELECT * FROM exercise") // Get all the records
-    fun getAllExercises(): Flow<List<Exercise>>
+    fun getAllExercises(): LiveData<List<Exercise>>
 
-    @Query("DELETE FROM exercise") // Clean Exercise table
-    suspend fun dropExercises()
+//    @Query("DELETE FROM exercise") // Clean Exercise table
+//    suspend fun dropExercises(): Int
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 }
