@@ -8,6 +8,6 @@ import androidx.room.PrimaryKey
 data class Workout(
     @PrimaryKey(autoGenerate = true) var uid: Int = 0, // Object ID
     @ColumnInfo(name = "date") var date: Long? = null, // Date of workout
-    @ColumnInfo(name = "duration") var duration: String? = null, // Workout duration
+    @ColumnInfo(name = "duration") var duration: Long? = null, // Workout duration
     @ColumnInfo(name = "notes") var notes: String? = null // Notes about workout
 )

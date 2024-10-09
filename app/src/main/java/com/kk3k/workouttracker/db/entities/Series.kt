@@ -22,7 +22,7 @@ import androidx.room.PrimaryKey
         )
     ]
 )
-data class _Set(
+data class Series(
     @PrimaryKey(autoGenerate = true) var uid: Int = 0, // Object ID
     @ColumnInfo(name = "workout_id") var workoutId: Int, // Workout object ID
     @ColumnInfo(name = "exercise_id") var exerciseId: Int, // Exercise object ID

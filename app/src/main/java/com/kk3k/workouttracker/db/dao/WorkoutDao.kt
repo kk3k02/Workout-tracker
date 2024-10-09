@@ -1,33 +1,45 @@
 package com.kk3k.workouttracker.db.dao
 
-import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.kk3k.workouttracker.db.entities.Workout
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WorkoutDao {
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Interface for workout table
 
-    @Insert // Insert record
+    // Insert one workout
+    @Insert
     suspend fun insert(workout: Workout)
 
-    @Delete // Delete record
-    suspend fun delete(workout: Workout)
+    // Insert multiple workouts
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(vararg workouts: Workout)
 
-    @Update // Update record
+    // Update an existing workout
+    @Update
     suspend fun update(workout: Workout)
 
-    @Query("SELECT * FROM workout") // Get all the records
-    fun getAllWorkouts(): Flow<List<Workout>>
+    // Delete a specific workout by object
+    @Delete
+    suspend fun delete(workout: Workout)
 
-    @Query("DELETE FROM workout") // Clean workout table
-    suspend fun dropWorkouts(): Int
+    // Delete all workouts
+    @Query("DELETE FROM workout")
+    suspend fun deleteAll()
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Get all workouts as Flow
+    @Query("SELECT * FROM workout")
+    fun getAllWorkoutsFlow(): Flow<List<Workout>>
+
+    // Get a specific workout by ID
+    @Query("SELECT * FROM workout WHERE uid = :id LIMIT 1")
+    suspend fun getWorkoutById(id: Int): Workout?
+
+    // Get count of all workouts
+    @Query("SELECT COUNT(*) FROM workout")
+    suspend fun getWorkoutCount(): Int
+
+    // Get the most recent workout
+    @Query("SELECT * FROM workout ORDER BY date DESC LIMIT 1")
+    suspend fun getMostRecentWorkout(): Workout?
 }

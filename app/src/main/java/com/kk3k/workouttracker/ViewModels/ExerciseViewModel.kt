@@ -1,29 +1,70 @@
 package com.kk3k.workouttracker.ViewModels
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.kk3k.workouttracker.ExerciseRepository
+import com.kk3k.workouttracker.db.AppDatabase
 import com.kk3k.workouttracker.db.entities.Exercise
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-class ExerciseViewModel(private val repository: ExerciseRepository) : ViewModel() {
-    val allExercises: Flow<List<Exercise>> = repository.allExercises
+class ExerciseViewModel(application: Application) : AndroidViewModel(application) {
+    private val exerciseDao = AppDatabase.getDatabase(application).exerciseDao()
 
-    fun insert(exercise: Exercise) = viewModelScope.launch(Dispatchers.IO) {
-        repository.insert(exercise)
+    // Get all exercises as Flow
+    val allExercises: Flow<List<Exercise>> = exerciseDao.getAllExercisesFlow()
+
+    // Insert a new exercise
+    fun insertExercise(exercise: Exercise) {
+        viewModelScope.launch {
+            exerciseDao.insert(exercise)
+        }
     }
 
-    fun update(exercise: Exercise) = viewModelScope.launch(Dispatchers.IO) {
-        repository.update(exercise)
+    // Update an existing exercise
+    fun updateExercise(exercise: Exercise) {
+        viewModelScope.launch {
+            exerciseDao.update(exercise)
+        }
     }
 
-    fun delete(exercise: Exercise) = viewModelScope.launch(Dispatchers.IO) {
-        repository.delete(exercise)
+    // Delete a specific exercise
+    fun deleteExercise(exercise: Exercise) {
+        viewModelScope.launch {
+            exerciseDao.delete(exercise)
+        }
     }
 
-    fun dropExercises() = viewModelScope.launch(Dispatchers.IO) {
-        repository.dropExercises()
+    // Delete all exercises
+    fun deleteAllExercises() {
+        viewModelScope.launch {
+            exerciseDao.deleteAll()
+        }
+    }
+
+    // Get a specific exercise by ID
+    fun getExerciseById(id: Int, callback: (Exercise?) -> Unit) {
+        viewModelScope.launch {
+            val exercise = exerciseDao.getExerciseById(id)
+            callback(exercise)
+        }
+    }
+
+    // Get exercises by name (case-insensitive)
+    fun getExercisesByName(name: String): Flow<List<Exercise>> {
+        return exerciseDao.getExercisesByName(name)
+    }
+
+    // Get exercises by target muscle group
+    fun getExercisesByTargetMuscle(targetMuscle: String): Flow<List<Exercise>> {
+        return exerciseDao.getExercisesByTargetMuscle(targetMuscle)
+    }
+
+    // Get the count of all exercises
+    fun getExerciseCount(callback: (Int) -> Unit) {
+        viewModelScope.launch {
+            val count = exerciseDao.getExerciseCount()
+            callback(count)
+        }
     }
 }
