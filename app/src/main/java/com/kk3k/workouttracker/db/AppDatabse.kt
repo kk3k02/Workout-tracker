@@ -5,6 +5,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import android.content.Context
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.kk3k.workouttracker.db.dao.*
 import com.kk3k.workouttracker.db.entities.*
 
@@ -15,7 +17,7 @@ import com.kk3k.workouttracker.db.entities.*
         Exercise::class,
         Series::class
                ],
-    version = 1
+    version = 3
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -35,7 +37,8 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "workout_tracker_database"
-                ).build()
+                )
+                    .build()
                 INSTANCE = instance
                 instance
             }

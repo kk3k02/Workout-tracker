@@ -6,7 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "set", // Table name
+    tableName = "series", // Table name
     foreignKeys = [
         ForeignKey( // Foreign key in Workout
             entity = Workout::class,

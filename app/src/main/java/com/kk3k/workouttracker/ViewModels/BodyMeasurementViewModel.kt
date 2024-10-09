@@ -70,4 +70,23 @@ class BodyMeasurementViewModel(application: Application) : AndroidViewModel(appl
             callback(count)
         }
     }
+
+    fun insertSampleBodyMeasurements(bodyMeasurementViewModel: BodyMeasurementViewModel) {
+        for (i in 1..10) {
+            val bodyMeasurement = BodyMeasurement(
+                date = System.currentTimeMillis() - (i * 1000L * 60L * 60L * 24L),
+                weight = 70 + i,
+                biceps = 30 + (i % 5),
+                triceps = 30 + (i % 5),
+                chest = 100 + (i % 10),
+                waist = 80 + (i % 10),
+                hips = 90 + (i % 10),
+                thighs = 60 + (i % 5),
+                calves = 40 + (i % 5),
+                notes = "Body measurement number $i"
+            )
+            bodyMeasurementViewModel.insertBodyMeasurement(bodyMeasurement)
+        }
+    }
+
 }

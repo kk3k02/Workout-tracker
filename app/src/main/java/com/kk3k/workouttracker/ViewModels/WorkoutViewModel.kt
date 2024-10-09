@@ -77,4 +77,15 @@ class WorkoutViewModel(application: Application) : AndroidViewModel(application)
             }
         }
     }
+
+    fun insertSampleWorkouts(workoutViewModel: WorkoutViewModel) {
+        for (i in 1..10) {
+            val workout = Workout(
+                date = System.currentTimeMillis() - (i * 1000L * 60L * 60L * 24L),
+                duration = (30L * i),
+                notes = "Workout number $i"
+            )
+            workoutViewModel.insertWorkout(workout)
+        }
+    }
 }

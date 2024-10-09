@@ -57,7 +57,7 @@ class SeriesViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     // Delete all sets
-    fun deleteAllSets() {
+    fun deleteAllSeries() {
         viewModelScope.launch {
             setDao.deleteAll()
         }
@@ -68,6 +68,18 @@ class SeriesViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             val count = setDao.getSeriesCount()
             callback(count)
+        }
+    }
+
+    fun insertSampleSeries(seriesViewModel: SeriesViewModel) {
+        for (i in 1..10) {
+            val series = Series(
+                workoutId = i,
+                exerciseId = i,
+                repetitions = 8 + (i % 5),
+                weight = (i * 5).toFloat()
+            )
+            seriesViewModel.insertSet(series)
         }
     }
 }

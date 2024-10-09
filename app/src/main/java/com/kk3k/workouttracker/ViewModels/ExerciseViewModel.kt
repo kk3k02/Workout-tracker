@@ -67,4 +67,20 @@ class ExerciseViewModel(application: Application) : AndroidViewModel(application
             callback(count)
         }
     }
+
+    fun insertSampleExercises(exerciseViewModel: ExerciseViewModel) {
+        val exerciseNames = listOf("Push-up", "Squat", "Bench Press", "Deadlift", "Pull-up", "Lunge", "Bicep Curl", "Tricep Extension", "Shoulder Press", "Leg Press")
+        val targetMuscles = listOf("CHEST", "LEGS", "BACK", "ARMS", "SHOULDERS")
+
+        for (i in 0 until 10) {
+            val exercise = Exercise(
+                name = exerciseNames[i],
+                targetMuscle = targetMuscles[i % targetMuscles.size],
+                description = "This is exercise number ${i + 1} targeting the ${targetMuscles[i % targetMuscles.size].toLowerCase()}",
+                image = null
+            )
+            exerciseViewModel.insertExercise(exercise)
+        }
+    }
+
 }
