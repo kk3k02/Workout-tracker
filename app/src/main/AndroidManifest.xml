@@ -16,7 +16,7 @@
             android:name=".Activities.SummaryActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.BodyMeasurementsActivity"
+            android:name=".Activities.BodyMeasurementActivity"
             android:exported="false" />
         <activity
             android:name=".Activities.WorkoutActivity"

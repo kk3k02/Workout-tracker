@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnBodyMeasurement.setOnClickListener {
-            val intent = Intent(this, BodyMeasurementsActivity::class.java)
+            val intent = Intent(this, BodyMeasurementActivity::class.java)
             startActivity(intent)
         }
 
