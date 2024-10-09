@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.kk3k.workouttracker.BodyMeasurementAdapter
+import com.kk3k.workouttracker.Adapters.BodyMeasurementAdapter
 import com.kk3k.workouttracker.R
 import com.kk3k.workouttracker.viewmodel.BodyMeasurementViewModel
 import kotlinx.coroutines.launch
@@ -25,6 +25,7 @@ class BodyMeasurementActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        // Zbieranie danych z ViewModel za pomocą Flow
         lifecycleScope.launch {
             bodyMeasurementViewModel.allMeasurements.collect { measurements ->
                 adapter.submitList(measurements)

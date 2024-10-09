@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Workout tracker</string>
+    <string name="triceps">Triceps:</string>
+    <string name="chest">Chest:</string>
+    <string name="date">Date</string>
+    <string name="biceps">Biceps:</string>
 </resources>

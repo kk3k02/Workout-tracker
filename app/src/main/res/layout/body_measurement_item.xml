@@ -1,7 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/textViewMeasurementInfo"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp"
-    android:textSize="16sp" />
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Kafelek wyświetlający datę -->
+    <TextView
+        android:id="@+id/measurementDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <!-- Rozwijana sekcja z danymi pomiaru, początkowo ukryta -->
+    <LinearLayout
+        android:id="@+id/expandableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:paddingTop="8dp">
+
+        <!-- Wyświetlanie wszystkich parametrów BodyMeasurement -->
+        <TextView
+            android:id="@+id/textViewBiceps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Biceps:" />
+
+        <TextView
+            android:id="@+id/textViewTriceps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Triceps:" />
+
+        <TextView
+            android:id="@+id/textViewChest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chest:" />
+
+        <TextView
+            android:id="@+id/textViewWaist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Waist:" />
+
+        <TextView
+            android:id="@+id/textViewHips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hips:" />
+
+        <TextView
+            android:id="@+id/textViewThighs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thighs:" />
+
+        <TextView
+            android:id="@+id/textViewCalves"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Calves:" />
+
+        <TextView
+            android:id="@+id/textViewWeight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Weight:" />
+    </LinearLayout>
+</LinearLayout>
