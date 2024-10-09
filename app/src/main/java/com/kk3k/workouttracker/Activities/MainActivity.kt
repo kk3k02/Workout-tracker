@@ -1,16 +1,18 @@
-package com.kk3k.workouttracker
+package com.kk3k.workouttracker.Activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.kk3k.workouttracker.R
 import com.kk3k.workouttracker.ViewModels.ExerciseViewModel
 import com.kk3k.workouttracker.viewmodel.BodyMeasurementViewModel
 import com.kk3k.workouttracker.viewmodel.SeriesViewModel
 import com.kk3k.workouttracker.viewmodel.WorkoutViewModel
 import kotlinx.coroutines.launch
-import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
     // Initialize ViewModels
@@ -24,13 +26,38 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        lifecycleScope.launch {
-            //insertSampleData()
-            //logWorkout()
-            //logExercises()
-            //logSeries()
-            //logBodyMeasurements()
+        val btnWorkout = findViewById<Button>(R.id.btnWorkout)
+        val btnWorkoutHistory = findViewById<Button>(R.id.btnWorkoutHistory)
+        val btnBodyMeasurement = findViewById<Button>(R.id.btnBodyMeasurement)
+        val btnSummary = findViewById<Button>(R.id.btnSummary)
+
+        btnWorkout.setOnClickListener {
+            val intent = Intent(this, WorkoutActivity::class.java)
+            startActivity(intent)
         }
+
+        btnWorkoutHistory.setOnClickListener {
+            val intent = Intent(this, WorkoutHistoryActivity::class.java)
+            startActivity(intent)
+        }
+
+        btnBodyMeasurement.setOnClickListener {
+            val intent = Intent(this, BodyMeasurementsActivity::class.java)
+            startActivity(intent)
+        }
+
+        btnSummary.setOnClickListener {
+            val intent = Intent(this, SummaryActivity::class.java)
+            startActivity(intent)
+        }
+
+//        lifecycleScope.launch {
+//            //insertSampleData()
+//            //logWorkout()
+//            //logExercises()
+//            //logSeries()
+//            //logBodyMeasurements()
+//        }
     }
 
     private fun insertSampleData() {

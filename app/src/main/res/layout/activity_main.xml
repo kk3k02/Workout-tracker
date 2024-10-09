@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main_buttons"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="bottom|center"
-    android:orientation="horizontal">
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
 
     <Button
-        android:id="@+id/workout_button"
+        android:id="@+id/btnWorkout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="WORKOUT" />
+        android:text="Workout" />
 
     <Button
-        android:id="@+id/figure_button"
+        android:id="@+id/btnWorkoutHistory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="FIGURE" />
+        android:text="Workout History" />
 
     <Button
-        android:id="@+id/history_button"
+        android:id="@+id/btnBodyMeasurement"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="HISTORY" />
+        android:text="Body Measurement" />
 
     <Button
-        android:id="@+id/summary_button"
+        android:id="@+id/btnSummary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SUMMARY" />
+        android:text="Summary" />
 </LinearLayout>
