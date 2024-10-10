@@ -1,7 +1,6 @@
 package com.kk3k.workouttracker.Adapters
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,16 +8,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.kk3k.workouttracker.R
 import com.kk3k.workouttracker.db.entities.BodyMeasurement
-
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 class BodyMeasurementAdapter : RecyclerView.Adapter<BodyMeasurementAdapter.BodyMeasurementViewHolder>() {
 
-    private var measurements = emptyList<BodyMeasurement>()
-    private var expandedPositions = mutableSetOf<Int>() // Zbiór do śledzenia rozwiniętych pozycji
+    private var measurements = emptyList<BodyMeasurement>() // List to hold body measurements
+    private var expandedPositions = mutableSetOf<Int>() // Set to track expanded items
 
+    // ViewHolder class to hold references to the views
     class BodyMeasurementViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val measurementDate: TextView = itemView.findViewById(R.id.measurementDate)
         val expandableLayout: View = itemView.findViewById(R.id.expandableLayout)
@@ -32,24 +31,26 @@ class BodyMeasurementAdapter : RecyclerView.Adapter<BodyMeasurementAdapter.BodyM
         val weight: TextView = itemView.findViewById(R.id.textViewWeight)
     }
 
+    // Inflate the layout for each item in the RecyclerView
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BodyMeasurementViewHolder {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.body_measurement_item, parent, false)
         return BodyMeasurementViewHolder(itemView)
     }
 
+    // Bind data to the ViewHolder
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: BodyMeasurementViewHolder, position: Int) {
         val currentMeasurement = measurements[position]
 
-        // Formatowanie daty
+        // Format the date
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val formattedDate = sdf.format(Date(currentMeasurement.date ?: 0L))
 
-        // Ustaw datę pomiaru w kafelku
+        // Set date in the main tile
         holder.measurementDate.text = "Date: $formattedDate"
 
-        // Ustaw wartości w sekcji rozwijanej
+        // Set the values in the expandable section
         holder.biceps.text = "Biceps: ${currentMeasurement.biceps} cm"
         holder.triceps.text = "Triceps: ${currentMeasurement.triceps} cm"
         holder.chest.text = "Chest: ${currentMeasurement.chest} cm"
@@ -59,34 +60,27 @@ class BodyMeasurementAdapter : RecyclerView.Adapter<BodyMeasurementAdapter.BodyM
         holder.calves.text = "Calves: ${currentMeasurement.calves ?: "N/A"} cm"
         holder.weight.text = "Weight: ${currentMeasurement.weight ?: "N/A"} kg"
 
-
-        // Ustal widoczność na podstawie stanu w expandedPositions
+        // Set visibility based on whether the item is expanded or not
         val isExpanded = expandedPositions.contains(position)
         holder.expandableLayout.visibility = if (isExpanded) View.VISIBLE else View.GONE
 
-        // Dodaj logowanie do stanu rozwinięcia
-        Log.d("BodyMeasurementAdapter", "Position: $position, isExpanded: $isExpanded")
-
-        // Obsługa kliknięcia w kafelek
+        // Handle item click to expand or collapse
         holder.itemView.setOnClickListener {
-            Log.d("BodyMeasurementAdapter", "Clicked on position: $position")
-
             if (isExpanded) {
-                // Jeśli jest już rozwinięty, usuń pozycję ze zbioru
+                // If expanded, collapse it
                 expandedPositions.remove(position)
             } else {
-                // Jeśli nie jest rozwinięty, dodaj pozycję do zbioru
+                // If collapsed, expand it
                 expandedPositions.add(position)
             }
-
-            Log.d("BodyMeasurementAdapter", "New state: $expandedPositions")
-            notifyItemChanged(position) // Odśwież tylko ten konkretny element
+            notifyItemChanged(position) // Refresh the specific item
         }
     }
 
-
+    // Return the total number of items
     override fun getItemCount(): Int = measurements.size
 
+    // Submit new data and refresh the list
     @SuppressLint("NotifyDataSetChanged")
     fun submitList(measurementList: List<BodyMeasurement>) {
         measurements = measurementList

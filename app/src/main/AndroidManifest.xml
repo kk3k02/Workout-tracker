@@ -13,6 +13,9 @@
         android:theme="@style/AppTheme"
         tools:targetApi="31">
         <activity
+            android:name=".Activities.WorkoutDetailsActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activities.SummaryActivity"
             android:exported="false" />
         <activity

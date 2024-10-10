@@ -13,19 +13,21 @@ import kotlinx.coroutines.launch
 
 class BodyMeasurementActivity : AppCompatActivity() {
 
+    // Using viewModels delegate to initialize the ViewModel
     private val bodyMeasurementViewModel: BodyMeasurementViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_body_measurement)
 
+        // Initialize the RecyclerView and set its adapter and layout manager
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewBodyMeasurements)
         val adapter = BodyMeasurementAdapter()
 
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Zbieranie danych z ViewModel za pomocą Flow
+        // Collecting data from ViewModel using Flow and updating the adapter
         lifecycleScope.launch {
             bodyMeasurementViewModel.allMeasurements.collect { measurements ->
                 adapter.submitList(measurements)

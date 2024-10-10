@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Kafelek wyświetlający datę -->
+    <!-- Tile displaying the measurement date -->
     <TextView
         android:id="@+id/measurementDate"
         android:layout_width="wrap_content"
@@ -13,7 +13,7 @@
         android:textSize="16sp"
         android:textStyle="bold" />
 
-    <!-- Rozwijana sekcja z danymi pomiaru, początkowo ukryta -->
+    <!-- Expandable section displaying measurement details, initially hidden -->
     <LinearLayout
         android:id="@+id/expandableLayout"
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
         android:visibility="gone"
         android:paddingTop="8dp">
 
-        <!-- Wyświetlanie wszystkich parametrów BodyMeasurement -->
+        <!-- Displaying all BodyMeasurement parameters -->
         <TextView
             android:id="@+id/textViewBiceps"
             android:layout_width="wrap_content"
