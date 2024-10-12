@@ -52,6 +52,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
+            //workoutViewModel.deleteAllWorkouts()
+            //workoutViewModel.deleteAllWorkouts()
             //insertSampleData()
             //logWorkout()
             //logExercises()

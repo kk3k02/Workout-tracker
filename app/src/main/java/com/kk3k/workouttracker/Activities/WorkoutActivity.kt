@@ -28,11 +28,15 @@ class WorkoutActivity : AppCompatActivity() {
     // Adapter do RecyclerView
     private lateinit var exerciseAdapter: ExerciseAdapter
 
+    // Przechowywanie ID treningu w bazie danych
+    private var workoutId: Int? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workout)
 
         val buttonAddExercise: Button = findViewById(R.id.buttonAddExercise)
+        val buttonSaveWorkout: Button = findViewById(R.id.buttonSaveWorkout)
         val recyclerView: RecyclerView = findViewById(R.id.recyclerViewExercises)
 
         // Ustawienia RecyclerView
@@ -41,7 +45,7 @@ class WorkoutActivity : AppCompatActivity() {
             seriesMap,
             onExerciseDelete = { exercise -> removeExercise(exercise) },
             onAddSeries = { exercise -> showAddSeriesDialog(exercise) },
-            onDeleteSeries = { series -> removeSeries(series) }  // Poprawiona funkcja usuwania serii
+            onDeleteSeries = { series -> removeSeries(series) }
         )
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = exerciseAdapter
@@ -51,14 +55,30 @@ class WorkoutActivity : AppCompatActivity() {
             showExerciseSelectionDialog()
         }
 
-        // Tworzenie nowego treningu w bazie danych
-        workoutViewModel.insertWorkout(
-            Workout(
+        // Obsługa kliknięcia na przycisk Save
+        buttonSaveWorkout.setOnClickListener {
+            saveWorkout()
+        }
+
+        // Tworzenie nowego treningu w bazie danych przy starcie aktywności
+        createNewWorkout()
+    }
+
+    // Tworzenie nowego obiektu workout w bazie danych
+    private fun createNewWorkout() {
+        lifecycleScope.launch {
+            val workout = Workout(
                 date = System.currentTimeMillis(),
                 duration = null,
                 notes = "Workout in progress"
             )
-        )
+
+            // Zapisz workout i ustaw jego ID
+            workoutViewModel.insertWorkout(workout)
+            workoutViewModel.getMostRecentWorkout { recentWorkout ->
+                workoutId = recentWorkout?.uid
+            }
+        }
     }
 
     // Funkcja do wyświetlenia dialogu z listą ćwiczeń
@@ -98,6 +118,9 @@ class WorkoutActivity : AppCompatActivity() {
     private fun removeSeries(series: Series) {
         seriesMap[series.exerciseId]?.remove(series)
         exerciseAdapter.updateSeries(series.exerciseId, seriesMap[series.exerciseId] ?: mutableListOf())
+
+        // Usuń serię z bazy danych
+        workoutViewModel.deleteSeries(series)
     }
 
     // Funkcja do wyświetlenia dialogu do dodawania serii
@@ -113,22 +136,32 @@ class WorkoutActivity : AppCompatActivity() {
             val reps = editTextReps.text.toString().toIntOrNull() ?: 0
             val weight = editTextWeight.text.toString().toFloatOrNull()
 
+            // Dodaj nową serię do mapy i odśwież listę
             val newSeries = Series(
-                workoutId = 1,  // Zakładając, że masz workoutId
+                workoutId = workoutId ?: 0,  // Użyj ID aktualnego workoutu
                 exerciseId = exercise.uid,
                 repetitions = reps,
                 weight = weight
             )
 
-            // Dodaj serię do mapy i odśwież listę
             seriesMap[exercise.uid]?.add(newSeries) ?: run {
                 seriesMap[exercise.uid] = mutableListOf(newSeries)
             }
-
             exerciseAdapter.updateSeries(exercise.uid, seriesMap[exercise.uid] ?: mutableListOf())
+
+            // Zapisz serię w bazie danych
+            workoutViewModel.insertSeries(newSeries)
         }
 
         builder.setNegativeButton("Cancel", null)
         builder.show()
+    }
+
+    // Funkcja zapisu treningu
+    private fun saveWorkout() {
+        // Możesz dodać tutaj dowolne dodatkowe akcje związane z zapisywaniem treningu
+
+        // Zakończ aktywność
+        finish()
     }
 }

@@ -176,4 +176,5 @@ class WorkoutViewModel(application: Application) : AndroidViewModel(application)
             callback(workout)
         }
     }
+
 }
