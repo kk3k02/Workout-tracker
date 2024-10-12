@@ -11,9 +11,9 @@ import com.kk3k.workouttracker.db.entities.Workout
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class WorkoutAdapter(
+class History_WorkoutAdapter(
     private val onWorkoutClick: (Int) -> Unit
-) : RecyclerView.Adapter<WorkoutAdapter.WorkoutViewHolder>() {
+) : RecyclerView.Adapter<History_WorkoutAdapter.WorkoutViewHolder>() {
 
     // Holds the list of workouts to display
     private var workouts = emptyList<Workout>()
@@ -26,7 +26,7 @@ class WorkoutAdapter(
     // Inflate the workout list item layout and return a new ViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkoutViewHolder {
         val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.workout_item, parent, false)
+            .inflate(R.layout.history_workout_item, parent, false)
         return WorkoutViewHolder(itemView)
     }
 
