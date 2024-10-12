@@ -16,12 +16,19 @@ class SeriesViewModel(application: Application) : AndroidViewModel(application) 
     private val exerciseDao = AppDatabase.getDatabase(application).exerciseDao()
 
     // Fetch series for a specific workout with exercise details
-    fun getSeriesForWorkout(workoutId: Int): Flow<List<Pair<Series, Exercise?>>> {
+    fun getSeriesForWorkout(workoutId: Int): Flow<List<Pair<Exercise, List<Series>>>> {
         return seriesDao.getSeriesForWorkout(workoutId).map { seriesList ->
-            seriesList.map { series ->
-                // Fetch exercise details for each series
-                val exercise = exerciseDao.getExerciseById(series.exerciseId)
-                series to exercise
+            // Pobierz unikalne identyfikatory ćwiczeń
+            val exerciseIds = seriesList.map { it.exerciseId }.distinct()
+
+            // Pobierz ćwiczenia dla tych identyfikatorów
+            val exercises = exerciseIds.mapNotNull { exerciseId ->
+                exerciseDao.getExerciseById(exerciseId)
+            }
+
+            // Powiąż ćwiczenia z odpowiadającymi im seriami
+            exercises.map { exercise ->
+                exercise to seriesList.filter { it.exerciseId == exercise.uid }
             }
         }
     }

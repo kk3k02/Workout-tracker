@@ -11,7 +11,7 @@ import com.kk3k.workouttracker.db.entities.Series
 import com.kk3k.workouttracker.db.entities.Exercise
 
 class ExerciseAdapter(
-    private var exerciseSeriesList: List<Pair<Series, Exercise?>>  // List of pairs of Series and Exercise
+    private var exerciseWithSeriesList: List<Pair<Exercise, List<Series>>>  // List of Pairs (Exercise, List of Series)
 ) : RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder>() {
 
     // Set to track expanded positions
@@ -20,9 +20,7 @@ class ExerciseAdapter(
     // ViewHolder class for holding the view elements for each item
     class ExerciseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val exerciseName: TextView = itemView.findViewById(R.id.exerciseName)
-        val expandableLayout: View = itemView.findViewById(R.id.expandableLayout)
-        val repetitions: TextView = itemView.findViewById(R.id.textViewRepetitions)
-        val weight: TextView = itemView.findViewById(R.id.textViewWeight)
+        val expandableLayout: ViewGroup = itemView.findViewById(R.id.expandableLayout)
     }
 
     // Method to inflate the item layout and create a ViewHolder
@@ -35,16 +33,30 @@ class ExerciseAdapter(
     // Bind data to the ViewHolder and handle the expand/collapse logic
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ExerciseViewHolder, position: Int) {
-        val (currentSeries, exercise) = exerciseSeriesList[position]
+        val (exercise, seriesList) = exerciseWithSeriesList[position]
 
-        // Set exercise name, repetitions, and weight
-        holder.exerciseName.text = exercise?.name ?: "Unknown Exercise"
-        holder.repetitions.text = "Repetitions: ${currentSeries.repetitions}"
-        holder.weight.text = "Weight: ${currentSeries.weight ?: "N/A"} kg"
+        // Set exercise name
+        holder.exerciseName.text = exercise.name
 
         // Check if the current position is expanded, if so, show the expandable layout
         val isExpanded = expandedPositions.contains(position)
         holder.expandableLayout.visibility = if (isExpanded) View.VISIBLE else View.GONE
+
+        // Clear previous series views
+        holder.expandableLayout.removeAllViews()
+
+        // Add series views dynamically when expanded
+        if (isExpanded) {
+            for ((index, series) in seriesList.withIndex()) {
+                val seriesView = LayoutInflater.from(holder.itemView.context)
+                    .inflate(R.layout.series_item, holder.expandableLayout, false)
+
+                val seriesInfo = seriesView.findViewById<TextView>(R.id.seriesInfo)
+                seriesInfo.text = "Set ${index + 1}: Reps: ${series.repetitions}, Weight: ${series.weight ?: "N/A"} kg"
+
+                holder.expandableLayout.addView(seriesView)
+            }
+        }
 
         // Handle the click event to expand or collapse the item
         holder.itemView.setOnClickListener {
@@ -58,12 +70,12 @@ class ExerciseAdapter(
     }
 
     // Return the size of the list
-    override fun getItemCount(): Int = exerciseSeriesList.size
+    override fun getItemCount(): Int = exerciseWithSeriesList.size
 
     // Update the list with new data and notify the adapter
     @SuppressLint("NotifyDataSetChanged")
-    fun submitList(newExerciseSeriesList: List<Pair<Series, Exercise?>>) {
-        exerciseSeriesList = newExerciseSeriesList
+    fun submitList(newExerciseWithSeriesList: List<Pair<Exercise, List<Series>>>) {
+        exerciseWithSeriesList = newExerciseWithSeriesList
         notifyDataSetChanged()
     }
 }

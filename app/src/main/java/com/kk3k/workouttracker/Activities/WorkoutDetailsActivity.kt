@@ -33,10 +33,10 @@ class WorkoutDetailsActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Collect data from the ViewModel and update the adapter with the exercise sets
+        // Collect exercises and series data from the ViewModel and update the adapter
         lifecycleScope.launch {
-            seriesViewModel.getSeriesForWorkout(workoutId).collect { exerciseSeriesList ->
-                adapter.submitList(exerciseSeriesList) // Update adapter with the new data
+            seriesViewModel.getSeriesForWorkout(workoutId).collect { exerciseWithSeriesList ->
+                adapter.submitList(exerciseWithSeriesList)
             }
         }
     }

@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- TextView to display the exercise name -->
+    <!-- Kafelek wyświetlający nazwę ćwiczenia -->
     <TextView
         android:id="@+id/exerciseName"
         android:layout_width="wrap_content"
@@ -13,7 +13,7 @@
         android:textSize="16sp"
         android:textStyle="bold" />
 
-    <!-- Expandable section that shows additional details like repetitions and weight -->
+    <!-- Rozwijana sekcja z danymi serii, początkowo ukryta -->
     <LinearLayout
         android:id="@+id/expandableLayout"
         android:layout_width="match_parent"
@@ -21,19 +21,5 @@
         android:orientation="vertical"
         android:visibility="gone"
         android:paddingTop="8dp">
-
-    <!-- TextView to display the number of repetitions -->
-    <TextView
-        android:id="@+id/textViewRepetitions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Repetitions:" />
-
-    <!-- TextView to display the weight used for the exercise -->
-    <TextView
-        android:id="@+id/textViewWeight"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Weight:" />
-</LinearLayout>
     </LinearLayout>
+</LinearLayout>
