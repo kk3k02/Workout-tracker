@@ -34,7 +34,10 @@ class WorkoutActivity : AppCompatActivity() {
         val recyclerView: RecyclerView = findViewById(R.id.recyclerViewExercises)
 
         // Ustawienia RecyclerView
-        exerciseAdapter = ExerciseAdapter(selectedExercises)
+        exerciseAdapter = ExerciseAdapter(
+            selectedExercises,
+            onExerciseDelete = { exercise -> removeExerciseFromList(exercise) } // Dodaj callback do usuwania
+        )
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = exerciseAdapter
 
@@ -77,5 +80,11 @@ class WorkoutActivity : AppCompatActivity() {
                 builder.show()
             }
         }
+    }
+
+    // Funkcja do usuwania ćwiczenia z listy
+    private fun removeExerciseFromList(exercise: Exercise) {
+        selectedExercises.remove(exercise)
+        exerciseAdapter.notifyDataSetChanged()
     }
 }
