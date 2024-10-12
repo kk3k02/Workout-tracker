@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.kk3k.workouttracker.Adapters.BodyMeasurementAdapter
+import com.kk3k.workouttracker.Adapters.History_BodyMeasurementAdapter
 import com.kk3k.workouttracker.R
 import com.kk3k.workouttracker.viewmodel.BodyMeasurementViewModel
 import kotlinx.coroutines.launch
@@ -22,7 +22,7 @@ class BodyMeasurementActivity : AppCompatActivity() {
 
         // Initialize the RecyclerView and set its adapter and layout manager
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewBodyMeasurements)
-        val adapter = BodyMeasurementAdapter()
+        val adapter = History_BodyMeasurementAdapter()
 
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
