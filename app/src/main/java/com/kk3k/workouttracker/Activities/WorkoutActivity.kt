@@ -40,7 +40,8 @@ class WorkoutActivity : AppCompatActivity() {
             selectedExercises,
             seriesMap,
             onExerciseDelete = { exercise -> removeExercise(exercise) },
-            onAddSeries = { exercise -> showAddSeriesDialog(exercise) }
+            onAddSeries = { exercise -> showAddSeriesDialog(exercise) },
+            onDeleteSeries = { series -> removeSeries(series) }  // Poprawiona funkcja usuwania serii
         )
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = exerciseAdapter
@@ -91,6 +92,12 @@ class WorkoutActivity : AppCompatActivity() {
         selectedExercises.remove(exercise)
         seriesMap.remove(exercise.uid) // Usuń również serie powiązane z ćwiczeniem
         exerciseAdapter.notifyDataSetChanged()
+    }
+
+    // Funkcja do usuwania serii
+    private fun removeSeries(series: Series) {
+        seriesMap[series.exerciseId]?.remove(series)
+        exerciseAdapter.updateSeries(series.exerciseId, seriesMap[series.exerciseId] ?: mutableListOf())
     }
 
     // Funkcja do wyświetlenia dialogu do dodawania serii

@@ -15,7 +15,8 @@ class ExerciseAdapter(
     private val exerciseList: MutableList<Exercise>,
     private val seriesMap: MutableMap<Int, MutableList<Series>>, // Mapowanie ćwiczeń na serie
     private val onExerciseDelete: (Exercise) -> Unit, // Callback do usuwania ćwiczenia
-    private val onAddSeries: (Exercise) -> Unit  // Callback do dodawania serii
+    private val onAddSeries: (Exercise) -> Unit,  // Callback do dodawania serii
+    private val onDeleteSeries: (Series) -> Unit  // Callback do usuwania serii
 ) : RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder>() {
 
     class ExerciseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -37,7 +38,9 @@ class ExerciseAdapter(
 
         // Ustawianie adaptera dla listy serii
         val seriesList = seriesMap[exercise.uid] ?: mutableListOf()
-        val seriesAdapter = SeriesAdapter(seriesList)
+        val seriesAdapter = SeriesAdapter(seriesList, onDeleteSeries = { series ->
+            onDeleteSeries(series)  // Wywołaj callback po kliknięciu na usuń serię
+        })
         holder.recyclerViewSeries.layoutManager = LinearLayoutManager(holder.itemView.context)
         holder.recyclerViewSeries.adapter = seriesAdapter
 

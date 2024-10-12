@@ -34,6 +34,14 @@ class WorkoutViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    // Metoda w WorkoutViewModel do usuwania serii
+    fun deleteSeries(series: Series) {
+        viewModelScope.launch {
+            seriesDao.delete(series)
+        }
+    }
+
+
     // Nowa funkcja: tworzy trening z ćwiczeniami i seriami
     fun createWorkoutWithExercisesAndSeries(
         exercise: Exercise, // Ćwiczenie, które ma być dodane do treningu
