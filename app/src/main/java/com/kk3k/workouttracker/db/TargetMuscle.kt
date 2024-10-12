@@ -2,6 +2,8 @@ package com.kk3k.workouttracker.db
 
 // Target muscles in exercises
 enum class TargetMuscle {
+    BICEPS,
+    TRICEPS,
     SHOULDERS, // Exercises for shoulders
     CHEST, // Exercises for chest
     BACK, // Exercises for back

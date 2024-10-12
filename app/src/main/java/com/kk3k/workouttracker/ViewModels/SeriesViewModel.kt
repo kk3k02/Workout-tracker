@@ -4,69 +4,94 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.kk3k.workouttracker.db.AppDatabase
+import com.kk3k.workouttracker.db.entities.Exercise
 import com.kk3k.workouttracker.db.entities.Series
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class SeriesViewModel(application: Application) : AndroidViewModel(application) {
-    private val setDao = AppDatabase.getDatabase(application).setDao()
+    private val seriesDao = AppDatabase.getDatabase(application).seriesDao()
+    private val exerciseDao = AppDatabase.getDatabase(application).exerciseDao()
 
-    // Get all sets for a specific workout as Flow
-    fun getSetsForWorkout(workoutId: Int): Flow<List<Series>> {
-        return setDao.getSeriesForWorkout(workoutId)
+    // Fetch series for a specific workout with exercise details
+    fun getSeriesForWorkout(workoutId: Int): Flow<List<Pair<Series, Exercise?>>> {
+        return seriesDao.getSeriesForWorkout(workoutId).map { seriesList ->
+            seriesList.map { series ->
+                // Fetch exercise details for each series
+                val exercise = exerciseDao.getExerciseById(series.exerciseId)
+                series to exercise
+            }
+        }
+    }
+
+    suspend fun getExercisesForWorkout(workoutId: Int): List<Exercise> {
+        // Pobieramy listę unikalnych exercise_id z tabeli Series dla danego workout_id
+        val seriesList = seriesDao.getSeriesForWorkout(workoutId).first()
+
+        // Wyciągamy unikalne identyfikatory ćwiczeń
+        val exerciseIds = seriesList.map { it.exerciseId }.distinct()
+
+        // Pobieramy ćwiczenia z ExerciseDao na podstawie exercise_id
+        val exercises = exerciseIds.mapNotNull { exerciseId ->
+            exerciseDao.getExerciseById(exerciseId)
+        }
+
+        return exercises
     }
 
     // Get all sets for a specific exercise in a workout
-    fun getSetsForExerciseInWorkout(workoutId: Int, exerciseId: Int): Flow<List<Series>> {
-        return setDao.getSeriesForExerciseInWorkout(workoutId, exerciseId)
+    fun getSeriesForExerciseInWorkout(workoutId: Int, exerciseId: Int): Flow<List<Series>> {
+        return seriesDao.getSeriesForExerciseInWorkout(workoutId, exerciseId)
     }
 
     // Insert a new set (series)
-    fun insertSet(set: Series) {
+    fun insertSeries(series: Series) {
         viewModelScope.launch {
-            setDao.insert(set)
+            seriesDao.insert(series)
         }
     }
 
     // Insert multiple sets
-    fun insertMultipleSets(vararg sets: Series) {
+    fun insertMultipleSeries(vararg sets: Series) {
         viewModelScope.launch {
-            setDao.insertAll(*sets)
+            seriesDao.insertAll(*sets)
         }
     }
 
     // Update an existing set
-    fun updateSet(set: Series) {
+    fun updateSeries(set: Series) {
         viewModelScope.launch {
-            setDao.update(set)
+            seriesDao.update(set)
         }
     }
 
     // Delete a specific set
-    fun deleteSet(set: Series) {
+    fun deleteSeries(set: Series) {
         viewModelScope.launch {
-            setDao.delete(set)
+            seriesDao.delete(set)
         }
     }
 
     // Delete all sets for a specific workout
-    fun deleteSetsForWorkout(workoutId: Int) {
+    fun deleteSeriesForWorkout(workoutId: Int) {
         viewModelScope.launch {
-            setDao.deleteSeriesForWorkout(workoutId)
+            seriesDao.deleteSeriesForWorkout(workoutId)
         }
     }
 
     // Delete all sets
     fun deleteAllSeries() {
         viewModelScope.launch {
-            setDao.deleteAll()
+            seriesDao.deleteAll()
         }
     }
 
     // Get the count of all sets
     fun getSeriesCount(callback: (Int) -> Unit) {
         viewModelScope.launch {
-            val count = setDao.getSeriesCount()
+            val count = seriesDao.getSeriesCount()
             callback(count)
         }
     }
@@ -79,7 +104,7 @@ class SeriesViewModel(application: Application) : AndroidViewModel(application) 
                 repetitions = 8 + (i % 5),
                 weight = (i * 5).toFloat()
             )
-            seriesViewModel.insertSet(series)
+            seriesViewModel.insertSeries(series)
         }
     }
 }

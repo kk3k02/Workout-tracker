@@ -25,7 +25,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun workoutDao(): WorkoutDao
     abstract fun bodyMeasurementDao(): BodyMeasurementDao
     abstract fun exerciseDao(): ExerciseDao
-    abstract fun setDao(): SeriesDao
+    abstract fun seriesDao(): SeriesDao
 
     companion object {
         @Volatile

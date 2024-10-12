@@ -51,20 +51,21 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-//        lifecycleScope.launch {
-//            //insertSampleData()
-//            //logWorkout()
-//            //logExercises()
-//            //logSeries()
-//            //logBodyMeasurements()
-//        }
+        lifecycleScope.launch {
+            //insertSampleData()
+            //logWorkout()
+            //logExercises()
+            //logSeries()
+            //logBodyMeasurements()
+            //workoutViewModel.deleteAllWorkouts()
+        }
     }
 
     private fun insertSampleData() {
-        workoutViewModel.insertSampleWorkouts(workoutViewModel)
-        exerciseViewModel.insertSampleExercises(exerciseViewModel)
-        seriesViewModel.insertSampleSeries(seriesViewModel)
-        bodyMeasurementViewModel.insertSampleBodyMeasurements(bodyMeasurementViewModel)
+//        workoutViewModel.insertSampleWorkouts()
+//        exerciseViewModel.insertSampleExercises(exerciseViewModel)
+//        seriesViewModel.insertSampleSeries(seriesViewModel)
+//        bodyMeasurementViewModel.insertSampleBodyMeasurements(bodyMeasurementViewModel)
     }
 
     private fun cleanData() {
@@ -99,12 +100,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun logSeries() {
-        seriesViewModel.getSetsForWorkout(1).collect { seriesList ->
+        seriesViewModel.getSeriesForWorkout(1).collect { seriesList ->
             if (seriesList.isEmpty()) {
                 Log.d("SeriesLog", "No series found in the database")
             } else {
                 seriesList.forEach { series ->
-                    Log.d("SeriesLog", "Series: ${series.uid}, Workout ID: ${series.workoutId}, Exercise ID: ${series.exerciseId}, Repetitions: ${series.repetitions}, Weight: ${series.weight}")
+                    //Log.d("SeriesLog", "Series: ${series.uid}, Workout ID: ${series.workoutId}, Exercise ID: ${series.exerciseId}, Repetitions: ${series.repetitions}, Weight: ${series.weight}")
                 }
             }
         }

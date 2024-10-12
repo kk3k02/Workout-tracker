@@ -1,6 +1,7 @@
 package com.kk3k.workouttracker.db.dao
 
 import androidx.room.*
+import com.kk3k.workouttracker.db.TargetMuscle
 import com.kk3k.workouttracker.db.entities.Exercise
 import kotlinx.coroutines.flow.Flow
 
@@ -46,4 +47,7 @@ interface ExerciseDao {
     // Get exercises by name (case insensitive)
     @Query("SELECT * FROM exercise WHERE LOWER(name) LIKE LOWER(:name)")
     fun getExercisesByName(name: String): Flow<List<Exercise>>
+
+    @Query("SELECT * FROM exercise WHERE target_muscle = :muscle")
+    fun getExercisesByMuscle(muscle: TargetMuscle): Flow<List<Exercise>>
 }

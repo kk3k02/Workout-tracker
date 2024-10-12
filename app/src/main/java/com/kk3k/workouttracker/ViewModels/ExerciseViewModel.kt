@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.kk3k.workouttracker.db.AppDatabase
+import com.kk3k.workouttracker.db.TargetMuscle
 import com.kk3k.workouttracker.db.entities.Exercise
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -68,6 +69,12 @@ class ExerciseViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    // Get exercises by muscle group (the function you wanted to add)
+    fun getExercisesByMuscle(muscle: TargetMuscle): Flow<List<Exercise>> {
+        return exerciseDao.getExercisesByMuscle(muscle)
+    }
+
+    // Function to insert some sample exercises into the database
     fun insertSampleExercises(exerciseViewModel: ExerciseViewModel) {
         val exerciseNames = listOf("Push-up", "Squat", "Bench Press", "Deadlift", "Pull-up", "Lunge", "Bicep Curl", "Tricep Extension", "Shoulder Press", "Leg Press")
         val targetMuscles = listOf("CHEST", "LEGS", "BACK", "ARMS", "SHOULDERS")
@@ -82,5 +89,4 @@ class ExerciseViewModel(application: Application) : AndroidViewModel(application
             exerciseViewModel.insertExercise(exercise)
         }
     }
-
 }

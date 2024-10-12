@@ -35,8 +35,8 @@ class WorkoutDetailsActivity : AppCompatActivity() {
 
         // Collect data from the ViewModel and update the adapter with the exercise sets
         lifecycleScope.launch {
-            seriesViewModel.getSetsForWorkout(workoutId).collect { sets ->
-                adapter.submitList(sets) // Update adapter with the new data
+            seriesViewModel.getSeriesForWorkout(workoutId).collect { exerciseSeriesList ->
+                adapter.submitList(exerciseSeriesList) // Update adapter with the new data
             }
         }
     }

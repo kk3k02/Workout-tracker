@@ -10,11 +10,12 @@ import com.kk3k.workouttracker.R
 import com.kk3k.workouttracker.db.entities.Series
 import com.kk3k.workouttracker.db.entities.Exercise
 
-class ExerciseAdapter(private val exerciseList: List<Exercise>) : RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder>() {
+class ExerciseAdapter(
+    private var exerciseSeriesList: List<Pair<Series, Exercise?>>  // List of pairs of Series and Exercise
+) : RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder>() {
 
-    // List of Series data and set to track expanded positions
-    private var seriesList = emptyList<Series>()
-    private var expandedPositions = mutableSetOf<Int>() // Set to track expanded positions
+    // Set to track expanded positions
+    private var expandedPositions = mutableSetOf<Int>()
 
     // ViewHolder class for holding the view elements for each item
     class ExerciseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -34,8 +35,7 @@ class ExerciseAdapter(private val exerciseList: List<Exercise>) : RecyclerView.A
     // Bind data to the ViewHolder and handle the expand/collapse logic
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ExerciseViewHolder, position: Int) {
-        val currentSeries = seriesList[position]
-        val exercise = exerciseList.find { it.uid == currentSeries.exerciseId }
+        val (currentSeries, exercise) = exerciseSeriesList[position]
 
         // Set exercise name, repetitions, and weight
         holder.exerciseName.text = exercise?.name ?: "Unknown Exercise"
@@ -58,12 +58,12 @@ class ExerciseAdapter(private val exerciseList: List<Exercise>) : RecyclerView.A
     }
 
     // Return the size of the list
-    override fun getItemCount(): Int = seriesList.size
+    override fun getItemCount(): Int = exerciseSeriesList.size
 
     // Update the list with new data and notify the adapter
     @SuppressLint("NotifyDataSetChanged")
-    fun submitList(series: List<Series>) {
-        seriesList = series
+    fun submitList(newExerciseSeriesList: List<Pair<Series, Exercise?>>) {
+        exerciseSeriesList = newExerciseSeriesList
         notifyDataSetChanged()
     }
 }
