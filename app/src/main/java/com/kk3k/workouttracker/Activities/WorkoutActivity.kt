@@ -11,6 +11,7 @@ import com.kk3k.workouttracker.Adapters.ExerciseAdapter
 import com.kk3k.workouttracker.R
 import com.kk3k.workouttracker.ViewModels.ExerciseViewModel
 import com.kk3k.workouttracker.db.entities.Exercise
+import com.kk3k.workouttracker.db.entities.Series
 import com.kk3k.workouttracker.db.entities.Workout
 import com.kk3k.workouttracker.viewmodel.WorkoutViewModel
 import kotlinx.coroutines.launch
@@ -22,6 +23,7 @@ class WorkoutActivity : AppCompatActivity() {
 
     // Lista dodanych ćwiczeń do treningu
     private val selectedExercises = mutableListOf<Exercise>()
+    private val seriesMap = mutableMapOf<Int, MutableList<Series>>() // Mapowanie ćwiczeń na serie
 
     // Adapter do RecyclerView
     private lateinit var exerciseAdapter: ExerciseAdapter
@@ -36,7 +38,9 @@ class WorkoutActivity : AppCompatActivity() {
         // Ustawienia RecyclerView
         exerciseAdapter = ExerciseAdapter(
             selectedExercises,
-            onExerciseDelete = { exercise -> removeExerciseFromList(exercise) } // Dodaj callback do usuwania
+            seriesMap,
+            onExerciseDelete = { exercise -> removeExercise(exercise) },
+            onAddSeries = { exercise -> showAddSeriesDialog(exercise) }
         )
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = exerciseAdapter
@@ -82,9 +86,42 @@ class WorkoutActivity : AppCompatActivity() {
         }
     }
 
-    // Funkcja do usuwania ćwiczenia z listy
-    private fun removeExerciseFromList(exercise: Exercise) {
+    // Funkcja do usuwania ćwiczenia
+    private fun removeExercise(exercise: Exercise) {
         selectedExercises.remove(exercise)
+        seriesMap.remove(exercise.uid) // Usuń również serie powiązane z ćwiczeniem
         exerciseAdapter.notifyDataSetChanged()
+    }
+
+    // Funkcja do wyświetlenia dialogu do dodawania serii
+    private fun showAddSeriesDialog(exercise: Exercise) {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        val view = layoutInflater.inflate(R.layout.dialog_add_series, null)
+        builder.setView(view)
+
+        val editTextReps = view.findViewById<android.widget.EditText>(R.id.editTextReps)
+        val editTextWeight = view.findViewById<android.widget.EditText>(R.id.editTextWeight)
+
+        builder.setPositiveButton("Add") { _, _ ->
+            val reps = editTextReps.text.toString().toIntOrNull() ?: 0
+            val weight = editTextWeight.text.toString().toFloatOrNull()
+
+            val newSeries = Series(
+                workoutId = 1,  // Zakładając, że masz workoutId
+                exerciseId = exercise.uid,
+                repetitions = reps,
+                weight = weight
+            )
+
+            // Dodaj serię do mapy i odśwież listę
+            seriesMap[exercise.uid]?.add(newSeries) ?: run {
+                seriesMap[exercise.uid] = mutableListOf(newSeries)
+            }
+
+            exerciseAdapter.updateSeries(exercise.uid, seriesMap[exercise.uid] ?: mutableListOf())
+        }
+
+        builder.setNegativeButton("Cancel", null)
+        builder.show()
     }
 }

@@ -27,6 +27,13 @@ class WorkoutViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    // Insert a new series into the database
+    fun insertSeries(series: Series) {
+        viewModelScope.launch {
+            seriesDao.insert(series)
+        }
+    }
+
     // Nowa funkcja: tworzy trening z ćwiczeniami i seriami
     fun createWorkoutWithExercisesAndSeries(
         exercise: Exercise, // Ćwiczenie, które ma być dodane do treningu
