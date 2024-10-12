@@ -6,12 +6,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.kk3k.workouttracker.Adapters.ExerciseAdapter
+import com.kk3k.workouttracker.Adapters.History_ExerciseAdapter
 import com.kk3k.workouttracker.R
 import com.kk3k.workouttracker.viewmodel.SeriesViewModel
 import kotlinx.coroutines.launch
 
-class WorkoutDetailsActivity : AppCompatActivity() {
+class WorkoutHistoryDetailsActivity : AppCompatActivity() {
 
     // ViewModel for accessing series data (sets of exercises in a workout)
     private val seriesViewModel: SeriesViewModel by viewModels()
@@ -27,7 +27,7 @@ class WorkoutDetailsActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewExercises)
 
         // Pass an empty list initially
-        val adapter = ExerciseAdapter(emptyList())
+        val adapter = History_ExerciseAdapter(emptyList())
 
         // Set the adapter and layout manager for the RecyclerView
         recyclerView.adapter = adapter

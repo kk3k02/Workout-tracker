@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class BodyMeasurementAdapter : RecyclerView.Adapter<BodyMeasurementAdapter.BodyMeasurementViewHolder>() {
+class History_BodyMeasurementAdapter : RecyclerView.Adapter<History_BodyMeasurementAdapter.BodyMeasurementViewHolder>() {
 
     private var measurements = emptyList<BodyMeasurement>() // List to hold body measurements
     private var expandedPositions = mutableSetOf<Int>() // Set to track expanded items
@@ -34,7 +34,7 @@ class BodyMeasurementAdapter : RecyclerView.Adapter<BodyMeasurementAdapter.BodyM
     // Inflate the layout for each item in the RecyclerView
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BodyMeasurementViewHolder {
         val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.body_measurement_item, parent, false)
+            .inflate(R.layout.history_body_measurement_item, parent, false)
         return BodyMeasurementViewHolder(itemView)
     }
 
