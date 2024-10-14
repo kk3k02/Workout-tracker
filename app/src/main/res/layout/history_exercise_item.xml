@@ -3,23 +3,40 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="12dp"
+    android:background="@android:color/white"
+    android:elevation="4dp"
+    android:layout_margin="8dp"
+    android:clipToPadding="false"
+    android:backgroundTint="@android:color/holo_blue_light">
 
-    <!-- Kafelek wyświetlający nazwę ćwiczenia -->
+    <!-- TextView to display the exercise name -->
     <TextView
         android:id="@+id/exerciseName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:padding="8dp"
+        android:gravity="center_vertical"
+        android:background="?android:attr/selectableItemBackground"
+        android:layout_marginBottom="8dp" />
 
-    <!-- Rozwijana sekcja z danymi serii, początkowo ukryta -->
+    <!-- Expandable section to show exercise series data, initially hidden -->
     <LinearLayout
         android:id="@+id/expandableLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:visibility="gone"
-        android:paddingTop="8dp">
+        android:padding="8dp"
+        android:background="#e0f7fa"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:backgroundTint="@android:color/darker_gray">
     </LinearLayout>
+
 </LinearLayout>

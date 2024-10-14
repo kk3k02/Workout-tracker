@@ -3,15 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:elevation="2dp"
+    android:layout_margin="8dp"
+    android:backgroundTint="@android:color/white"
+    android:divider="?android:attr/dividerVertical"
+    android:showDividers="middle">
 
     <!-- Tile displaying the measurement date -->
     <TextView
         android:id="@+id/measurementDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:padding="8dp" />
 
     <!-- Expandable section displaying measurement details, initially hidden -->
     <LinearLayout
@@ -27,48 +35,73 @@
             android:id="@+id/textViewBiceps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Biceps:" />
+            android:text="Biceps:"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:padding="4dp" />
 
         <TextView
             android:id="@+id/textViewTriceps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Triceps:" />
+            android:text="Triceps:"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:padding="4dp" />
 
         <TextView
             android:id="@+id/textViewChest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Chest:" />
+            android:text="Chest:"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:padding="4dp" />
 
         <TextView
             android:id="@+id/textViewWaist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Waist:" />
+            android:text="Waist:"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:padding="4dp" />
 
         <TextView
             android:id="@+id/textViewHips"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hips:" />
+            android:text="Hips:"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:padding="4dp" />
 
         <TextView
             android:id="@+id/textViewThighs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thighs:" />
+            android:text="Thighs:"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:padding="4dp" />
 
         <TextView
             android:id="@+id/textViewCalves"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Calves:" />
+            android:text="Calves:"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:padding="4dp" />
 
         <TextView
             android:id="@+id/textViewWeight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Weight:" />
+            android:text="Weight:"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:padding="4dp" />
+
     </LinearLayout>
 </LinearLayout>
