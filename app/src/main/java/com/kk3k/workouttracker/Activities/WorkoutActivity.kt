@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kk3k.workouttracker.Adapters.ExerciseAdapter
 import com.kk3k.workouttracker.R
 import com.kk3k.workouttracker.ViewModels.ExerciseViewModel
+import com.kk3k.workouttracker.db.TargetMuscle
 import com.kk3k.workouttracker.db.entities.Exercise
 import com.kk3k.workouttracker.db.entities.Series
 import com.kk3k.workouttracker.db.entities.Workout
@@ -24,14 +25,14 @@ class WorkoutActivity : AppCompatActivity() {
 
     // List of exercises added to the workout
     private val selectedExercises = mutableListOf<Exercise>()
-    private val seriesMap = mutableMapOf<Int, MutableList<Series>>() // Mapping exercises to series
+    private val seriesMap = mutableMapOf<Int, MutableList<Series>>() // Mapping exercises to their series
 
-    // Adapter for RecyclerView
+    // Adapter for the RecyclerView
     private lateinit var exerciseAdapter: ExerciseAdapter
 
-    // Storing workout ID in the database
+    // Storing the workout ID from the database
     private var workoutId: Int? = null
-    private lateinit var buttonSaveWorkout: Button // "Save Workout" button
+    private lateinit var buttonSaveWorkout: Button // Button for "Save Workout"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +42,7 @@ class WorkoutActivity : AppCompatActivity() {
         buttonSaveWorkout = findViewById(R.id.buttonSaveWorkout)
         val recyclerView: RecyclerView = findViewById(R.id.recyclerViewExercises)
 
-        // RecyclerView setup
+        // Setting up the RecyclerView with the exercise adapter
         exerciseAdapter = ExerciseAdapter(
             selectedExercises,
             seriesMap,
@@ -52,24 +53,24 @@ class WorkoutActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = exerciseAdapter
 
-        // Initially set the "Save Workout" button to inactive
+        // Initially disable the "Save Workout" button
         buttonSaveWorkout.isEnabled = false
 
-        // Handle Add Exercise button click
+        // Handling the "Add Exercise" button click
         buttonAddExercise.setOnClickListener {
-            showExerciseSelectionDialog()
+            showMuscleGroupSelectionDialog() // Show muscle group selection
         }
 
-        // Handle Save button click
+        // Handling the "Save" button click
         buttonSaveWorkout.setOnClickListener {
-            saveWorkout()
+            saveWorkout() // Save the workout when clicked
         }
 
         // Create a new workout in the database when the activity starts
         createNewWorkout()
     }
 
-    // Create a new workout entry in the database
+    // Creating a new workout object in the database
     private fun createNewWorkout() {
         lifecycleScope.launch {
             val workout = Workout(
@@ -86,18 +87,31 @@ class WorkoutActivity : AppCompatActivity() {
         }
     }
 
-    // Show a dialog with a list of exercises to select from
+    // Display a dialog to select a muscle group
+    private fun showMuscleGroupSelectionDialog() {
+        val muscleGroups = TargetMuscle.entries.map { it.name }
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        builder.setTitle("Select Muscle Group")
+        builder.setItems(muscleGroups.toTypedArray()) { _, which ->
+            val selectedMuscleGroup = TargetMuscle.entries[which]
+            showExerciseSelectionDialog(selectedMuscleGroup) // Show exercises filtered by selected muscle group
+        }
+        builder.setNegativeButton("Cancel", null)
+        builder.show()
+    }
+
+    // Display a dialog with exercises filtered by the selected muscle group
     @SuppressLint("NotifyDataSetChanged")
-    private fun showExerciseSelectionDialog() {
+    private fun showExerciseSelectionDialog(muscleGroup: TargetMuscle) {
         val exerciseList = mutableListOf<Exercise>()
 
-        // Fetch exercises from the database
+        // Fetch exercises for the selected muscle group from the database
         lifecycleScope.launch {
             exerciseViewModel.allExercises.collect { exercises ->
                 exerciseList.clear()
-                exerciseList.addAll(exercises)
+                exerciseList.addAll(exercises.filter { it.targetMuscle == muscleGroup.name })
 
-                // Display the list of exercises in a dialog
+                // Display a dialog with the list of exercises
                 val exerciseNames = exerciseList.map { it.name }.toTypedArray()
 
                 val builder = androidx.appcompat.app.AlertDialog.Builder(this@WorkoutActivity)
@@ -107,7 +121,7 @@ class WorkoutActivity : AppCompatActivity() {
                     selectedExercises.add(selectedExercise)
                     exerciseAdapter.notifyDataSetChanged()
 
-                    // Enable "Save Workout" button if there are exercises added
+                    // Enable the "Save Workout" button if there are exercises
                     updateSaveButtonState()
                 }
                 builder.setNegativeButton("Cancel", null)
@@ -116,27 +130,27 @@ class WorkoutActivity : AppCompatActivity() {
         }
     }
 
-    // Function to remove an exercise
+    // Function to remove an exercise from the workout
     @SuppressLint("NotifyDataSetChanged")
     private fun removeExercise(exercise: Exercise) {
         selectedExercises.remove(exercise)
-        seriesMap.remove(exercise.uid) // Remove series related to the exercise
+        seriesMap.remove(exercise.uid) // Remove the series related to the exercise
         exerciseAdapter.notifyDataSetChanged()
 
-        // Update the state of the Save button
+        // Update the state of the "Save Workout" button
         updateSaveButtonState()
     }
 
-    // Function to remove a series
+    // Function to remove a series from an exercise
     private fun removeSeries(series: Series) {
         seriesMap[series.exerciseId]?.remove(series)
         exerciseAdapter.updateSeries(series.exerciseId, seriesMap[series.exerciseId] ?: mutableListOf())
 
-        // Delete the series from the database
+        // Remove the series from the database
         workoutViewModel.deleteSeries(series)
     }
 
-    // Show a dialog to add a new series for a specific exercise
+    // Function to show a dialog to add a series to an exercise
     private fun showAddSeriesDialog(exercise: Exercise) {
         val builder = androidx.appcompat.app.AlertDialog.Builder(this)
         val view = layoutInflater.inflate(R.layout.dialog_add_series, null)
@@ -149,7 +163,7 @@ class WorkoutActivity : AppCompatActivity() {
             val reps = editTextReps.text.toString().toIntOrNull() ?: 0
             val weight = editTextWeight.text.toString().toFloatOrNull()
 
-            // Add the new series to the map and update the list
+            // Add a new series to the exercise and update the list
             val newSeries = Series(
                 workoutId = workoutId ?: 0,  // Use the current workout ID
                 exerciseId = exercise.uid,
@@ -172,7 +186,7 @@ class WorkoutActivity : AppCompatActivity() {
 
     // Function to save the workout
     private fun saveWorkout() {
-        // Additional actions related to saving the workout can be added here
+        // Add any additional actions related to saving the workout here
 
         // Finish the activity
         finish()
