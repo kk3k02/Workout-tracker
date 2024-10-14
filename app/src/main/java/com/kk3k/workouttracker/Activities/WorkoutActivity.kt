@@ -1,5 +1,6 @@
 package com.kk3k.workouttracker.Activities
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.viewModels
@@ -21,25 +22,26 @@ class WorkoutActivity : AppCompatActivity() {
     private val workoutViewModel: WorkoutViewModel by viewModels()
     private val exerciseViewModel: ExerciseViewModel by viewModels()
 
-    // Lista dodanych ćwiczeń do treningu
+    // List of exercises added to the workout
     private val selectedExercises = mutableListOf<Exercise>()
-    private val seriesMap = mutableMapOf<Int, MutableList<Series>>() // Mapowanie ćwiczeń na serie
+    private val seriesMap = mutableMapOf<Int, MutableList<Series>>() // Mapping exercises to series
 
-    // Adapter do RecyclerView
+    // Adapter for RecyclerView
     private lateinit var exerciseAdapter: ExerciseAdapter
 
-    // Przechowywanie ID treningu w bazie danych
+    // Storing workout ID in the database
     private var workoutId: Int? = null
+    private lateinit var buttonSaveWorkout: Button // "Save Workout" button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workout)
 
         val buttonAddExercise: Button = findViewById(R.id.buttonAddExercise)
-        val buttonSaveWorkout: Button = findViewById(R.id.buttonSaveWorkout)
+        buttonSaveWorkout = findViewById(R.id.buttonSaveWorkout)
         val recyclerView: RecyclerView = findViewById(R.id.recyclerViewExercises)
 
-        // Ustawienia RecyclerView
+        // RecyclerView setup
         exerciseAdapter = ExerciseAdapter(
             selectedExercises,
             seriesMap,
@@ -50,21 +52,24 @@ class WorkoutActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = exerciseAdapter
 
-        // Obsługa kliknięcia na przycisk Add Exercise
+        // Initially set the "Save Workout" button to inactive
+        buttonSaveWorkout.isEnabled = false
+
+        // Handle Add Exercise button click
         buttonAddExercise.setOnClickListener {
             showExerciseSelectionDialog()
         }
 
-        // Obsługa kliknięcia na przycisk Save
+        // Handle Save button click
         buttonSaveWorkout.setOnClickListener {
             saveWorkout()
         }
 
-        // Tworzenie nowego treningu w bazie danych przy starcie aktywności
+        // Create a new workout in the database when the activity starts
         createNewWorkout()
     }
 
-    // Tworzenie nowego obiektu workout w bazie danych
+    // Create a new workout entry in the database
     private fun createNewWorkout() {
         lifecycleScope.launch {
             val workout = Workout(
@@ -73,7 +78,7 @@ class WorkoutActivity : AppCompatActivity() {
                 notes = "Workout in progress"
             )
 
-            // Zapisz workout i ustaw jego ID
+            // Insert workout and set its ID
             workoutViewModel.insertWorkout(workout)
             workoutViewModel.getMostRecentWorkout { recentWorkout ->
                 workoutId = recentWorkout?.uid
@@ -81,17 +86,18 @@ class WorkoutActivity : AppCompatActivity() {
         }
     }
 
-    // Funkcja do wyświetlenia dialogu z listą ćwiczeń
+    // Show a dialog with a list of exercises to select from
+    @SuppressLint("NotifyDataSetChanged")
     private fun showExerciseSelectionDialog() {
         val exerciseList = mutableListOf<Exercise>()
 
-        // Pobieranie ćwiczeń z bazy danych
+        // Fetch exercises from the database
         lifecycleScope.launch {
             exerciseViewModel.allExercises.collect { exercises ->
                 exerciseList.clear()
                 exerciseList.addAll(exercises)
 
-                // Wyświetlenie dialogu z listą ćwiczeń
+                // Display the list of exercises in a dialog
                 val exerciseNames = exerciseList.map { it.name }.toTypedArray()
 
                 val builder = androidx.appcompat.app.AlertDialog.Builder(this@WorkoutActivity)
@@ -100,6 +106,9 @@ class WorkoutActivity : AppCompatActivity() {
                     val selectedExercise = exerciseList[which]
                     selectedExercises.add(selectedExercise)
                     exerciseAdapter.notifyDataSetChanged()
+
+                    // Enable "Save Workout" button if there are exercises added
+                    updateSaveButtonState()
                 }
                 builder.setNegativeButton("Cancel", null)
                 builder.show()
@@ -107,23 +116,27 @@ class WorkoutActivity : AppCompatActivity() {
         }
     }
 
-    // Funkcja do usuwania ćwiczenia
+    // Function to remove an exercise
+    @SuppressLint("NotifyDataSetChanged")
     private fun removeExercise(exercise: Exercise) {
         selectedExercises.remove(exercise)
-        seriesMap.remove(exercise.uid) // Usuń również serie powiązane z ćwiczeniem
+        seriesMap.remove(exercise.uid) // Remove series related to the exercise
         exerciseAdapter.notifyDataSetChanged()
+
+        // Update the state of the Save button
+        updateSaveButtonState()
     }
 
-    // Funkcja do usuwania serii
+    // Function to remove a series
     private fun removeSeries(series: Series) {
         seriesMap[series.exerciseId]?.remove(series)
         exerciseAdapter.updateSeries(series.exerciseId, seriesMap[series.exerciseId] ?: mutableListOf())
 
-        // Usuń serię z bazy danych
+        // Delete the series from the database
         workoutViewModel.deleteSeries(series)
     }
 
-    // Funkcja do wyświetlenia dialogu do dodawania serii
+    // Show a dialog to add a new series for a specific exercise
     private fun showAddSeriesDialog(exercise: Exercise) {
         val builder = androidx.appcompat.app.AlertDialog.Builder(this)
         val view = layoutInflater.inflate(R.layout.dialog_add_series, null)
@@ -136,9 +149,9 @@ class WorkoutActivity : AppCompatActivity() {
             val reps = editTextReps.text.toString().toIntOrNull() ?: 0
             val weight = editTextWeight.text.toString().toFloatOrNull()
 
-            // Dodaj nową serię do mapy i odśwież listę
+            // Add the new series to the map and update the list
             val newSeries = Series(
-                workoutId = workoutId ?: 0,  // Użyj ID aktualnego workoutu
+                workoutId = workoutId ?: 0,  // Use the current workout ID
                 exerciseId = exercise.uid,
                 repetitions = reps,
                 weight = weight
@@ -149,7 +162,7 @@ class WorkoutActivity : AppCompatActivity() {
             }
             exerciseAdapter.updateSeries(exercise.uid, seriesMap[exercise.uid] ?: mutableListOf())
 
-            // Zapisz serię w bazie danych
+            // Insert the new series into the database
             workoutViewModel.insertSeries(newSeries)
         }
 
@@ -157,11 +170,16 @@ class WorkoutActivity : AppCompatActivity() {
         builder.show()
     }
 
-    // Funkcja zapisu treningu
+    // Function to save the workout
     private fun saveWorkout() {
-        // Możesz dodać tutaj dowolne dodatkowe akcje związane z zapisywaniem treningu
+        // Additional actions related to saving the workout can be added here
 
-        // Zakończ aktywność
+        // Finish the activity
         finish()
+    }
+
+    // Function to manage the state of the "Save Workout" button
+    private fun updateSaveButtonState() {
+        buttonSaveWorkout.isEnabled = selectedExercises.isNotEmpty()
     }
 }
