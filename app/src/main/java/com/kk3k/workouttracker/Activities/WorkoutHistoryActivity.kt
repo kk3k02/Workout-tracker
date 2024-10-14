@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kk3k.workouttracker.Adapters.History_WorkoutAdapter
 import com.kk3k.workouttracker.R
+import com.kk3k.workouttracker.db.entities.Workout
 import com.kk3k.workouttracker.viewmodel.WorkoutViewModel
 import kotlinx.coroutines.launch
 
@@ -23,12 +24,18 @@ class WorkoutHistoryActivity : AppCompatActivity() {
 
         // Initialize RecyclerView and set up adapter for workout list
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewWorkouts)
-        val adapter = History_WorkoutAdapter { workoutId ->
-            // Handle click on a workout item - open WorkoutDetailsActivity
-            val intent = Intent(this, WorkoutHistoryDetailsActivity::class.java)
-            intent.putExtra("WORKOUT_ID", workoutId)
-            startActivity(intent)
-        }
+        val adapter = History_WorkoutAdapter(
+            onWorkoutClick = { workoutId ->
+                // Handle click on a workout item - open WorkoutDetailsActivity
+                val intent = Intent(this, WorkoutHistoryDetailsActivity::class.java)
+                intent.putExtra("WORKOUT_ID", workoutId)
+                startActivity(intent)
+            },
+            onDeleteClick = { workout ->
+                // Handle workout deletion
+                deleteWorkout(workout)
+            }
+        )
 
         // Set the adapter and layout manager for the RecyclerView
         recyclerView.adapter = adapter
@@ -39,6 +46,13 @@ class WorkoutHistoryActivity : AppCompatActivity() {
             workoutViewModel.allWorkouts.collect { workouts ->
                 adapter.submitList(workouts)
             }
+        }
+    }
+
+    // Function to delete a workout from the database
+    private fun deleteWorkout(workout: Workout) {
+        lifecycleScope.launch {
+            workoutViewModel.deleteWorkout(workout)  // Remove the workout from the database
         }
     }
 }
