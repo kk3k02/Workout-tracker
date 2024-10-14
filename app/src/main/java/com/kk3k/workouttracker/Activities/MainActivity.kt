@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
     private fun insertSampleData() {
 //        workoutViewModel.insertSampleWorkouts()
 //        exerciseViewModel.insertSampleExercises(exerciseViewModel)
-//        seriesViewModel.insertSampleSeries(seriesViewModel)
+//        seriesViewModel.insertSampleSeries(seriesViewModel)refrer
 //        bodyMeasurementViewModel.insertSampleBodyMeasurements(bodyMeasurementViewModel)
     }
 

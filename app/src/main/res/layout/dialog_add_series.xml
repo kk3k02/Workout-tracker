@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <EditText
-        android:id="@+id/editTextReps"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter repetitions"
-        android:inputType="number" />
-
+    <!-- Weight input field (now on top) -->
     <EditText
         android:id="@+id/editTextWeight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter weight (optional)"
+        android:hint="Enter Weight"
         android:inputType="numberDecimal" />
+
+    <!-- Repetitions input field (now below the weight) -->
+    <EditText
+        android:id="@+id/editTextReps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Reps"
+        android:inputType="number" />
+
 </LinearLayout>
