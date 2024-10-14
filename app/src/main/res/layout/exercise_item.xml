@@ -4,11 +4,13 @@
     android:orientation="vertical"
     android:padding="8dp">
 
+    <!-- Horizontal layout for exercise name and action icons (add and delete) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <!-- TextView to display the exercise name -->
         <TextView
             android:id="@+id/exerciseName"
             android:layout_width="0dp"
@@ -17,7 +19,7 @@
             android:text="Exercise Name"
             android:textSize="16sp" />
 
-        <!-- Ikona dodawania serii (plus) -->
+        <!-- Icon for adding a new series (plus icon) -->
         <ImageView
             android:id="@+id/addSeriesIcon"
             android:layout_width="wrap_content"
@@ -25,7 +27,7 @@
             android:src="@android:drawable/ic_input_add"
             android:contentDescription="Add series" />
 
-        <!-- Ikona usuwania ćwiczenia (kosz) -->
+        <!-- Icon for deleting the exercise (trash icon) -->
         <ImageView
             android:id="@+id/deleteExerciseIcon"
             android:layout_width="wrap_content"
@@ -34,7 +36,7 @@
             android:contentDescription="Delete exercise" />
     </LinearLayout>
 
-    <!-- RecyclerView do wyświetlania serii dla każdego ćwiczenia -->
+    <!-- RecyclerView to display the list of series (sets) for each exercise -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewSeries"
         android:layout_width="match_parent"

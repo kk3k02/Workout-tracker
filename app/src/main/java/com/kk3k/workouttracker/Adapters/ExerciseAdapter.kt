@@ -1,5 +1,6 @@
 package com.kk3k.workouttracker.Adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,63 +14,69 @@ import com.kk3k.workouttracker.db.entities.Series
 
 class ExerciseAdapter(
     private val exerciseList: MutableList<Exercise>,
-    private val seriesMap: MutableMap<Int, MutableList<Series>>, // Mapowanie ćwiczeń na serie
-    private val onExerciseDelete: (Exercise) -> Unit, // Callback do usuwania ćwiczenia
-    private val onAddSeries: (Exercise) -> Unit,  // Callback do dodawania serii
-    private val onDeleteSeries: (Series) -> Unit  // Callback do usuwania serii
+    private val seriesMap: MutableMap<Int, MutableList<Series>>, // Mapping exercises to their series
+    private val onExerciseDelete: (Exercise) -> Unit, // Callback to delete exercise
+    private val onAddSeries: (Exercise) -> Unit,  // Callback to add a series
+    private val onDeleteSeries: (Series) -> Unit  // Callback to delete a series
 ) : RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder>() {
 
+    // ViewHolder class to hold the views for each exercise item
     class ExerciseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val exerciseName: TextView = itemView.findViewById(R.id.exerciseName)
-        val deleteExerciseIcon: ImageView = itemView.findViewById(R.id.deleteExerciseIcon)
-        val addSeriesIcon: ImageView = itemView.findViewById(R.id.addSeriesIcon)
-        val recyclerViewSeries: RecyclerView = itemView.findViewById(R.id.recyclerViewSeries)
+        val exerciseName: TextView = itemView.findViewById(R.id.exerciseName) // Text for exercise name
+        val deleteExerciseIcon: ImageView = itemView.findViewById(R.id.deleteExerciseIcon) // Icon to delete the exercise
+        val addSeriesIcon: ImageView = itemView.findViewById(R.id.addSeriesIcon) // Icon to add a series
+        val recyclerViewSeries: RecyclerView = itemView.findViewById(R.id.recyclerViewSeries) // RecyclerView to display series
     }
 
+    // Method to inflate the item layout for the exercise
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExerciseViewHolder {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.exercise_item, parent, false)
         return ExerciseViewHolder(itemView)
     }
 
+    // Bind exercise data and handle click actions for add/delete series and exercise
     override fun onBindViewHolder(holder: ExerciseViewHolder, position: Int) {
         val exercise = exerciseList[position]
         holder.exerciseName.text = exercise.name
 
-        // Ustawianie adaptera dla listy serii
+        // Set up the adapter for the list of series related to the exercise
         val seriesList = seriesMap[exercise.uid] ?: mutableListOf()
         val seriesAdapter = SeriesAdapter(seriesList, onDeleteSeries = { series ->
-            onDeleteSeries(series)  // Wywołaj callback po kliknięciu na usuń serię
+            onDeleteSeries(series) // Call the delete series callback when clicked
         })
         holder.recyclerViewSeries.layoutManager = LinearLayoutManager(holder.itemView.context)
         holder.recyclerViewSeries.adapter = seriesAdapter
 
-        // Obsługa kliknięcia ikony kosza
+        // Handle click for deleting the exercise
         holder.deleteExerciseIcon.setOnClickListener {
-            onExerciseDelete(exercise)  // Wywołaj callback po kliknięciu ikony kosza
+            onExerciseDelete(exercise) // Call the delete exercise callback
         }
 
-        // Obsługa kliknięcia ikony plusa
+        // Handle click for adding a new series
         holder.addSeriesIcon.setOnClickListener {
-            onAddSeries(exercise)  // Wywołaj callback po kliknięciu ikony plusa
+            onAddSeries(exercise) // Call the add series callback
         }
 
-        // Pokaż/ukryj listę serii
+        // Show the series list if there are series, hide it otherwise
         holder.recyclerViewSeries.visibility = if (seriesList.isNotEmpty()) View.VISIBLE else View.GONE
     }
 
+    // Return the number of exercises in the list
     override fun getItemCount(): Int = exerciseList.size
 
-    // Aktualizacja listy ćwiczeń
+    // Update the exercise list with new data
+    @SuppressLint("NotifyDataSetChanged")
     fun updateList(newExerciseList: List<Exercise>) {
         exerciseList.clear()
         exerciseList.addAll(newExerciseList)
-        notifyDataSetChanged()
+        notifyDataSetChanged() // Notify adapter to refresh the list
     }
 
-    // Aktualizacja listy serii dla danego ćwiczenia
+    // Update the list of series for a specific exercise
+    @SuppressLint("NotifyDataSetChanged")
     fun updateSeries(exerciseId: Int, seriesList: List<Series>) {
-        seriesMap[exerciseId] = seriesList.toMutableList()
-        notifyDataSetChanged()
+        seriesMap[exerciseId] = seriesList.toMutableList() // Update the map with the new series list
+        notifyDataSetChanged() // Notify adapter to refresh the list
     }
 }

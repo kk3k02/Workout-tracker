@@ -5,14 +5,16 @@
     android:orientation="horizontal"
     android:padding="8dp">
 
+    <!-- TextView for displaying the series information (reps and weight) -->
     <TextView
         android:id="@+id/textViewSeriesInfo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Reps: 10, Weight: 50kg" />
+        android:text="Reps: 10, Weight: 50kg"
+        android:textSize="16sp" />
 
-    <!-- Ikona minus do usuwania serii -->
+    <!-- ImageView for the delete (minus) icon to remove the series -->
     <ImageView
         android:id="@+id/iconDeleteSeries"
         android:layout_width="wrap_content"
