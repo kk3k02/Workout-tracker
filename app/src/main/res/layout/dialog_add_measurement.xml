@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/editTextBiceps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Biceps (cm)" />
+
+    <EditText
+        android:id="@+id/editTextTriceps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Triceps (cm)" />
+
+    <EditText
+        android:id="@+id/editTextChest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Chest (cm)" />
+
+    <EditText
+        android:id="@+id/editTextWaist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Waist (cm)" />
+
+    <EditText
+        android:id="@+id/editTextHips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Hips (cm)" />
+
+    <EditText
+        android:id="@+id/editTextThighs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Thighs (cm)" />
+
+    <EditText
+        android:id="@+id/editTextCalves"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Calves (cm)" />
+
+    <EditText
+        android:id="@+id/editTextWeight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Weight (kg)" />
+
+</LinearLayout>
