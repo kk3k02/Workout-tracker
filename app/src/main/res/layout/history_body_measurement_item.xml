@@ -4,10 +4,10 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="?android:attr/selectableItemBackground"
-    android:elevation="2dp"
     android:layout_margin="8dp"
-    android:backgroundTint="@android:color/white"
+    android:background="@drawable/card_background"
+    android:elevation="4dp"
+    android:clipToPadding="false"
     android:divider="?android:attr/dividerVertical"
     android:showDividers="middle">
 
