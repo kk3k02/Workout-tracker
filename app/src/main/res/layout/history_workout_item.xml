@@ -1,15 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="12dp"
-    android:elevation="3dp"
+    android:background="#E0E0E0"
+    android:padding="16dp"
     android:layout_margin="8dp"
-    android:background="@android:color/white"
-    android:gravity="center_vertical"
-    android:backgroundTint="@android:color/holo_blue_light">
+    android:elevation="4dp"
+    android:backgroundTint="@android:color/white"
+    android:divider="?android:attr/dividerVertical"
+    android:showDividers="middle"
+    android:layout_gravity="center_vertical"
+    android:gravity="center_vertical">
 
     <!-- TextView to display workout information -->
     <TextView
@@ -18,11 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Workout Info"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:paddingEnd="8dp"
-        android:background="?android:attr/selectableItemBackground" />
+        android:textSize="16sp"
+        android:textColor="@android:color/black" />
 
     <!-- Delete button (X icon) to remove the workout -->
     <ImageView
@@ -30,8 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_delete"
-        android:contentDescription="Delete workout"
+        android:tint="@android:color/holo_red_dark"
         android:padding="8dp"
-        android:background="?android:attr/selectableItemBackground"
-        app:tint="@android:color/holo_red_dark" />
+        android:contentDescription="Delete workout" />
 </LinearLayout>

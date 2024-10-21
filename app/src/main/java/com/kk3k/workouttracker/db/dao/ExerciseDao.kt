@@ -50,4 +50,7 @@ interface ExerciseDao {
 
     @Query("SELECT * FROM exercise WHERE target_muscle = :muscle")
     fun getExercisesByMuscle(muscle: TargetMuscle): Flow<List<Exercise>>
+
+    @Query("SELECT * FROM exercise WHERE name = :exerciseName LIMIT 1")
+    suspend fun getExerciseByName(exerciseName: String): Exercise?
 }

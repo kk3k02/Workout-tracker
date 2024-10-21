@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.kk3k.workouttracker.db.AppDatabase
 import com.kk3k.workouttracker.db.TargetMuscle
 import com.kk3k.workouttracker.db.entities.Exercise
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ExerciseViewModel(application: Application) : AndroidViewModel(application) {
     private val exerciseDao = AppDatabase.getDatabase(application).exerciseDao()
@@ -63,9 +65,11 @@ class ExerciseViewModel(application: Application) : AndroidViewModel(application
 
     // Get the count of all exercises
     fun getExerciseCount(callback: (Int) -> Unit) {
-        viewModelScope.launch {
-            val count = exerciseDao.getExerciseCount()
-            callback(count)
+        viewModelScope.launch(Dispatchers.IO) {
+            val count = exerciseDao.getExerciseCount()  // Zakładam, że masz DAO, które pobiera liczbę ćwiczeń
+            withContext(Dispatchers.Main) {
+                callback(count)  // Przekazanie wyniku do callbacku
+            }
         }
     }
 
@@ -74,19 +78,7 @@ class ExerciseViewModel(application: Application) : AndroidViewModel(application
         return exerciseDao.getExercisesByMuscle(muscle)
     }
 
-    // Function to insert some sample exercises into the database
-    fun insertSampleExercises(exerciseViewModel: ExerciseViewModel) {
-        val exerciseNames = listOf("Push-up", "Squat", "Bench Press", "Deadlift", "Pull-up", "Lunge", "Bicep Curl", "Tricep Extension", "Shoulder Press", "Leg Press")
-        val targetMuscles = listOf("CHEST", "LEGS", "BACK", "ARMS", "SHOULDERS")
-
-        for (i in 0 until 10) {
-            val exercise = Exercise(
-                name = exerciseNames[i],
-                targetMuscle = targetMuscles[i % targetMuscles.size],
-                description = "This is exercise number ${i + 1} targeting the ${targetMuscles[i % targetMuscles.size].toLowerCase()}",
-                image = null
-            )
-            exerciseViewModel.insertExercise(exercise)
-        }
+    suspend fun getExerciseByName(exerciseName: String): Exercise? {
+        return exerciseDao.getExerciseByName(exerciseName)
     }
 }

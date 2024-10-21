@@ -7,6 +7,7 @@ import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.kk3k.workouttracker.ExerciseLoader
 import com.kk3k.workouttracker.R
 import com.kk3k.workouttracker.ViewModels.ExerciseViewModel
 import com.kk3k.workouttracker.viewmodel.BodyMeasurementViewModel
@@ -25,6 +26,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        ExerciseLoader.loadExercisesIfNeeded(this, exerciseViewModel)
 
         val btnWorkout = findViewById<Button>(R.id.btnWorkout)
         val btnWorkoutHistory = findViewById<Button>(R.id.btnWorkoutHistory)
@@ -53,7 +56,7 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             //workoutViewModel.deleteAllWorkouts()
-            //workoutViewModel.deleteAllWorkouts()
+            //exerciseViewModel.deleteAllExercises()
             //insertSampleData()
             //logWorkout()
             //logExercises()
