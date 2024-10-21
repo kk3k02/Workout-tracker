@@ -1,5 +1,6 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -29,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_delete"
-        android:tint="@android:color/holo_red_dark"
         android:padding="8dp"
-        android:contentDescription="Delete workout" />
+        android:contentDescription="Delete workout"
+        app:tint="@android:color/holo_red_dark" />
 </LinearLayout>
