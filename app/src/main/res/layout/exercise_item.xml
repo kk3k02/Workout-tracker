@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:padding="8dp">
 
-    <!-- Horizontal layout for exercise name and action icons (add and delete) -->
+    <!-- Horizontal layout for exercise name and action icons (add, delete, and info) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,6 +34,16 @@
             android:layout_height="wrap_content"
             android:src="@android:drawable/ic_delete"
             android:contentDescription="Delete exercise" />
+
+        <!-- Icon for showing exercise info (info icon) -->
+        <ImageView
+            android:id="@+id/infoExerciseIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_info_details"
+            android:contentDescription="Exercise Info"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
     </LinearLayout>
 
     <!-- RecyclerView to display the list of series (sets) for each exercise -->

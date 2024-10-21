@@ -17,7 +17,8 @@ class ExerciseAdapter(
     private val seriesMap: MutableMap<Int, MutableList<Series>>, // Mapping exercises to their series
     private val onExerciseDelete: (Exercise) -> Unit, // Callback to delete exercise
     private val onAddSeries: (Exercise) -> Unit,  // Callback to add a series
-    private val onDeleteSeries: (Series) -> Unit  // Callback to delete a series
+    private val onDeleteSeries: (Series) -> Unit,  // Callback to delete a series
+    private val onInfoClick: (Exercise) -> Unit  // Callback to show exercise info
 ) : RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder>() {
 
     // ViewHolder class to hold the views for each exercise item
@@ -25,6 +26,7 @@ class ExerciseAdapter(
         val exerciseName: TextView = itemView.findViewById(R.id.exerciseName) // Text for exercise name
         val deleteExerciseIcon: ImageView = itemView.findViewById(R.id.deleteExerciseIcon) // Icon to delete the exercise
         val addSeriesIcon: ImageView = itemView.findViewById(R.id.addSeriesIcon) // Icon to add a series
+        val infoExerciseIcon: ImageView = itemView.findViewById(R.id.infoExerciseIcon) // Icon to show exercise info
         val recyclerViewSeries: RecyclerView = itemView.findViewById(R.id.recyclerViewSeries) // RecyclerView to display series
     }
 
@@ -35,7 +37,7 @@ class ExerciseAdapter(
         return ExerciseViewHolder(itemView)
     }
 
-    // Bind exercise data and handle click actions for add/delete series and exercise
+    // Bind exercise data and handle click actions for add/delete series, delete exercise, and show exercise info
     override fun onBindViewHolder(holder: ExerciseViewHolder, position: Int) {
         val exercise = exerciseList[position]
         holder.exerciseName.text = exercise.name
@@ -56,6 +58,11 @@ class ExerciseAdapter(
         // Handle click for adding a new series
         holder.addSeriesIcon.setOnClickListener {
             onAddSeries(exercise) // Call the add series callback
+        }
+
+        // Handle click for showing exercise info
+        holder.infoExerciseIcon.setOnClickListener {
+            onInfoClick(exercise) // Call the show exercise info callback
         }
 
         // Show the series list if there are series, hide it otherwise

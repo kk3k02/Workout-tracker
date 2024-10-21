@@ -66,66 +66,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun insertSampleData() {
-//        workoutViewModel.insertSampleWorkouts()
-//        exerciseViewModel.insertSampleExercises(exerciseViewModel)
-//        seriesViewModel.insertSampleSeries(seriesViewModel)
-//        bodyMeasurementViewModel.insertSampleBodyMeasurements(bodyMeasurementViewModel)
-    }
-
     private fun cleanData() {
         workoutViewModel.deleteAllWorkouts()
         exerciseViewModel.deleteAllExercises()
         seriesViewModel.deleteAllSeries()
         bodyMeasurementViewModel.deleteAllMeasurements()
-    }
-
-    private suspend fun logWorkout() {
-        workoutViewModel.allWorkouts.collect { workouts ->
-            if (workouts.isEmpty()) {
-                Log.d("WorkoutLog", "No workouts found in the database")
-            } else {
-                workouts.forEach { workout ->
-                    Log.d("WorkoutLog", "Workout: ${workout.uid}, ${workout.notes}")
-                }
-            }
-        }
-    }
-
-    private suspend fun logExercises() {
-        exerciseViewModel.allExercises.collect { exercises ->
-            if (exercises.isEmpty()) {
-                Log.d("ExerciseLog", "No exercises found in the database")
-            } else {
-                exercises.forEach { exercise ->
-                    Log.d("ExerciseLog", "Exercise: ${exercise.uid}, ${exercise.name}, Target muscle: ${exercise.targetMuscle}")
-                }
-            }
-        }
-    }
-
-    private suspend fun logSeries() {
-        seriesViewModel.getSeriesForWorkout(1).collect { seriesList ->
-            if (seriesList.isEmpty()) {
-                Log.d("SeriesLog", "No series found in the database")
-            } else {
-                seriesList.forEach { series ->
-                    //Log.d("SeriesLog", "Series: ${series.uid}, Workout ID: ${series.workoutId}, Exercise ID: ${series.exerciseId}, Repetitions: ${series.repetitions}, Weight: ${series.weight}")
-                }
-            }
-        }
-    }
-
-    private suspend fun logBodyMeasurements() {
-        bodyMeasurementViewModel.allMeasurements.collect { measurements ->
-            if (measurements.isEmpty()) {
-                Log.d("BodyMeasurementLog", "No body measurements found in the database")
-            } else {
-                measurements.forEach { measurement ->
-                    Log.d("BodyMeasurementLog", "BodyMeasurement: ${measurement.uid}, Weight: ${measurement.weight}, Biceps: ${measurement.biceps}, Chest: ${measurement.chest}")
-                }
-            }
-        }
     }
 
 }

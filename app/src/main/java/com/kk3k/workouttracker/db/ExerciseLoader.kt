@@ -97,27 +97,32 @@ object ExerciseLoader {
             Exercise(
                 name = "Wyciskanie sztangi sprzed głowy",
                 targetMuscle = TargetMuscle.SHOULDERS.name,
-                description = "Ćwiczenie to angażuje przednie i boczne aktony mięśni naramiennych. Wyciskanie sztangi sprzed głowy można wykonywać zarówno w pozycji siedzącej, jak i stojącej."
+                description = "Ćwiczenie to angażuje przednie i boczne aktony mięśni naramiennych. Wyciskanie sztangi sprzed głowy można wykonywać zarówno w pozycji siedzącej, jak i stojącej.",
+                image = getGifAsByteArray(context, R.raw.shoulders_1)
             ),
             Exercise(
                 name = "Wyciskanie sztangi zza głowy",
                 targetMuscle = TargetMuscle.SHOULDERS.name,
-                description = "Angażuje głównie przednie i boczne aktony mięśni naramiennych. Wyciskanie zza głowy wymaga dużej kontroli, aby uniknąć kontuzji."
+                description = "Angażuje głównie przednie i boczne aktony mięśni naramiennych. Wyciskanie zza głowy wymaga dużej kontroli, aby uniknąć kontuzji.",
+                image = getGifAsByteArray(context, R.raw.shoulders_2)
             ),
             Exercise(
                 name = "Wyciskanie hantli nad głowę",
                 targetMuscle = TargetMuscle.SHOULDERS.name,
-                description = "Wyciskanie hantli nad głowę pozwala na lepszą izolację mięśni naramiennych. Ćwiczenie to można wykonywać w pozycji siedzącej, aby zwiększyć stabilizację."
+                description = "Wyciskanie hantli nad głowę pozwala na lepszą izolację mięśni naramiennych. Ćwiczenie to można wykonywać w pozycji siedzącej, aby zwiększyć stabilizację.",
+                image = getGifAsByteArray(context, R.raw.shoulders_3)
             ),
             Exercise(
                 name = "Arnoldki",
                 targetMuscle = TargetMuscle.SHOULDERS.name,
-                description = "Ćwiczenie wymyślone przez Arnolda Schwarzeneggera. Ruch wyciskania połączony z rotacją dłoni angażuje wszystkie aktony mięśni naramiennych."
+                description = "Ćwiczenie wymyślone przez Arnolda Schwarzeneggera. Ruch wyciskania połączony z rotacją dłoni angażuje wszystkie aktony mięśni naramiennych.",
+                image = getGifAsByteArray(context, R.raw.shoulders_4)
             ),
             Exercise(
                 name = "Unoszenie sztangielek bokiem w górę",
                 targetMuscle = TargetMuscle.SHOULDERS.name,
-                description = "Ćwiczenie izolujące boczne aktony mięśni naramiennych. Wykonujemy je w pozycji stojącej lub siedzącej, unosząc ramiona bokiem."
+                description = "Ćwiczenie izolujące boczne aktony mięśni naramiennych. Wykonujemy je w pozycji stojącej lub siedzącej, unosząc ramiona bokiem.",
+                image = getGifAsByteArray(context, R.raw.shoulders_5)
             ),
 
             // CHEST

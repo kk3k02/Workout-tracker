@@ -17,6 +17,10 @@ import com.kk3k.workouttracker.db.entities.Series
 import com.kk3k.workouttracker.db.entities.Workout
 import com.kk3k.workouttracker.viewmodel.WorkoutViewModel
 import kotlinx.coroutines.launch
+import android.app.AlertDialog
+import com.bumptech.glide.Glide
+import android.widget.ImageView
+import android.widget.TextView
 
 class WorkoutActivity : AppCompatActivity() {
 
@@ -48,7 +52,8 @@ class WorkoutActivity : AppCompatActivity() {
             seriesMap,
             onExerciseDelete = { exercise -> removeExercise(exercise) },
             onAddSeries = { exercise -> showAddSeriesDialog(exercise) },
-            onDeleteSeries = { series -> removeSeries(series) }
+            onDeleteSeries = { series -> removeSeries(series) },
+            onInfoClick = { exercise -> showExerciseInfoDialog(exercise) } // New callback for showing exercise info
         )
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = exerciseAdapter
@@ -238,6 +243,38 @@ class WorkoutActivity : AppCompatActivity() {
         builder.setNegativeButton("Cancel", null)
         builder.show()
     }
+
+    // Function to display exercise info dialog with animated GIF support
+    @SuppressLint("MissingInflatedId")
+    private fun showExerciseInfoDialog(exercise: Exercise) {
+        val builder = AlertDialog.Builder(this)
+        val view = layoutInflater.inflate(R.layout.dialog_exercise_info, null)
+
+        val imageView = view.findViewById<ImageView>(R.id.imageViewExercise)
+        val textViewName = view.findViewById<TextView>(R.id.textViewExerciseName)
+        val textViewDescription = view.findViewById<TextView>(R.id.textViewExerciseDescription)
+
+        // Set the exercise name and description in the dialog
+        textViewName.text = exercise.name
+        textViewDescription.text = exercise.description
+
+        // Check if the exercise has an image (ByteArray representing GIF)
+        if (exercise.image != null && exercise.image!!.isNotEmpty()) {
+            // Load the GIF using Glide
+            Glide.with(this)
+                .asGif()
+                .load(exercise.image) // Load ByteArray as GIF
+                .into(imageView)
+        } else {
+            // Fallback: use a default icon if there is no image
+            imageView.setImageResource(android.R.drawable.ic_dialog_info)
+        }
+
+        builder.setView(view)
+        builder.setPositiveButton("Close", null)
+        builder.show()
+    }
+
 
     // Function to save the workout
     private fun saveWorkout() {
