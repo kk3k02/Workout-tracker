@@ -2,14 +2,13 @@ package com.kk3k.workouttracker.Activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.kk3k.workouttracker.ExerciseLoader
 import com.kk3k.workouttracker.R
 import com.kk3k.workouttracker.ViewModels.ExerciseViewModel
+import com.kk3k.workouttracker.db.ExerciseLoader
 import com.kk3k.workouttracker.viewmodel.BodyMeasurementViewModel
 import com.kk3k.workouttracker.viewmodel.SeriesViewModel
 import com.kk3k.workouttracker.viewmodel.WorkoutViewModel
