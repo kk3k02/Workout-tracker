@@ -47,4 +47,6 @@ interface WorkoutDao {
     @Query("SELECT isFinished FROM workout WHERE uid = :id LIMIT 1")
     suspend fun isWorkoutFinished(id: Int): Boolean?
 
+    @Query("SELECT * FROM workout WHERE isFinished = 1")
+    fun getFinishedWorkouts(): Flow<List<Workout>>
 }

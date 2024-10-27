@@ -19,6 +19,7 @@ class WorkoutViewModel(application: Application) : AndroidViewModel(application)
 
     // Get all workouts as Flow
     val allWorkouts: Flow<List<Workout>> = workoutDao.getAllWorkoutsFlow()
+    val finishedWorkouts: Flow<List<Workout>> = workoutDao.getFinishedWorkouts()
 
     // Insert a new workout
     fun insertWorkout(workout: Workout) {

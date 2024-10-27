@@ -41,9 +41,9 @@ class WorkoutHistoryActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Collect data from ViewModel and assign it to the adapter
+        // Collect only finished workouts from ViewModel and assign it to the adapter
         lifecycleScope.launch {
-            workoutViewModel.allWorkouts.collect { workouts ->
+            workoutViewModel.finishedWorkouts.collect { workouts ->
                 adapter.submitList(workouts)
             }
         }
