@@ -1,35 +1,38 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="wrap_content">
 
-    <!-- ImageView for displaying the exercise GIF or image -->
-    <ImageView
-        android:id="@+id/imageViewExercise"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <!-- TextView for displaying the exercise name -->
-    <TextView
-        android:id="@+id/textViewExerciseName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Exercise Name"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/imageViewExercise"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="Exercise Image" />
 
-    <!-- TextView for displaying the exercise description -->
-    <TextView
-        android:id="@+id/textViewExerciseDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Exercise Description"
-        android:textSize="16sp" />
+        <!-- TextView for displaying the exercise name -->
+        <TextView
+            android:id="@+id/textViewExerciseName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingTop="8dp"
+            android:textColor="@android:color/black" />
 
-</LinearLayout>
+        <!-- TextView for displaying the exercise description -->
+        <TextView
+            android:id="@+id/textViewExerciseDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:textSize="16sp"
+            android:textColor="@android:color/black" />
+    </LinearLayout>
+</ScrollView>
