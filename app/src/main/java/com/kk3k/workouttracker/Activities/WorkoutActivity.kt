@@ -276,13 +276,17 @@ class WorkoutActivity : AppCompatActivity() {
     }
 
 
-    // Function to save the workout
+    // Function to save the workout and mark it as finished
     private fun saveWorkout() {
-        // Add any additional actions related to saving the workout here
+        // Check if workoutId is not null, then mark the workout as finished
+        workoutId?.let { id ->
+            workoutViewModel.markWorkoutAsFinished(id)  // Mark the workout as finished in the database
+        }
 
-        // Finish the activity
+        // Close the activity after saving and marking the workout as finished
         finish()
     }
+
 
     // Function to manage the state of the "Save Workout" button
     private fun updateSaveButtonState() {

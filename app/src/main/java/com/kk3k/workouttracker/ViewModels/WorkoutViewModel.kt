@@ -177,4 +177,16 @@ class WorkoutViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    fun markWorkoutAsFinished(workoutId: Int) {
+        viewModelScope.launch {
+            // Get the workout by id
+            val workout = workoutDao.getWorkoutById(workoutId)
+            workout?.let {
+                it.isFinished = true  // Set isFinished on true
+                workoutDao.update(it) // Update workout
+            }
+        }
+    }
+
+
 }
