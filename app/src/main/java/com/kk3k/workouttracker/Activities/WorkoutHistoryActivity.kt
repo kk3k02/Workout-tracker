@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kk3k.workouttracker.Adapters.History_WorkoutAdapter
 import com.kk3k.workouttracker.R
 import com.kk3k.workouttracker.db.entities.Workout
-import com.kk3k.workouttracker.viewmodel.WorkoutViewModel
+import com.kk3k.workouttracker.ViewModels.WorkoutViewModel
 import kotlinx.coroutines.launch
 
 class WorkoutHistoryActivity : AppCompatActivity() {

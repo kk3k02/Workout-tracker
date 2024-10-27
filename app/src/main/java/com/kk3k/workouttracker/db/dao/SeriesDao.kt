@@ -50,4 +50,11 @@ interface SeriesDao {
     // Get series for a specific exercise in a workout
     @Query("SELECT * FROM series WHERE workout_id = :workoutId AND exercise_id = :exerciseId")
     fun getSeriesForExerciseInWorkout(workoutId: Int, exerciseId: Int): Flow<List<Series>>
+
+    @Query("SELECT DISTINCT exercise_id FROM series WHERE workout_id = :workoutId")
+    suspend fun getExerciseIdsForWorkout(workoutId: Int): List<Int>
+
+    @Query("SELECT * FROM series WHERE workout_id = :workoutId AND exercise_id = :exerciseId")
+    suspend fun getSeriesForWorkoutAndExercise(workoutId: Int, exerciseId: Int): List<Series>
+
 }

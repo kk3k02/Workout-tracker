@@ -1,4 +1,4 @@
-package com.kk3k.workouttracker.viewmodel
+package com.kk3k.workouttracker.ViewModels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -189,5 +189,22 @@ class WorkoutViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+
+    suspend fun getUnfinishedWorkout(): Workout? {
+        return workoutDao.getUnfinishedWorkout()
+    }
+
+
+    suspend fun getExercisesForWorkout(workoutId: Int): List<Exercise> {
+        // Pobierz unikalne ID ćwiczeń z serii powiązanych z workoutId
+        val exerciseIds = seriesDao.getExerciseIdsForWorkout(workoutId)
+        // Następnie pobierz szczegóły ćwiczeń na podstawie exerciseIds
+        return exerciseDao.getExercisesByIds(exerciseIds)
+    }
+
+    suspend fun getSeriesForExercise(workoutId: Int, exerciseId: Int): List<Series> {
+        // Pobierz serie powiązane z workoutId i exerciseId
+        return seriesDao.getSeriesForWorkoutAndExercise(workoutId, exerciseId)
+    }
 
 }

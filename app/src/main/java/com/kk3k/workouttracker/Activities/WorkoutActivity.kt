@@ -15,7 +15,7 @@ import com.kk3k.workouttracker.db.TargetMuscle
 import com.kk3k.workouttracker.db.entities.Exercise
 import com.kk3k.workouttracker.db.entities.Series
 import com.kk3k.workouttracker.db.entities.Workout
-import com.kk3k.workouttracker.viewmodel.WorkoutViewModel
+import com.kk3k.workouttracker.ViewModels.WorkoutViewModel
 import kotlinx.coroutines.launch
 import android.app.AlertDialog
 import com.bumptech.glide.Glide
@@ -71,8 +71,43 @@ class WorkoutActivity : AppCompatActivity() {
             saveWorkout()
         }
 
-        // Create a new workout in the database when the activity starts
-        createNewWorkout()
+        // Try to load an existing unfinished workout or create a new one
+        loadOrCreateWorkout()
+    }
+
+    // Function to load an existing unfinished workout or create a new one
+    private fun loadOrCreateWorkout() {
+        lifecycleScope.launch {
+            val unfinishedWorkout = workoutViewModel.getUnfinishedWorkout() // Check for unfinished workout
+
+            if (unfinishedWorkout != null) {
+                // Unfinished workout found, use its ID and data
+                workoutId = unfinishedWorkout.uid
+                loadWorkoutData(unfinishedWorkout)
+            } else {
+                // No unfinished workout found, create a new one
+                createNewWorkout()
+            }
+        }
+    }
+
+    // Function to load existing workout data into the activity
+    @SuppressLint("NotifyDataSetChanged")
+    private suspend fun loadWorkoutData(workout: Workout) {
+        workoutId = workout.uid
+
+        // Load exercises and series for the workout
+        val exercises = workoutViewModel.getExercisesForWorkout(workoutId!!)
+        selectedExercises.addAll(exercises)
+
+        // Load series for each exercise
+        for (exercise in exercises) {
+            val seriesList = workoutViewModel.getSeriesForExercise(workoutId!!, exercise.uid)
+            seriesMap[exercise.uid] = seriesList.toMutableList()
+        }
+
+        exerciseAdapter.notifyDataSetChanged()
+        updateSaveButtonState()
     }
 
     // Function to create a new workout object in the database
@@ -81,7 +116,8 @@ class WorkoutActivity : AppCompatActivity() {
             val workout = Workout(
                 date = System.currentTimeMillis(),
                 duration = null,
-                notes = "Workout in progress"
+                notes = "Workout in progress",
+                isFinished = false
             )
 
             // Save workout and set its ID
@@ -275,7 +311,6 @@ class WorkoutActivity : AppCompatActivity() {
         builder.show()
     }
 
-
     // Function to save the workout and mark it as finished
     private fun saveWorkout() {
         // Check if workoutId is not null, then mark the workout as finished
@@ -286,7 +321,6 @@ class WorkoutActivity : AppCompatActivity() {
         // Close the activity after saving and marking the workout as finished
         finish()
     }
-
 
     // Function to manage the state of the "Save Workout" button
     private fun updateSaveButtonState() {

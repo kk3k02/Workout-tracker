@@ -49,4 +49,7 @@ interface WorkoutDao {
 
     @Query("SELECT * FROM workout WHERE isFinished = 1")
     fun getFinishedWorkouts(): Flow<List<Workout>>
+
+    @Query("SELECT * FROM workout WHERE isFinished = 0 LIMIT 1")
+    suspend fun getUnfinishedWorkout(): Workout?
 }

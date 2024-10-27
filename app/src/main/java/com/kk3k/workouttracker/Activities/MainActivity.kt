@@ -11,7 +11,7 @@ import com.kk3k.workouttracker.ViewModels.ExerciseViewModel
 import com.kk3k.workouttracker.db.ExerciseLoader
 import com.kk3k.workouttracker.viewmodel.BodyMeasurementViewModel
 import com.kk3k.workouttracker.viewmodel.SeriesViewModel
-import com.kk3k.workouttracker.viewmodel.WorkoutViewModel
+import com.kk3k.workouttracker.ViewModels.WorkoutViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
