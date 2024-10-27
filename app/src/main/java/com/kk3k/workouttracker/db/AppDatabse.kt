@@ -1,14 +1,18 @@
 package com.kk3k.workouttracker.db
 
+import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import android.content.Context
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
-import com.kk3k.workouttracker.db.dao.*
-import com.kk3k.workouttracker.db.entities.*
+import com.kk3k.workouttracker.db.dao.BodyMeasurementDao
+import com.kk3k.workouttracker.db.dao.ExerciseDao
+import com.kk3k.workouttracker.db.dao.SeriesDao
+import com.kk3k.workouttracker.db.dao.WorkoutDao
+import com.kk3k.workouttracker.db.entities.BodyMeasurement
+import com.kk3k.workouttracker.db.entities.Exercise
+import com.kk3k.workouttracker.db.entities.Series
+import com.kk3k.workouttracker.db.entities.Workout
 
 @Database(
     entities = [
@@ -16,8 +20,8 @@ import com.kk3k.workouttracker.db.entities.*
         BodyMeasurement::class,
         Exercise::class,
         Series::class
-               ],
-    version = 3
+    ],
+    version = 4 // Incremented to version 4
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

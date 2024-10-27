@@ -42,4 +42,9 @@ interface WorkoutDao {
     // Get the most recent workout
     @Query("SELECT * FROM workout ORDER BY date DESC LIMIT 1")
     suspend fun getMostRecentWorkout(): Workout?
+
+    // Check if a specific workout has been finished by ID
+    @Query("SELECT isFinished FROM workout WHERE uid = :id LIMIT 1")
+    suspend fun isWorkoutFinished(id: Int): Boolean?
+
 }
