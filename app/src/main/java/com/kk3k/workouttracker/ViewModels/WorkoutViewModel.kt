@@ -1,6 +1,7 @@
 package com.kk3k.workouttracker.ViewModels
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.kk3k.workouttracker.db.AppDatabase
@@ -17,11 +18,11 @@ class WorkoutViewModel(application: Application) : AndroidViewModel(application)
     private val seriesDao = AppDatabase.getDatabase(application).seriesDao()
     private val exerciseDao = AppDatabase.getDatabase(application).exerciseDao()
 
-    // Get all workouts as Flow
+    // Get all workouts as a Flow
     val allWorkouts: Flow<List<Workout>> = workoutDao.getAllWorkoutsFlow()
     val finishedWorkouts: Flow<List<Workout>> = workoutDao.getFinishedWorkouts()
 
-    // Insert a new workout
+    // Insert a new workout into the database
     fun insertWorkout(workout: Workout) {
         viewModelScope.launch {
             workoutDao.insert(workout)
@@ -35,126 +36,69 @@ class WorkoutViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    // Metoda w WorkoutViewModel do usuwania serii
+    // Delete a specific series from the database
     fun deleteSeries(series: Series) {
         viewModelScope.launch {
             seriesDao.delete(series)
         }
     }
 
-
-    // Nowa funkcja: tworzy trening z ćwiczeniami i seriami
+    // Creates a new workout and adds exercises and series to it
     fun createWorkoutWithExercisesAndSeries(
-        exercise: Exercise, // Ćwiczenie, które ma być dodane do treningu
-        seriesList: List<Pair<Int, Float?>> // Lista par: (powtórzenia, obciążenie)
+        exercise: Exercise,  // Exercise to add to the workout
+        seriesList: List<Pair<Int, Float?>>  // List of pairs: (repetitions, weight)
     ) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                // 1. Tworzenie nowego treningu
+                // 1. Create a new workout with current timestamp
                 val newWorkout = Workout(
-                    date = System.currentTimeMillis(),  // Bieżąca data
-                    duration = null,                    // Czas trwania treningu
+                    date = System.currentTimeMillis(),
+                    duration = null,
                     notes = "New workout with ${exercise.name}"
                 )
-                // Wstaw trening do bazy danych
-                workoutDao.insert(newWorkout)
+                workoutDao.insert(newWorkout)  // Insert workout into the database
 
-                // 2. Pobierz najnowszy trening z bazy danych (aby uzyskać jego ID)
+                // 2. Get the most recent workout to obtain its ID
                 val recentWorkout = workoutDao.getMostRecentWorkout()
 
                 recentWorkout?.let { workout ->
-                    // 3. Dodanie serii do ćwiczenia w ramach treningu
+                    // 3. Add series to the exercise within the workout
                     for ((repetitions, weight) in seriesList) {
                         val newSeries = Series(
-                            workoutId = workout.uid,    // ID treningu
-                            exerciseId = exercise.uid,  // ID ćwiczenia
-                            repetitions = repetitions,  // Powtórzenia
-                            weight = weight             // Waga
+                            workoutId = workout.uid,
+                            exerciseId = exercise.uid,
+                            repetitions = repetitions,
+                            weight = weight
                         )
-                        // Wstaw nową serię do bazy danych
-                        seriesDao.insert(newSeries)
+                        seriesDao.insert(newSeries)  // Insert each series into the database
                     }
                 }
             }
         }
     }
 
-    // Sample workouts for testing purposes
-    fun insertSampleWorkouts() {
-        viewModelScope.launch {
-            val workout = Workout(
-                date = System.currentTimeMillis(),
-                duration = 60L,
-                notes = "Sample workout with multiple exercises"
-            )
-
-            workoutDao.insert(workout)
-
-            val createdWorkout = workoutDao.getMostRecentWorkout()
-
-            createdWorkout?.let { workout ->
-                val workoutId = workout.uid
-
-                val exerciseIds = listOf(1, 2, 3, 4, 5)
-
-                // Pobieranie ćwiczeń z bazy danych na podstawie ich UIDs
-                val exerciseList = exerciseIds.mapNotNull { exerciseId ->
-                    exerciseDao.getExerciseById(exerciseId)
-                }
-
-                // Przykładowe serie dla każdego ćwiczenia
-                val seriesData = mapOf(
-                    1 to listOf(Pair(10, 60f), Pair(8, 65f), Pair(6, 70f)), // Bench Press
-                    2 to listOf(Pair(12, 100f), Pair(10, 110f), Pair(8, 120f)), // Squat
-                    3 to listOf(Pair(8, 140f), Pair(6, 150f)), // Deadlift
-                    4 to listOf(Pair(12, null), Pair(10, null)), // Pull-up
-                    5 to listOf(Pair(15, 20f), Pair(12, 25f)) // Bicep Curl
-                )
-
-                // Dodajemy serie do każdego ćwiczenia
-                for (exercise in exerciseList) {
-                    val exerciseId = exercise.uid
-
-                    // Pobieramy serie dla ćwiczenia
-                    seriesData[exerciseId]?.let { seriesList ->
-                        for ((reps, weight) in seriesList) {
-                            val series = Series(
-                                workoutId = workoutId,
-                                exerciseId = exerciseId,
-                                repetitions = reps,
-                                weight = weight
-                            )
-                            // Wstawiamy serie do bazy danych
-                            seriesDao.insert(series)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // Delete all workouts
+    // Deletes all workouts from the database
     fun deleteAllWorkouts() {
         viewModelScope.launch {
             workoutDao.deleteAll()
         }
     }
 
-    // Update an existing workout
+    // Updates an existing workout in the database
     fun updateWorkout(workout: Workout) {
         viewModelScope.launch {
             workoutDao.update(workout)
         }
     }
 
-    // Delete a specific workout
+    // Deletes a specific workout
     fun deleteWorkout(workout: Workout) {
         viewModelScope.launch {
             workoutDao.delete(workout)
         }
     }
 
-    // Get a specific workout by ID
+    // Retrieve a workout by its ID, using a callback
     fun getWorkoutById(id: Int, callback: (Workout?) -> Unit) {
         viewModelScope.launch {
             val workout = workoutDao.getWorkoutById(id)
@@ -162,7 +106,7 @@ class WorkoutViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    // Get workout count
+    // Retrieve the total count of workouts, using a callback
     fun getWorkoutCount(callback: (Int) -> Unit) {
         viewModelScope.launch {
             val count = workoutDao.getWorkoutCount()
@@ -170,7 +114,7 @@ class WorkoutViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    // Get the most recent workout
+    // Retrieve the most recent workout, using a callback
     fun getMostRecentWorkout(callback: (Workout?) -> Unit) {
         viewModelScope.launch {
             val workout = workoutDao.getMostRecentWorkout()
@@ -178,33 +122,39 @@ class WorkoutViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    // Mark a workout as finished by setting its isFinished attribute to true
     fun markWorkoutAsFinished(workoutId: Int) {
         viewModelScope.launch {
-            // Get the workout by id
             val workout = workoutDao.getWorkoutById(workoutId)
             workout?.let {
-                it.isFinished = true  // Set isFinished on true
-                workoutDao.update(it) // Update workout
+                it.isFinished = true
+                workoutDao.update(it)
             }
         }
     }
 
-
+    // Get an unfinished workout (if any) from the database
     suspend fun getUnfinishedWorkout(): Workout? {
         return workoutDao.getUnfinishedWorkout()
     }
 
-
+    // Retrieve exercises associated with a specific workout ID
     suspend fun getExercisesForWorkout(workoutId: Int): List<Exercise> {
-        // Pobierz unikalne ID ćwiczeń z serii powiązanych z workoutId
-        val exerciseIds = seriesDao.getExerciseIdsForWorkout(workoutId)
-        // Następnie pobierz szczegóły ćwiczeń na podstawie exerciseIds
-        return exerciseDao.getExercisesByIds(exerciseIds)
+        val exerciseIds = seriesDao.getExerciseIdsForWorkout(workoutId)  // Get unique exercise IDs for the workout
+        return exerciseDao.getExercisesByIds(exerciseIds)  // Fetch exercises by these IDs
     }
 
+    // Retrieve series for a specific exercise within a workout
     suspend fun getSeriesForExercise(workoutId: Int, exerciseId: Int): List<Series> {
-        // Pobierz serie powiązane z workoutId i exerciseId
         return seriesDao.getSeriesForWorkoutAndExercise(workoutId, exerciseId)
     }
 
+    // Function to set and save workout duration in the database
+    fun setWorkoutDuration(workoutId: Int, duration: Long) {
+        viewModelScope.launch {
+            Log.d("DURATION", "DURATION IN VIEWMODEL IS $duration")
+            workoutDao.updateDuration(workoutId, duration)  // Update duration field in database
+            Log.d("DURATION", "DURATION SAVED IN DATABASE FOR WORKOUT ID: $workoutId")
+        }
+    }
 }
