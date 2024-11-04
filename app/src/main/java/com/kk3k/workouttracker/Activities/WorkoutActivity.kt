@@ -26,35 +26,35 @@ import kotlinx.coroutines.launch
 
 class WorkoutActivity : AppCompatActivity() {
 
-    private val workoutViewModel: WorkoutViewModel by viewModels() // Workout ViewModel instance
-    private val exerciseViewModel: ExerciseViewModel by viewModels() // Exercise ViewModel instance
+    private val workoutViewModel: WorkoutViewModel by viewModels() // ViewModel for workouts
+    private val exerciseViewModel: ExerciseViewModel by viewModels() // ViewModel for exercises
 
-    // List to hold selected exercises for the workout
-    private val selectedExercises = mutableListOf<Exercise>()
-    private val seriesMap = mutableMapOf<Int, MutableList<Series>>() // Maps exercises to series
-
+    private val selectedExercises = mutableListOf<Exercise>() // List of selected exercises
+    private val seriesMap = mutableMapOf<Int, MutableList<Series>>() // Map linking exercises to their series
     private lateinit var exerciseAdapter: ExerciseAdapter // Adapter for RecyclerView
+
     private var workoutId: Int? = null // ID of the workout in the database
-    private lateinit var buttonSaveWorkout: Button // Button to save workout
+    private lateinit var buttonSaveWorkout: Button // Button to save the workout
     private var selectedImageBytes: ByteArray? = null // Holds image data for exercises
 
-    // Variables to track workout start and end time
     private var startTime: Long = 0L
     private var endTime: Long = 0L
+    private var workoutNote: String = "" // Variable to store workout notes
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workout)
 
-        val buttonAddExercise: Button = findViewById(R.id.buttonAddExercise) // Button to add exercises
+        // Initialize UI elements
+        val buttonAddExercise: Button = findViewById(R.id.buttonAddExercise)
         buttonSaveWorkout = findViewById(R.id.buttonSaveWorkout)
         val recyclerView: RecyclerView = findViewById(R.id.recyclerViewExercises)
 
-        // Initialize RecyclerView with LinearLayoutManager and set the adapter
+        // Set up RecyclerView with ExerciseAdapter
         exerciseAdapter = ExerciseAdapter(
             selectedExercises,
             seriesMap,
-            onExerciseDelete = { exercise -> removeExercise(exercise) }, // Callback to remove an exercise
+            onExerciseDelete = { exercise -> removeExercise(exercise) }, // Callback to delete exercise
             onAddSeries = { exercise -> showAddSeriesDialog(exercise) }, // Callback to add series
             onDeleteSeries = { series -> removeSeries(series) }, // Callback to delete series
             onInfoClick = { exercise -> showExerciseInfoDialog(exercise) } // Callback to show exercise info
@@ -62,25 +62,27 @@ class WorkoutActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = exerciseAdapter
 
-        buttonSaveWorkout.isEnabled = false // Disable save button initially
+        // Disable save button initially
+        buttonSaveWorkout.isEnabled = false
 
-        startTime = System.currentTimeMillis() // Set workout start time
+        // Record workout start time
+        startTime = System.currentTimeMillis()
 
-        // Click listener to add an exercise
+        // Handle click for adding exercises
         buttonAddExercise.setOnClickListener {
             showMuscleGroupSelectionDialog()
         }
 
-        // Click listener to save the workout
+        // Handle click for saving workout
         buttonSaveWorkout.setOnClickListener {
-            saveWorkout()
+            showAddNoteDialog() // Show dialog to add a note before saving
         }
 
         // Load existing unfinished workout or create a new one
         loadOrCreateWorkout()
     }
 
-    // Function to load an unfinished workout or create a new one
+    // Loads an existing unfinished workout or creates a new one
     private fun loadOrCreateWorkout() {
         lifecycleScope.launch {
             val unfinishedWorkout = workoutViewModel.getUnfinishedWorkout()
@@ -94,42 +96,45 @@ class WorkoutActivity : AppCompatActivity() {
         }
     }
 
-    // Function to load data of an existing workout
+    // Loads data for an existing workout
     @SuppressLint("NotifyDataSetChanged")
     private suspend fun loadWorkoutData(workout: Workout) {
         workoutId = workout.uid
 
-        // Load exercises for the workout
+        // Load exercises and their series for the workout
         val exercises = workoutViewModel.getExercisesForWorkout(workoutId!!)
         selectedExercises.addAll(exercises)
 
-        // Load series for each exercise
-        for (exercise in exercises) {
+        exercises.forEach { exercise ->
             val seriesList = workoutViewModel.getSeriesForExercise(workoutId!!, exercise.uid)
             seriesMap[exercise.uid] = seriesList.toMutableList()
         }
 
-        exerciseAdapter.notifyDataSetChanged() // Refresh adapter
-        updateSaveButtonState() // Update save button state
+        exerciseAdapter.notifyDataSetChanged()
+        updateSaveButtonState()
     }
 
-    // Function to create a new workout and save it in the database
+    // Creates a new workout and inserts it into the database
     private fun createNewWorkout() {
         lifecycleScope.launch {
             val workout = Workout(
                 date = System.currentTimeMillis(),
                 duration = null,
-                notes = "Workout in progress",
+                notes = workoutNote,
                 isFinished = false
             )
+
             workoutViewModel.insertWorkout(workout)
             workoutViewModel.getMostRecentWorkout { recentWorkout ->
                 workoutId = recentWorkout?.uid
+                if (workoutId == null) {
+                    Log.e("WorkoutActivity", "Failed to create a new workout.")
+                }
             }
         }
     }
 
-    // Function to display a dialog for selecting a muscle group
+    // Shows a dialog to select a muscle group
     private fun showMuscleGroupSelectionDialog() {
         val muscleGroups = TargetMuscle.entries.map { it.name }
         val builder = AlertDialog.Builder(this)
@@ -142,7 +147,7 @@ class WorkoutActivity : AppCompatActivity() {
         builder.show()
     }
 
-    // Function to show exercises for the selected muscle group
+    // Shows exercises for a selected muscle group
     @SuppressLint("NotifyDataSetChanged")
     private fun showExerciseSelectionDialog(muscleGroup: TargetMuscle) {
         val exerciseList = mutableListOf<Exercise>()
@@ -181,7 +186,7 @@ class WorkoutActivity : AppCompatActivity() {
         }
     }
 
-    // Function to display a dialog for adding a custom exercise
+    // Shows a dialog to add a custom exercise
     private fun showAddCustomExerciseDialog() {
         val builder = AlertDialog.Builder(this)
         val view = layoutInflater.inflate(R.layout.dialog_add_cutstom_exercise, null)
@@ -212,7 +217,40 @@ class WorkoutActivity : AppCompatActivity() {
         builder.show()
     }
 
-    // Function to remove an exercise from the workout
+    // Shows a dialog to add a note before saving the workout
+    private fun showAddNoteDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Add a Note")
+
+        // Custom layout with an EditText for note input
+        val view = layoutInflater.inflate(R.layout.dialog_add_note, null)
+        val editTextNote = view.findViewById<EditText>(R.id.editTextNote)
+
+        builder.setView(view)
+        builder.setPositiveButton("OK") { _, _ ->
+            workoutNote = editTextNote.text.toString() // Save the note
+            saveWorkout() // Save workout with note
+        }
+        builder.setNegativeButton("Cancel", null)
+        builder.show()
+    }
+
+    // Saves the workout and sets the end time
+    private fun saveWorkout() {
+        endTime = System.currentTimeMillis() // Set end time
+
+        // Calculate duration as the difference between start and end times
+        val duration = endTime - startTime
+
+        workoutId?.let { id ->
+            workoutViewModel.setWorkoutDuration(id, duration)
+            workoutViewModel.setWorkoutNote(id, workoutNote) // Update note in database
+            workoutViewModel.markWorkoutAsFinished(id)
+        } ?: Log.e("WorkoutActivity", "Cannot save workout because workoutId is null.")
+
+        finish() // Close the activity
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     private fun removeExercise(exercise: Exercise) {
         selectedExercises.remove(exercise)
@@ -221,14 +259,14 @@ class WorkoutActivity : AppCompatActivity() {
         updateSaveButtonState()
     }
 
-    // Function to remove a series from the workout
     private fun removeSeries(series: Series) {
         seriesMap[series.exerciseId]?.remove(series)
         exerciseAdapter.updateSeries(series.exerciseId, seriesMap[series.exerciseId] ?: mutableListOf())
-        workoutViewModel.deleteSeries(series)
+        workoutId?.let { _ ->
+            workoutViewModel.deleteSeries(series)
+        } ?: Log.e("WorkoutActivity", "Cannot delete series because workoutId is null.")
     }
 
-    // Function to display a dialog for adding series to an exercise
     private fun showAddSeriesDialog(exercise: Exercise) {
         val builder = AlertDialog.Builder(this)
         val view = layoutInflater.inflate(R.layout.dialog_add_series, null)
@@ -240,16 +278,17 @@ class WorkoutActivity : AppCompatActivity() {
         builder.setPositiveButton("Add") { _, _ ->
             val reps = editTextReps.text.toString().toIntOrNull() ?: 0
             val weight = editTextWeight.text.toString().toFloatOrNull()
-            val newSeries = Series(workoutId = workoutId ?: 0, exerciseId = exercise.uid, repetitions = reps, weight = weight)
-            seriesMap[exercise.uid]?.add(newSeries) ?: run { seriesMap[exercise.uid] = mutableListOf(newSeries) }
-            exerciseAdapter.updateSeries(exercise.uid, seriesMap[exercise.uid] ?: mutableListOf())
-            workoutViewModel.insertSeries(newSeries)
+            workoutId?.let { id ->
+                val newSeries = Series(workoutId = id, exerciseId = exercise.uid, repetitions = reps, weight = weight)
+                seriesMap[exercise.uid]?.add(newSeries) ?: run { seriesMap[exercise.uid] = mutableListOf(newSeries) }
+                exerciseAdapter.updateSeries(exercise.uid, seriesMap[exercise.uid] ?: mutableListOf())
+                workoutViewModel.insertSeries(newSeries)
+            } ?: Log.e("WorkoutActivity", "Cannot add series because workoutId is null.")
         }
         builder.setNegativeButton("Cancel", null)
         builder.show()
     }
 
-    // Function to show information dialog for an exercise
     private fun showExerciseInfoDialog(exercise: Exercise) {
         val builder = AlertDialog.Builder(this)
         val view = layoutInflater.inflate(R.layout.dialog_exercise_info, null)
@@ -271,23 +310,6 @@ class WorkoutActivity : AppCompatActivity() {
         builder.show()
     }
 
-    // Function to save the workout and set the end time
-    private fun saveWorkout() {
-        endTime = System.currentTimeMillis() // Set end time
-
-        // Calculate duration as difference between end and start time
-        val duration = endTime - startTime
-        Log.d("DURATION", "DURATION IS $duration")
-
-        workoutId?.let { id ->
-            workoutViewModel.setWorkoutDuration(id, duration)
-            workoutViewModel.markWorkoutAsFinished(id)
-        }
-
-        finish() // End the activity
-    }
-
-    // Function to update the state of the save button
     private fun updateSaveButtonState() {
         buttonSaveWorkout.isEnabled = selectedExercises.isNotEmpty()
     }
