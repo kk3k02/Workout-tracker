@@ -56,6 +56,10 @@ interface WorkoutDao {
     suspend fun getUnfinishedWorkout(): Workout?
 
     // Updates the duration of a specific workout by its ID
-    @Query("UPDATE workout SET duration = :duration WHERE uid = :workoutId")
-    suspend fun updateDuration(workoutId: Int, duration: Long)
+    @Query("UPDATE workout SET duration = :duration WHERE uid = :id")
+    suspend fun updateDuration(id: Int, duration: Long)
+
+    // Updates the note of a specific workout by its ID
+    @Query("UPDATE workout SET notes = :note WHERE uid = :id")
+    suspend fun updateNote(id: Int, note: String)
 }
