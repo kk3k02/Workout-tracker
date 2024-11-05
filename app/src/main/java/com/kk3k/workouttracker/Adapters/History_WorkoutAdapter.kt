@@ -1,11 +1,13 @@
 package com.kk3k.workouttracker.Adapters
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.kk3k.workouttracker.R
 import com.kk3k.workouttracker.db.entities.Workout
@@ -25,6 +27,7 @@ class History_WorkoutAdapter(
     class WorkoutViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val workoutInfo: TextView = itemView.findViewById(R.id.workoutInfo)  // Text view for workout info
         val deleteWorkoutIcon: ImageView = itemView.findViewById(R.id.deleteWorkoutIcon)  // Image view for delete icon
+        val noteIcon: ImageView = itemView.findViewById(R.id.noteIcon)  // Image view for notes icon
     }
 
     // Inflate the layout for each workout list item and return a new ViewHolder
@@ -62,6 +65,11 @@ class History_WorkoutAdapter(
         holder.deleteWorkoutIcon.setOnClickListener {
             onDeleteClick(currentWorkout)  // Pass the workout to the delete callback
         }
+
+        // Set up the click listener for the note icon
+        holder.noteIcon.setOnClickListener {
+            showNotePopup(holder.itemView.context, currentWorkout.notes ?: "No notes available.")
+        }
     }
 
     // Helper function to format duration from milliseconds to "MM:SS"
@@ -70,6 +78,15 @@ class History_WorkoutAdapter(
         val minutes = TimeUnit.MILLISECONDS.toMinutes(durationMillis)
         val seconds = TimeUnit.MILLISECONDS.toSeconds(durationMillis) % 60
         return String.format("%02d:%02d", minutes, seconds)
+    }
+
+    // Function to show the workout note in a popup dialog
+    private fun showNotePopup(context: Context, note: String) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Workout Note")
+        builder.setMessage(note)
+        builder.setPositiveButton("Close", null)
+        builder.show()
     }
 
     // Return the total number of workouts in the list
