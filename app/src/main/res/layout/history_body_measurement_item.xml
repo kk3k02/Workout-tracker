@@ -115,5 +115,14 @@
             android:textSize="14sp"
             android:textColor="@android:color/black"
             android:padding="4dp" />
+
+        <TextView
+            android:id="@+id/textViewNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Note:"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:padding="4dp" />
     </LinearLayout>
 </LinearLayout>

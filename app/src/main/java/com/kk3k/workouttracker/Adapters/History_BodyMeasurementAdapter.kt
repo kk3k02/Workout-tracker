@@ -16,48 +16,42 @@ import java.util.Locale
 
 class History_BodyMeasurementAdapter(private val viewModel: BodyMeasurementViewModel) : RecyclerView.Adapter<History_BodyMeasurementAdapter.BodyMeasurementViewHolder>() {
 
-    // List to hold body measurement data
+    // List to hold the body measurement data
     private var measurements = emptyList<BodyMeasurement>()
 
-    // ViewHolder class for RecyclerView items
+    // ViewHolder class to define and manage views for each RecyclerView item
     class BodyMeasurementViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val measurementDate: TextView = itemView.findViewById(R.id.measurementDate)
-        val expandableLayout: View = itemView.findViewById(R.id.expandableLayout)
-        val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
-        // TextViews for displaying various body measurements
-        val biceps: TextView = itemView.findViewById(R.id.textViewBiceps)
-        val triceps: TextView = itemView.findViewById(R.id.textViewTriceps)
-        val chest: TextView = itemView.findViewById(R.id.textViewChest)
-        val waist: TextView = itemView.findViewById(R.id.textViewWaist)
-        val hips: TextView = itemView.findViewById(R.id.textViewHips)
-        val thighs: TextView = itemView.findViewById(R.id.textViewThighs)
-        val calves: TextView = itemView.findViewById(R.id.textViewCalves)
-        val weight: TextView = itemView.findViewById(R.id.textViewWeight)
+        val measurementDate: TextView = itemView.findViewById(R.id.measurementDate) // Displays the date of the measurement
+        val expandableLayout: View = itemView.findViewById(R.id.expandableLayout) // Layout to show additional measurement details
+        val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton) // Button to delete a measurement
+        val biceps: TextView = itemView.findViewById(R.id.textViewBiceps) // Displays the biceps measurement
+        val triceps: TextView = itemView.findViewById(R.id.textViewTriceps) // Displays the triceps measurement
+        val chest: TextView = itemView.findViewById(R.id.textViewChest) // Displays the chest measurement
+        val waist: TextView = itemView.findViewById(R.id.textViewWaist) // Displays the waist measurement
+        val hips: TextView = itemView.findViewById(R.id.textViewHips) // Displays the hips measurement
+        val thighs: TextView = itemView.findViewById(R.id.textViewThighs) // Displays the thighs measurement
+        val calves: TextView = itemView.findViewById(R.id.textViewCalves) // Displays the calves measurement
+        val weight: TextView = itemView.findViewById(R.id.textViewWeight) // Displays the weight measurement
+        val note: TextView = itemView.findViewById(R.id.textViewNote) // Displays the note associated with the measurement
     }
 
-    // Inflating layout from XML and returning the holder
+    // Inflates the layout for each item in the RecyclerView and returns a ViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BodyMeasurementViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.history_body_measurement_item, parent, false)
         return BodyMeasurementViewHolder(itemView)
     }
 
+    // Binds data to the views in the ViewHolder
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: BodyMeasurementViewHolder, position: Int) {
         val currentMeasurement = measurements[position]
+
+        // Format the date into a human-readable format
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val formattedDate = sdf.format(Date(currentMeasurement.date ?: 0L))
 
-        // Setting text for the measurement date
+        // Populate the views with data from the current measurement
         holder.measurementDate.text = "Date: $formattedDate"
-        // Set up delete button to remove measurement from database via ViewModel
-        holder.deleteButton.setOnClickListener {
-            viewModel.deleteBodyMeasurement(currentMeasurement)
-            measurements = measurements.filter { it != currentMeasurement }
-            notifyItemRemoved(position)
-            notifyItemRangeChanged(position, measurements.size)
-        }
-
-        // Setting up individual measurement details
         holder.biceps.text = "Biceps: ${currentMeasurement.biceps ?: "N/A"} cm"
         holder.triceps.text = "Triceps: ${currentMeasurement.triceps ?: "N/A"} cm"
         holder.chest.text = "Chest: ${currentMeasurement.chest ?: "N/A"} cm"
@@ -66,14 +60,24 @@ class History_BodyMeasurementAdapter(private val viewModel: BodyMeasurementViewM
         holder.thighs.text = "Thighs: ${currentMeasurement.thighs ?: "N/A"} cm"
         holder.calves.text = "Calves: ${currentMeasurement.calves ?: "N/A"} cm"
         holder.weight.text = "Weight: ${currentMeasurement.weight ?: "N/A"} kg"
+        holder.note.text = "Note: ${currentMeasurement.notes ?: "N/A"}" // Display the note or "N/A" if empty
 
-        // Expandable layout for showing and hiding additional details
+        // Handle delete button clicks
+        holder.deleteButton.setOnClickListener {
+            viewModel.deleteBodyMeasurement(currentMeasurement) // Remove measurement from the database
+            measurements = measurements.filter { it != currentMeasurement } // Update the list
+            notifyItemRemoved(position) // Notify RecyclerView about the removal
+            notifyItemRangeChanged(position, measurements.size) // Refresh the range of items
+        }
+
+        // Handle expanding/collapsing of additional details
         holder.itemView.setOnClickListener {
-            holder.expandableLayout.visibility = if (holder.expandableLayout.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+            holder.expandableLayout.visibility =
+                if (holder.expandableLayout.visibility == View.VISIBLE) View.GONE else View.VISIBLE
         }
     }
 
-    // Returns the total count of items in the list
+    // Returns the total number of items in the list
     override fun getItemCount(): Int = measurements.size
 
     // Updates the list with new data and notifies the RecyclerView to refresh
