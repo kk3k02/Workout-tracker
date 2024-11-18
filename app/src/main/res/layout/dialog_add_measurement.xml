@@ -53,4 +53,14 @@
         android:layout_height="wrap_content"
         android:hint="Weight (kg)" />
 
+    <EditText
+        android:id="@+id/editTextNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Note (optional)"
+        android:inputType="textMultiLine"
+        android:lines="3"
+        android:maxLines="5"
+        android:scrollbars="vertical" />
+
 </LinearLayout>

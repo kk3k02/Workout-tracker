@@ -18,26 +18,26 @@ import kotlinx.coroutines.launch
 
 class BodyMeasurementActivity : AppCompatActivity() {
 
-    // ViewModel for handling operations related to body measurements
+    // Lazy initialization of the ViewModel using the 'viewModels()' Kotlin property delegate
     private val bodyMeasurementViewModel: BodyMeasurementViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_body_measurement)
 
-        // Setting up the RecyclerView for displaying body measurements
+        // Initialize RecyclerView and set its layout manager and adapter
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewBodyMeasurements)
         val adapter = History_BodyMeasurementAdapter(bodyMeasurementViewModel)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Button to trigger adding a new measurement
+        // Setup button to open a dialog for adding new measurements
         val buttonAddMeasurement: Button = findViewById(R.id.buttonAddMeasurement)
         buttonAddMeasurement.setOnClickListener {
             showAddMeasurementDialog()
         }
 
-        // Observing measurements data from the ViewModel and updating the UI accordingly
+        // Subscribe to measurement updates from the ViewModel and update the adapter accordingly
         lifecycleScope.launch {
             bodyMeasurementViewModel.allMeasurements.collect { measurements ->
                 adapter.submitList(measurements)
@@ -45,14 +45,14 @@ class BodyMeasurementActivity : AppCompatActivity() {
         }
     }
 
-    // Function to display a dialog allowing the user to add a new body measurement
+    // Function to show a dialog that allows the user to add new body measurement entries
     private fun showAddMeasurementDialog() {
         val builder = AlertDialog.Builder(this)
         val inflater = LayoutInflater.from(this)
         val view = inflater.inflate(R.layout.dialog_add_measurement, null)
         builder.setView(view)
 
-        // Getting references to input fields in the dialog
+        // Find and initialize input fields from the dialog layout
         val editTextBiceps = view.findViewById<EditText>(R.id.editTextBiceps)
         val editTextTriceps = view.findViewById<EditText>(R.id.editTextTriceps)
         val editTextChest = view.findViewById<EditText>(R.id.editTextChest)
@@ -61,12 +61,13 @@ class BodyMeasurementActivity : AppCompatActivity() {
         val editTextThighs = view.findViewById<EditText>(R.id.editTextThighs)
         val editTextCalves = view.findViewById<EditText>(R.id.editTextCalves)
         val editTextWeight = view.findViewById<EditText>(R.id.editTextWeight)
+        val editTextNote = view.findViewById<EditText>(R.id.editTextNote) // Note input field
 
-        // Setting up the response to the "Save" button in the dialog
+        // Define the behavior for the "Save" button in the dialog
         builder.setPositiveButton("Save") { _, _ ->
-            // Parsing user input to create a new BodyMeasurement instance
+            // Create a new measurement object from the input data
             val newMeasurement = BodyMeasurement(
-                date = System.currentTimeMillis(),
+                date = System.currentTimeMillis(),  // Capture the current time as the date
                 biceps = editTextBiceps.text.toString().toIntOrNull(),
                 triceps = editTextTriceps.text.toString().toIntOrNull(),
                 chest = editTextChest.text.toString().toIntOrNull(),
@@ -74,17 +75,18 @@ class BodyMeasurementActivity : AppCompatActivity() {
                 hips = editTextHips.text.toString().toIntOrNull(),
                 thighs = editTextThighs.text.toString().toIntOrNull(),
                 calves = editTextCalves.text.toString().toIntOrNull(),
-                weight = editTextWeight.text.toString().toIntOrNull()
+                weight = editTextWeight.text.toString().toIntOrNull(),
+                notes = editTextNote.text.toString()  // Capture the optional note
             )
 
-            // Saving the new measurement to the database via the ViewModel
+            // Save the new measurement through the ViewModel
             lifecycleScope.launch {
                 bodyMeasurementViewModel.insertBodyMeasurement(newMeasurement)
             }
         }
 
-        // Handling the "Cancel" button in the dialog
-        builder.setNegativeButton("Cancel", null)
-        builder.show()
+        // Define the behavior for the "Cancel" button
+        builder.setNegativeButton("Cancel", null) // Simply dismiss the dialog on cancel
+        builder.show()  // Display the dialog to the user
     }
 }
