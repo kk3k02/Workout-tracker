@@ -1,10 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.SummaryActivity">
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp"
+    android:background="@color/white">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Button to navigate to Body Statistics -->
+    <Button
+        android:id="@+id/buttonBodyStatistics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Body Statistics"
+        android:padding="12dp"
+        android:textSize="18sp" />
+
+    <!-- Space between buttons -->
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="16dp" />
+
+    <!-- Button to navigate to Workout Statistics -->
+    <Button
+        android:id="@+id/buttonWorkoutStatistics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Workout Statistics"
+        android:padding="12dp"
+        android:textSize="18sp" />
+
+</LinearLayout>

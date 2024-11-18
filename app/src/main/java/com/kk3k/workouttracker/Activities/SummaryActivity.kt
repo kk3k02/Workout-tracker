@@ -1,10 +1,10 @@
 package com.kk3k.workouttracker.Activities
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.kk3k.workouttracker.R
 
 class SummaryActivity : AppCompatActivity() {
@@ -12,10 +12,20 @@ class SummaryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_summary)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        // Find buttons by their IDs
+        val buttonBodyStatistics: Button = findViewById(R.id.buttonBodyStatistics)
+        val buttonWorkoutStatistics: Button = findViewById(R.id.buttonWorkoutStatistics)
+
+        // Set click listeners for the buttons
+        buttonBodyStatistics.setOnClickListener {
+            val intent = Intent(this, BodyStatisticsActivity::class.java)
+            startActivity(intent)
+        }
+
+        buttonWorkoutStatistics.setOnClickListener {
+            val intent = Intent(this, WorkoutStatisticsActivity::class.java)
+            startActivity(intent)
         }
     }
 }
