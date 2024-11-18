@@ -1,4 +1,4 @@
-package com.kk3k.workouttracker.viewmodel
+package com.kk3k.workouttracker.ViewModels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

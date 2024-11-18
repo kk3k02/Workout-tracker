@@ -11,17 +11,31 @@
     android:divider="?android:attr/dividerVertical"
     android:showDividers="middle">
 
-    <!-- Tile displaying the measurement date -->
-    <TextView
-        android:id="@+id/measurementDate"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:padding="8dp" />
+        android:orientation="horizontal"
+        android:padding="8dp">
 
-    <!-- Expandable section displaying measurement details, initially hidden -->
+        <TextView
+            android:id="@+id/measurementDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:padding="8dp" />
+
+        <ImageButton
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_delete"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="delete measurement" />
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/expandableLayout"
         android:layout_width="match_parent"
@@ -30,7 +44,6 @@
         android:visibility="gone"
         android:paddingTop="8dp">
 
-        <!-- Displaying all BodyMeasurement parameters -->
         <TextView
             android:id="@+id/textViewBiceps"
             android:layout_width="wrap_content"
@@ -102,6 +115,5 @@
             android:textSize="14sp"
             android:textColor="@android:color/black"
             android:padding="4dp" />
-
     </LinearLayout>
 </LinearLayout>

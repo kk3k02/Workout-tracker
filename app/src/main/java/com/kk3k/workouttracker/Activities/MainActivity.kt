@@ -9,7 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.kk3k.workouttracker.R
 import com.kk3k.workouttracker.ViewModels.ExerciseViewModel
 import com.kk3k.workouttracker.db.ExerciseLoader
-import com.kk3k.workouttracker.viewmodel.BodyMeasurementViewModel
+import com.kk3k.workouttracker.ViewModels.BodyMeasurementViewModel
 import com.kk3k.workouttracker.viewmodel.SeriesViewModel
 import com.kk3k.workouttracker.ViewModels.WorkoutViewModel
 import kotlinx.coroutines.launch
