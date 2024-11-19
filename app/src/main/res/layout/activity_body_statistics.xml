@@ -14,9 +14,16 @@
         android:paddingBottom="8dp">
 
         <Button
+            android:id="@+id/buttonGeneral"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="General" />
+
+        <Button
             android:id="@+id/buttonWeightChart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:text="Weight" />
 
         <Button
