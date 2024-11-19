@@ -1,9 +1,12 @@
 package com.kk3k.workouttracker.Activities
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.TextView
+import android.view.Gravity
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -59,6 +62,7 @@ class BodyStatisticsActivity : AppCompatActivity() {
             deactivateButtons()
             buttonGeneral.isEnabled = false
             chartContainer.removeAllViews() // Clear the chart container
+            showGeneralContent() // Show the general content (e.g. text, image, etc.)
         }
 
         buttonWeightChart.setOnClickListener {
@@ -76,6 +80,9 @@ class BodyStatisticsActivity : AppCompatActivity() {
             chartContainer.addView(bodyMeasurementsChart) // Add measurements chart to container
             setupBodyMeasurementsChart(bodyMeasurementsChart) // Configure and display the measurements chart
         }
+
+        // Automatically show general content (information about biceps size change)
+        showGeneralContent()  // Call this method to display biceps size change info when the activity starts
     }
 
     // Deactivate all buttons (make them clickable again)
@@ -83,6 +90,54 @@ class BodyStatisticsActivity : AppCompatActivity() {
         buttonGeneral.isEnabled = true
         buttonWeightChart.isEnabled = true
         buttonDimensions.isEnabled = true
+    }
+
+    // Show general content when the "General" button is clicked
+    @SuppressLint("SetTextI18n")
+    private fun showGeneralContent() {
+        lifecycleScope.launch {
+            // Collect body measurements data from the ViewModel
+            bodyMeasurementViewModel.allMeasurements.collect { measurements ->
+                if (measurements.isNotEmpty()) {
+                    // Find the first (oldest) and latest (most recent) measurement for biceps
+                    val firstBicepsMeasurement = measurements.minByOrNull { it.date ?: Long.MAX_VALUE }
+                    val latestBicepsMeasurement = measurements.maxByOrNull { it.date ?: Long.MIN_VALUE }
+
+                    if (firstBicepsMeasurement != null && latestBicepsMeasurement != null) {
+                        val firstBiceps = firstBicepsMeasurement.biceps?.toFloat() ?: 0f
+                        val latestBiceps = latestBicepsMeasurement.biceps?.toFloat() ?: 0f
+
+                        // Calculate the difference in biceps size
+                        val changeInBiceps = latestBiceps - firstBiceps
+                        val changeText = if (changeInBiceps >= 0) {
+                            "+${changeInBiceps.toInt()} cm"
+                        } else {
+                            "${changeInBiceps.toInt()} cm"
+                        }
+
+                        // Display the result in the chart container
+                        val generalTextView = TextView(this@BodyStatisticsActivity).apply {
+                            text = "Change in Biceps: $changeText"
+                            textSize = 18f
+                            setTextColor(Color.BLACK)
+                            gravity = Gravity.CENTER
+                        }
+
+                        chartContainer.addView(generalTextView)
+                    }
+                } else {
+                    // If no measurements are available
+                    val generalTextView = TextView(this@BodyStatisticsActivity).apply {
+                        text = "No measurements available."
+                        textSize = 18f
+                        setTextColor(Color.BLACK)
+                        gravity = Gravity.CENTER
+                    }
+
+                    chartContainer.addView(generalTextView)
+                }
+            }
+        }
     }
 
     // Configure the weight chart to display weight progression over time
