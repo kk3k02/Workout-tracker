@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Description
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -45,13 +47,26 @@ class BodyStatisticsActivity : AppCompatActivity() {
                     weightChart.apply {
                         data = lineData
                         description = Description().apply { text = "Weight Progression" }
+
+                        // Configure X-axis for date labels at the bottom
                         xAxis.apply {
                             textColor = Color.BLACK
+                            position = XAxis.XAxisPosition.BOTTOM // Set position to bottom
                             valueFormatter = DateAxisValueFormatter()
-                            setDrawGridLines(false)
+                            setDrawGridLines(true) // Enable vertical grid lines
+                            gridColor = Color.LTGRAY // Grid line color
                         }
-                        axisLeft.textColor = Color.BLACK
+
+                        // Configure Left Y-axis for horizontal grid lines
+                        axisLeft.apply {
+                            textColor = Color.BLACK
+                            setDrawGridLines(true) // Enable horizontal grid lines
+                            gridColor = Color.LTGRAY // Grid line color
+                        }
+
+                        // Disable Right Y-axis (optional for cleaner look)
                         axisRight.isEnabled = false
+
                         setNoDataText("No weight data available.")
                         invalidate() // Refresh the chart
                     }

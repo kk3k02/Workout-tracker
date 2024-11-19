@@ -25,6 +25,8 @@ class BodyMeasurementActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_body_measurement)
 
+        //bodyMeasurementViewModel.addSampleBodyMeasurements()
+
         // Initialize RecyclerView and set its layout manager and adapter
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewBodyMeasurements)
         val adapter = History_BodyMeasurementAdapter(bodyMeasurementViewModel)
