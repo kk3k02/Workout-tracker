@@ -28,7 +28,7 @@ interface BodyMeasurementDao {
     suspend fun deleteAll()
 
     // Get all body measurements as Flow
-    @Query("SELECT * FROM body_measurement ORDER BY date DESC")
+    @Query("SELECT * FROM body_measurement ORDER BY date ASC")
     fun getAllBodyMeasurementsFlow(): Flow<List<BodyMeasurement>>
 
     // Get a specific body measurement by ID
