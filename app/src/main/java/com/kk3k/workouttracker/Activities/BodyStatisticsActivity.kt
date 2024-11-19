@@ -40,7 +40,7 @@ class BodyStatisticsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_body_statistics)
 
-        // Initialize the views
+        // Initialize the views for the buttons and chart container
         chartContainer = findViewById(R.id.chartContainer)
         buttonGeneral = findViewById(R.id.buttonGeneral)
         buttonWeightChart = findViewById(R.id.buttonWeightChart)
@@ -50,7 +50,7 @@ class BodyStatisticsActivity : AppCompatActivity() {
         val weightChart = LineChart(this)
         val bodyMeasurementsChart = LineChart(this)
 
-        // Set "General" button as the default active button
+        // Set the "General" button as the default active button
         deactivateButtons()
         buttonGeneral.isEnabled = false
 
@@ -99,32 +99,89 @@ class BodyStatisticsActivity : AppCompatActivity() {
             // Collect body measurements data from the ViewModel
             bodyMeasurementViewModel.allMeasurements.collect { measurements ->
                 if (measurements.isNotEmpty()) {
-                    // Find the first (oldest) and latest (most recent) measurement for biceps
+                    // Find the first (oldest) and latest (most recent) measurement for each body part
                     val firstBicepsMeasurement = measurements.minByOrNull { it.date ?: Long.MAX_VALUE }
                     val latestBicepsMeasurement = measurements.maxByOrNull { it.date ?: Long.MIN_VALUE }
 
-                    if (firstBicepsMeasurement != null && latestBicepsMeasurement != null) {
+                    val firstTricepsMeasurement = measurements.minByOrNull { it.date ?: Long.MAX_VALUE }
+                    val latestTricepsMeasurement = measurements.maxByOrNull { it.date ?: Long.MIN_VALUE }
+
+                    val firstChestMeasurement = measurements.minByOrNull { it.date ?: Long.MAX_VALUE }
+                    val latestChestMeasurement = measurements.maxByOrNull { it.date ?: Long.MIN_VALUE }
+
+                    val firstWaistMeasurement = measurements.minByOrNull { it.date ?: Long.MAX_VALUE }
+                    val latestWaistMeasurement = measurements.maxByOrNull { it.date ?: Long.MIN_VALUE }
+
+                    val firstHipsMeasurement = measurements.minByOrNull { it.date ?: Long.MAX_VALUE }
+                    val latestHipsMeasurement = measurements.maxByOrNull { it.date ?: Long.MIN_VALUE }
+
+                    val firstThighsMeasurement = measurements.minByOrNull { it.date ?: Long.MAX_VALUE }
+                    val latestThighsMeasurement = measurements.maxByOrNull { it.date ?: Long.MIN_VALUE }
+
+                    val firstCalvesMeasurement = measurements.minByOrNull { it.date ?: Long.MAX_VALUE }
+                    val latestCalvesMeasurement = measurements.maxByOrNull { it.date ?: Long.MIN_VALUE }
+
+                    // Calculate the changes separately for each parameter (e.g., Biceps, Triceps, etc.)
+                    val bicepsChange = if (firstBicepsMeasurement != null && latestBicepsMeasurement != null) {
                         val firstBiceps = firstBicepsMeasurement.biceps?.toFloat() ?: 0f
                         val latestBiceps = latestBicepsMeasurement.biceps?.toFloat() ?: 0f
+                        latestBiceps - firstBiceps
+                    } else 0f
 
-                        // Calculate the difference in biceps size
-                        val changeInBiceps = latestBiceps - firstBiceps
-                        val changeText = if (changeInBiceps >= 0) {
-                            "+${changeInBiceps.toInt()} cm"
-                        } else {
-                            "${changeInBiceps.toInt()} cm"
-                        }
+                    val tricepsChange = if (firstTricepsMeasurement != null && latestTricepsMeasurement != null) {
+                        val firstTriceps = firstTricepsMeasurement.triceps?.toFloat() ?: 0f
+                        val latestTriceps = latestTricepsMeasurement.triceps?.toFloat() ?: 0f
+                        latestTriceps - firstTriceps
+                    } else 0f
 
-                        // Display the result in the chart container
-                        val generalTextView = TextView(this@BodyStatisticsActivity).apply {
-                            text = "Change in Biceps: $changeText"
-                            textSize = 18f
-                            setTextColor(Color.BLACK)
-                            gravity = Gravity.CENTER
-                        }
+                    val chestChange = if (firstChestMeasurement != null && latestChestMeasurement != null) {
+                        val firstChest = firstChestMeasurement.chest?.toFloat() ?: 0f
+                        val latestChest = latestChestMeasurement.chest?.toFloat() ?: 0f
+                        latestChest - firstChest
+                    } else 0f
 
-                        chartContainer.addView(generalTextView)
+                    val waistChange = if (firstWaistMeasurement != null && latestWaistMeasurement != null) {
+                        val firstWaist = firstWaistMeasurement.waist?.toFloat() ?: 0f
+                        val latestWaist = latestWaistMeasurement.waist?.toFloat() ?: 0f
+                        latestWaist - firstWaist
+                    } else 0f
+
+                    val hipsChange = if (firstHipsMeasurement != null && latestHipsMeasurement != null) {
+                        val firstHips = firstHipsMeasurement.hips?.toFloat() ?: 0f
+                        val latestHips = latestHipsMeasurement.hips?.toFloat() ?: 0f
+                        latestHips - firstHips
+                    } else 0f
+
+                    val thighsChange = if (firstThighsMeasurement != null && latestThighsMeasurement != null) {
+                        val firstThighs = firstThighsMeasurement.thighs?.toFloat() ?: 0f
+                        val latestThighs = latestThighsMeasurement.thighs?.toFloat() ?: 0f
+                        latestThighs - firstThighs
+                    } else 0f
+
+                    val calvesChange = if (firstCalvesMeasurement != null && latestCalvesMeasurement != null) {
+                        val firstCalves = firstCalvesMeasurement.calves?.toFloat() ?: 0f
+                        val latestCalves = latestCalvesMeasurement.calves?.toFloat() ?: 0f
+                        latestCalves - firstCalves
+                    } else 0f
+
+                    // Create the display text for each measurement showing differences separately
+                    val generalTextView = TextView(this@BodyStatisticsActivity).apply {
+                        textSize = 18f
+                        setTextColor(Color.BLACK)
+                        gravity = Gravity.CENTER
+                        text = """
+                        Biceps: ${if (bicepsChange >= 0) "+${bicepsChange.toInt()} cm" else "${bicepsChange.toInt()} cm"}
+                        Triceps: ${if (tricepsChange >= 0) "+${tricepsChange.toInt()} cm" else "${tricepsChange.toInt()} cm"}
+                        Chest: ${if (chestChange >= 0) "+${chestChange.toInt()} cm" else "${chestChange.toInt()} cm"}
+                        Waist: ${if (waistChange >= 0) "+${waistChange.toInt()} cm" else "${waistChange.toInt()} cm"}
+                        Hips: ${if (hipsChange >= 0) "+${hipsChange.toInt()} cm" else "${hipsChange.toInt()} cm"}
+                        Thighs: ${if (thighsChange >= 0) "+${thighsChange.toInt()} cm" else "${thighsChange.toInt()} cm"}
+                        Calves: ${if (calvesChange >= 0) "+${calvesChange.toInt()} cm" else "${calvesChange.toInt()} cm"}
+                    """.trimIndent()
                     }
+
+                    // Display the result in the chart container
+                    chartContainer.addView(generalTextView)
                 } else {
                     // If no measurements are available
                     val generalTextView = TextView(this@BodyStatisticsActivity).apply {
