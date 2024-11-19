@@ -15,23 +15,32 @@
 
         <Button
             android:id="@+id/buttonGeneral"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="General" />
+            android:text="General"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_button"
+            android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/buttonWeightChart"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Weight" />
+            android:text="Weight"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_button"
+            android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/buttonDimensions"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Dimensions" />
+            android:text="Dimensions"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_button"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
     <!-- Container for dynamic views -->
