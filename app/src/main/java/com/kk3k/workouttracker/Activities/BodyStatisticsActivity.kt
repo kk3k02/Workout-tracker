@@ -2,19 +2,24 @@ package com.kk3k.workouttracker.Activities
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.kk3k.workouttracker.R
 import com.kk3k.workouttracker.ViewModels.BodyMeasurementViewModel
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class BodyStatisticsActivity : AppCompatActivity() {
     private val bodyMeasurementViewModel: BodyMeasurementViewModel by viewModels()
@@ -23,9 +28,34 @@ class BodyStatisticsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_body_statistics)
 
-        val weightChart: LineChart = findViewById(R.id.weightChart)
+        val chartContainer: FrameLayout = findViewById(R.id.chartContainer)
+        val buttonWeightChart: Button = findViewById(R.id.buttonWeightChart)
+        val buttonDimensions: Button = findViewById(R.id.buttonDimensions)
 
-        // Collect weight data from ViewModel's Flow and plot it on the chart
+        // Create views for the weight chart and empty dimensions placeholder
+        val weightChart = LineChart(this)
+        val emptyView = View(this).apply {
+            setBackgroundColor(Color.LTGRAY)
+        }
+
+        // Initially show nothing
+        chartContainer.removeAllViews()
+
+        // Button click listeners
+        buttonWeightChart.setOnClickListener {
+            chartContainer.removeAllViews()
+            chartContainer.addView(weightChart)
+            setupWeightChart(weightChart) // Configure and display the weight chart
+        }
+
+        buttonDimensions.setOnClickListener {
+            chartContainer.removeAllViews()
+            chartContainer.addView(emptyView) // Show placeholder for dimensions
+        }
+    }
+
+    // Configure the weight chart
+    private fun setupWeightChart(chart: LineChart) {
         lifecycleScope.launch {
             bodyMeasurementViewModel.allMeasurements.collect { measurements ->
                 if (measurements.isNotEmpty()) {
@@ -44,45 +74,42 @@ class BodyStatisticsActivity : AppCompatActivity() {
 
                     val lineData = LineData(dataSet)
 
-                    weightChart.apply {
+                    chart.apply {
                         data = lineData
                         description = Description().apply { text = "Weight Progression" }
 
-                        // Configure X-axis for date labels at the bottom
                         xAxis.apply {
                             textColor = Color.BLACK
-                            position = XAxis.XAxisPosition.BOTTOM // Set position to bottom
-                            valueFormatter = DateAxisValueFormatter()
-                            setDrawGridLines(true) // Enable vertical grid lines
-                            gridColor = Color.LTGRAY // Grid line color
+                            position = XAxis.XAxisPosition.BOTTOM
+                            setDrawGridLines(true)
+                            gridColor = Color.LTGRAY
+                            valueFormatter = DateAxisValueFormatter() // Use custom formatter
                         }
 
-                        // Configure Left Y-axis for horizontal grid lines
                         axisLeft.apply {
                             textColor = Color.BLACK
-                            setDrawGridLines(true) // Enable horizontal grid lines
-                            gridColor = Color.LTGRAY // Grid line color
+                            setDrawGridLines(true)
+                            gridColor = Color.LTGRAY
                         }
 
-                        // Disable Right Y-axis (optional for cleaner look)
                         axisRight.isEnabled = false
-
                         setNoDataText("No weight data available.")
                         invalidate() // Refresh the chart
                     }
                 } else {
-                    weightChart.clear()
-                    weightChart.setNoDataText("No weight data available.")
+                    chart.clear()
+                    chart.setNoDataText("No weight data available.")
                 }
             }
         }
     }
 
     // Custom value formatter for the X-axis to display dates
-    private class DateAxisValueFormatter : com.github.mikephil.charting.formatter.ValueFormatter() {
+    private class DateAxisValueFormatter : ValueFormatter() {
+        private val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
         override fun getFormattedValue(value: Float): String {
-            val sdf = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
-            return sdf.format(java.util.Date(value.toLong()))
+            return sdf.format(value.toLong())
         }
     }
 }
