@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.kk3k.workouttracker.R
 import com.kk3k.workouttracker.db.AppDatabase
 import com.kk3k.workouttracker.db.dao.WorkoutDao
+import com.kk3k.workouttracker.db.dao.SeriesDao
 import kotlinx.coroutines.launch
 
 class WorkoutStatisticsActivity : AppCompatActivity() {
@@ -16,7 +17,8 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
     private lateinit var buttonGeneral: Button
     private lateinit var buttonProgressChart: Button
     private lateinit var chartContainer: FrameLayout
-    private lateinit var workoutDao: WorkoutDao  // Declare workoutDao as lateinit
+    private lateinit var workoutDao: WorkoutDao
+    private lateinit var seriesDao: SeriesDao  // Declare SeriesDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,9 +29,10 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
         buttonProgressChart = findViewById(R.id.btnProgressChart)
         chartContainer = findViewById(R.id.chartContainer)
 
-        // Initialize workoutDao here (make sure your AppDatabase is set up correctly)
-        val workoutDatabase = AppDatabase.getDatabase(this)  // Get the database instance
-        workoutDao = workoutDatabase.workoutDao()  // Initialize workoutDao
+        // Initialize workoutDao and seriesDao
+        val workoutDatabase = AppDatabase.getDatabase(this)
+        workoutDao = workoutDatabase.workoutDao()
+        seriesDao = workoutDatabase.seriesDao()  // Initialize SeriesDao
 
         // Set the "General" button as default active button
         deactivateButtons()
@@ -69,11 +72,15 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
             // Get the total duration of all finished workouts
             val totalDuration = workoutDao.getTotalWorkoutDuration() ?: 0L
 
+            // Get the total weight used in all series (weight * repetitions)
+            val totalWeight = seriesDao.getTotalWeightUsed() ?: 0f
+
             val generalTextView = TextView(this@WorkoutStatisticsActivity).apply {
                 textSize = 18f
                 text = """
                     Number of completed workouts: $workoutCount
                     Total duration of all workouts: ${formatDuration(totalDuration)}
+                    Total weight used: ${formatWeight(totalWeight)}
                 """
             }
 
@@ -81,12 +88,17 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
         }
     }
 
-    // Format duration in seconds into a human-readable format (HH:mm:ss)
+    // Format duration in milliseconds into a human-readable format (HH:mm:ss)
     private fun formatDuration(durationInMillis: Long): String {
         val hours = (durationInMillis / 3600000) % 24
         val minutes = (durationInMillis / 60000) % 60
         val seconds = (durationInMillis / 1000) % 60
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+    }
+
+    // Format weight into a human-readable format (e.g., kg)
+    private fun formatWeight(weight: Float): String {
+        return String.format("%.2f kg", weight)
     }
 
     // Show progress chart content in the container

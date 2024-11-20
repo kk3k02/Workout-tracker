@@ -57,4 +57,6 @@ interface SeriesDao {
     @Query("SELECT * FROM series WHERE workout_id = :workoutId AND exercise_id = :exerciseId")
     suspend fun getSeriesForWorkoutAndExercise(workoutId: Int, exerciseId: Int): List<Series>
 
+    @Query("SELECT SUM(weight * repetitions) FROM series WHERE weight IS NOT NULL AND repetitions > 0")
+    suspend fun getTotalWeightUsed(): Float?
 }
