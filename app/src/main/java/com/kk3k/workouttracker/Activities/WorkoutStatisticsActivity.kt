@@ -66,13 +66,27 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
             // Get the count of finished workouts from the database
             val workoutCount = workoutDao.getFinishedWorkoutCount()
 
+            // Get the total duration of all finished workouts
+            val totalDuration = workoutDao.getTotalWorkoutDuration() ?: 0L
+
             val generalTextView = TextView(this@WorkoutStatisticsActivity).apply {
                 textSize = 18f
-                text = "Number of completed workouts: $workoutCount"
+                text = """
+                    Number of completed workouts: $workoutCount
+                    Total duration of all workouts: ${formatDuration(totalDuration)}
+                """
             }
 
             chartContainer.addView(generalTextView)  // Add content to container
         }
+    }
+
+    // Format duration in seconds into a human-readable format (HH:mm:ss)
+    private fun formatDuration(durationInMillis: Long): String {
+        val hours = (durationInMillis / 3600000) % 24
+        val minutes = (durationInMillis / 60000) % 60
+        val seconds = (durationInMillis / 1000) % 60
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
     // Show progress chart content in the container

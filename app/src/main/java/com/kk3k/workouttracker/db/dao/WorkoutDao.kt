@@ -65,4 +65,7 @@ interface WorkoutDao {
 
     @Query("SELECT COUNT(*) FROM workout WHERE isFinished = 1")
     suspend fun getFinishedWorkoutCount(): Int
+
+    @Query("SELECT SUM(duration) FROM workout WHERE isFinished = 1")
+    suspend fun getTotalWorkoutDuration(): Long?
 }
