@@ -5,13 +5,18 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.kk3k.workouttracker.R
+import com.kk3k.workouttracker.db.AppDatabase
+import com.kk3k.workouttracker.db.dao.WorkoutDao
+import kotlinx.coroutines.launch
 
 class WorkoutStatisticsActivity : AppCompatActivity() {
 
     private lateinit var buttonGeneral: Button
     private lateinit var buttonProgressChart: Button
     private lateinit var chartContainer: FrameLayout
+    private lateinit var workoutDao: WorkoutDao  // Declare workoutDao as lateinit
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +26,10 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
         buttonGeneral = findViewById(R.id.btnGeneral)
         buttonProgressChart = findViewById(R.id.btnProgressChart)
         chartContainer = findViewById(R.id.chartContainer)
+
+        // Initialize workoutDao here (make sure your AppDatabase is set up correctly)
+        val workoutDatabase = AppDatabase.getDatabase(this)  // Get the database instance
+        workoutDao = workoutDatabase.workoutDao()  // Initialize workoutDao
 
         // Set the "General" button as default active button
         deactivateButtons()
@@ -53,12 +62,17 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
 
     // Show general content in the container
     private fun showGeneralContent() {
-        val generalTextView = TextView(this).apply {
-            textSize = 18f
-            text = "This is the general content. Information goes here."
-        }
+        lifecycleScope.launch {
+            // Get the count of finished workouts from the database
+            val workoutCount = workoutDao.getFinishedWorkoutCount()
 
-        chartContainer.addView(generalTextView)  // Add content to container
+            val generalTextView = TextView(this@WorkoutStatisticsActivity).apply {
+                textSize = 18f
+                text = "Number of completed workouts: $workoutCount"
+            }
+
+            chartContainer.addView(generalTextView)  // Add content to container
+        }
     }
 
     // Show progress chart content in the container

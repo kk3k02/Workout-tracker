@@ -62,4 +62,7 @@ interface WorkoutDao {
     // Updates the note of a specific workout by its ID
     @Query("UPDATE workout SET notes = :note WHERE uid = :id")
     suspend fun updateNote(id: Int, note: String)
+
+    @Query("SELECT COUNT(*) FROM workout WHERE isFinished = 1")
+    suspend fun getFinishedWorkoutCount(): Int
 }
