@@ -14,8 +14,7 @@ import kotlinx.coroutines.launch
 
 class WorkoutStatisticsActivity : AppCompatActivity() {
 
-    private lateinit var buttonGeneral: Button
-    private lateinit var buttonProgressChart: Button
+    private lateinit var buttonSelectExercise: Button
     private lateinit var chartContainer: FrameLayout
     private lateinit var workoutDao: WorkoutDao
     private lateinit var seriesDao: SeriesDao  // Declare SeriesDao
@@ -25,8 +24,7 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_workout_statistics)
 
         // Initialize views
-        buttonGeneral = findViewById(R.id.btnGeneral)
-        buttonProgressChart = findViewById(R.id.btnProgressChart)
+        buttonSelectExercise = findViewById(R.id.btnSelectExercise)
         chartContainer = findViewById(R.id.chartContainer)
 
         // Initialize workoutDao and seriesDao
@@ -34,33 +32,15 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
         workoutDao = workoutDatabase.workoutDao()
         seriesDao = workoutDatabase.seriesDao()  // Initialize SeriesDao
 
-        // Set the "General" button as default active button
-        deactivateButtons()
-        buttonGeneral.isEnabled = false
-
-        // Set click listeners for the buttons
-        buttonGeneral.setOnClickListener {
-            deactivateButtons()
-            buttonGeneral.isEnabled = false
-            chartContainer.removeAllViews()  // Clear the container
-            showGeneralContent()  // Display general content
-        }
-
-        buttonProgressChart.setOnClickListener {
-            deactivateButtons()
-            buttonProgressChart.isEnabled = false
-            chartContainer.removeAllViews()  // Clear the container
-            showProgressChartContent()  // Display progress chart content
+        // Set click listener for the "Select Exercise" button
+        buttonSelectExercise.setOnClickListener {
+            // Placeholder action to show exercise selection logic
+            // You can add a dialog or another activity to allow users to select an exercise.
+            showExerciseSelection()
         }
 
         // Initially show the general content
         showGeneralContent()
-    }
-
-    // Deactivate all buttons (make them clickable again)
-    private fun deactivateButtons() {
-        buttonGeneral.isEnabled = true
-        buttonProgressChart.isEnabled = true
     }
 
     // Show general content in the container
@@ -75,16 +55,14 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
             // Get the total weight used in all series (weight * repetitions)
             val totalWeight = seriesDao.getTotalWeightUsed() ?: 0f
 
-            val generalTextView = TextView(this@WorkoutStatisticsActivity).apply {
-                textSize = 18f
-                text = """
-                    Number of completed workouts: $workoutCount
-                    Total duration of all workouts: ${formatDuration(totalDuration)}
-                    Total weight used: ${formatWeight(totalWeight)}
-                """
-            }
+            // Find the TextView elements by ID and update them with the data
+            val workoutCountTextView = findViewById<TextView>(R.id.tvWorkoutCount)
+            val totalDurationTextView = findViewById<TextView>(R.id.tvTotalDuration)
+            val totalWeightTextView = findViewById<TextView>(R.id.tvTotalWeight)
 
-            chartContainer.addView(generalTextView)  // Add content to container
+            workoutCountTextView.text = "Number of completed workouts: $workoutCount"
+            totalDurationTextView.text = "Total duration of all workouts: ${formatDuration(totalDuration)}"
+            totalWeightTextView.text = "Total weight used: ${formatWeight(totalWeight)}"
         }
     }
 
@@ -101,13 +79,14 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
         return String.format("%.2f kg", weight)
     }
 
-    // Show progress chart content in the container
-    private fun showProgressChartContent() {
-        val progressChartTextView = TextView(this).apply {
-            textSize = 18f
-            text = "This is the progress chart content. You can add a chart here."
+    // Placeholder function to simulate exercise selection
+    private fun showExerciseSelection() {
+        // You can open a dialog or a new activity here to allow the user to select an exercise.
+        // For now, let's just show a simple placeholder text.
+        val exerciseSelectionTextView = TextView(this).apply {
+            text = "Exercise selection feature coming soon!"
         }
-
-        chartContainer.addView(progressChartTextView)  // Add content to container
+        chartContainer.removeAllViews()  // Clear the container
+        chartContainer.addView(exerciseSelectionTextView)  // Add the placeholder text
     }
 }

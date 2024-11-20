@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Horizontal LinearLayout for buttons -->
+    <!-- Horizontal LinearLayout for the exercise selection button -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,20 +13,15 @@
         android:gravity="center_horizontal"
         android:layout_marginTop="50dp">
 
-        <!-- Button for General View -->
+        <!-- Button for selecting exercise -->
         <Button
-            android:id="@+id/btnGeneral"
+            android:id="@+id/btnSelectExercise"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="General"
-            android:layout_marginEnd="16dp" />
-
-        <!-- Button for Progress Chart View -->
-        <Button
-            android:id="@+id/btnProgressChart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Progress Chart" />
+            android:text="Wybierz ćwiczenie"
+            android:textColor="#FFFFFF"
+            android:background="@color/colorPrimary"
+            android:padding="12dp" />
     </LinearLayout>
 
     <!-- Container for dynamic content -->
@@ -36,4 +31,54 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginTop="20dp"/>
+
+    <!-- Container for summary of statistics -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="20dp">
+
+        <!-- Display General Statistics -->
+        <TextView
+            android:id="@+id/tvGeneralStats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="General Statistics"
+            android:textSize="20sp"
+            android:textColor="#333333"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp"/>
+
+        <!-- Display Workout Count -->
+        <TextView
+            android:id="@+id/tvWorkoutCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Number of completed workouts: 0"
+            android:textSize="18sp"
+            android:textColor="#4CAF50"
+            android:layout_marginBottom="10dp"/>
+
+        <!-- Display Total Duration -->
+        <TextView
+            android:id="@+id/tvTotalDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total duration of all workouts: 00:00:00"
+            android:textSize="18sp"
+            android:textColor="#2196F3"
+            android:layout_marginBottom="10dp"/>
+
+        <!-- Display Total Weight -->
+        <TextView
+            android:id="@+id/tvTotalWeight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total weight used: 0.00 kg"
+            android:textSize="18sp"
+            android:textColor="#FF5722"/>
+    </LinearLayout>
+
 </LinearLayout>
