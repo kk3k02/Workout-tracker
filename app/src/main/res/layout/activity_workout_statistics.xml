@@ -24,6 +24,17 @@
             android:padding="12dp" />
     </LinearLayout>
 
+    <!-- Display selected exercise -->
+    <TextView
+        android:id="@+id/tvSelectedExercise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selected Exercise: None"
+        android:textSize="18sp"
+        android:textColor="#000000"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal" />
+
     <!-- Container for dynamic content -->
     <FrameLayout
         android:id="@+id/chartContainer"
