@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Horizontal LinearLayout for the exercise selection button -->
+    <!-- Horizontal LinearLayout for the General and Chart buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,12 +13,41 @@
         android:gravity="center_horizontal"
         android:layout_marginTop="50dp">
 
-        <!-- Button for selecting exercise -->
+        <!-- Button for General Stats -->
+        <Button
+            android:id="@+id/btnGeneral"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="General"
+            android:textColor="#FFFFFF"
+            android:background="@color/colorPrimary"
+            android:padding="12dp" />
+
+        <!-- Button for Chart -->
+        <Button
+            android:id="@+id/btnChart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chart"
+            android:textColor="#FFFFFF"
+            android:background="@color/colorPrimary"
+            android:padding="12dp"
+            android:layout_marginStart="16dp"/>
+    </LinearLayout>
+
+    <!-- Button to select exercise -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="16dp">
+
         <Button
             android:id="@+id/btnSelectExercise"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Wybierz ćwiczenie"
+            android:text="Select Exercise"
             android:textColor="#FFFFFF"
             android:background="@color/colorPrimary"
             android:padding="12dp" />
@@ -35,16 +64,17 @@
         android:layout_marginTop="20dp"
         android:gravity="center_horizontal" />
 
-    <!-- Container for dynamic content -->
+    <!-- Container for dynamic content like chart -->
     <FrameLayout
         android:id="@+id/chartContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="20dp" />
 
     <!-- Container for summary of statistics -->
     <LinearLayout
+        android:id="@+id/generalStatsContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
