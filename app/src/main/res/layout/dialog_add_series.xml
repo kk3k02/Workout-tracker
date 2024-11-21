@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter Weight"
-        android:inputType="numberDecimal" />
+        android:inputType="numberDecimal" /> <!-- Numeric keyboard with decimal support -->
 
     <!-- Repetitions input field (now below the weight) -->
     <EditText
@@ -19,6 +19,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter Reps"
-        android:inputType="number" />
+        android:inputType="number" /> <!-- Numeric keyboard without decimals (only integer input) -->
 
 </LinearLayout>
