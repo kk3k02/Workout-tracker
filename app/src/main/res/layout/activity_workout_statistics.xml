@@ -72,6 +72,18 @@
         android:layout_weight="1"
         android:layout_marginTop="20dp" />
 
+    <!-- TextView to show when there is no data for the selected exercise -->
+    <TextView
+        android:id="@+id/tvNoDataMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No data available for this exercise."
+        android:textSize="18sp"
+        android:textColor="#FF0000"
+        android:visibility="gone"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal" />
+
     <!-- Container for summary of statistics -->
     <LinearLayout
         android:id="@+id/generalStatsContainer"

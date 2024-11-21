@@ -33,6 +33,7 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
     // Declare UI components
     private lateinit var buttonSelectExercise: Button  // Button to select an exercise
     private lateinit var chartContainer: FrameLayout  // FrameLayout to display chart
+    private lateinit var noDataMessage: TextView  // TextView to show when there is no data
     private lateinit var workoutDao: WorkoutDao  // DAO for workout data
     private lateinit var seriesDao: SeriesDao  // DAO for series data
 
@@ -53,6 +54,7 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
         // Initialize views
         buttonSelectExercise = findViewById(R.id.btnSelectExercise)
         chartContainer = findViewById(R.id.chartContainer)
+        noDataMessage = findViewById(R.id.tvNoDataMessage)  // Add the TextView for the "No Data" message
         selectedExerciseTextView = findViewById(R.id.tvSelectedExercise)
 
         // Initialize workoutDao and seriesDao to access the database
@@ -63,6 +65,7 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
         // Initially hide the selected exercise TextView and the Select Exercise button
         selectedExerciseTextView.visibility = View.GONE
         buttonSelectExercise.visibility = View.GONE
+        noDataMessage.visibility = View.GONE  // Initially hide the "No Data" message
 
         // Set click listener for the "Select Exercise" button
         buttonSelectExercise.setOnClickListener {
@@ -182,10 +185,14 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
             // Fetch all series for the selected exercise
             val seriesList = seriesDao.getSeriesForExercise(exerciseId)
 
-            // If no series are found, log and return
+            // If no series are found, log and show "No data" message
             if (seriesList.isEmpty()) {
                 Log.d("Chart", "No series data found for this exercise")
+                noDataMessage.visibility = View.VISIBLE  // Show "No data" message
+                chartContainer.visibility = View.GONE  // Hide the chart container
                 return@launch
+            } else {
+                noDataMessage.visibility = View.GONE  // Hide the "No data" message
             }
 
             // Map for storing total weight per workout date
