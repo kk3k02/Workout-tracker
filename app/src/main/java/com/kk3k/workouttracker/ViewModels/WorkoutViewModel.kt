@@ -7,142 +7,98 @@ import com.kk3k.workouttracker.db.AppDatabase
 import com.kk3k.workouttracker.db.entities.Exercise
 import com.kk3k.workouttracker.db.entities.Series
 import com.kk3k.workouttracker.db.entities.Workout
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
+// ViewModel class for managing workout-related data and operations
 class WorkoutViewModel(application: Application) : AndroidViewModel(application) {
-    // DAOs initialization
+    // Initializing DAOs for accessing workout, series, and exercise data in the database
     private val workoutDao = AppDatabase.getDatabase(application).workoutDao()
     private val seriesDao = AppDatabase.getDatabase(application).seriesDao()
     private val exerciseDao = AppDatabase.getDatabase(application).exerciseDao()
 
-    // LiveData/Flow properties to observe workouts in UI
-    val allWorkouts: Flow<List<Workout>> = workoutDao.getAllWorkoutsFlow()
+    // Flow that emits all finished workouts
     val finishedWorkouts: Flow<List<Workout>> = workoutDao.getFinishedWorkouts()
 
     // Method to insert a new workout into the database
     fun insertWorkout(workout: Workout) {
+        // Launches a coroutine to perform database insertion asynchronously
         viewModelScope.launch {
-            workoutDao.insert(workout)
+            workoutDao.insert(workout)  // Insert workout into the database
         }
     }
 
-    // Method to insert a new series entry into the database
+    // Method to insert a new series (set of repetitions) into the database
     fun insertSeries(series: Series) {
+        // Launches a coroutine to insert the series asynchronously
         viewModelScope.launch {
-            seriesDao.insert(series)
+            seriesDao.insert(series)  // Insert series into the database
         }
     }
 
     // Method to delete a specific series from the database
     fun deleteSeries(series: Series) {
+        // Launches a coroutine to delete the series asynchronously
         viewModelScope.launch {
-            seriesDao.delete(series)
-        }
-    }
-
-    // Method to create a new workout entry and associate exercises and series to it
-    fun createWorkoutWithExercisesAndSeries(
-        exercise: Exercise,
-        seriesList: List<Pair<Int, Float?>>
-    ) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val newWorkout = Workout(
-                    date = System.currentTimeMillis(),
-                    duration = null,
-                    notes = "New workout with ${exercise.name}"
-                )
-                workoutDao.insert(newWorkout) // Insert the new workout
-
-                val recentWorkout = workoutDao.getMostRecentWorkout()
-                recentWorkout?.let { workout ->
-                    seriesList.forEach { (repetitions, weight) ->
-                        val newSeries = Series(
-                            workoutId = workout.uid,
-                            exerciseId = exercise.uid,
-                            repetitions = repetitions,
-                            weight = weight
-                        )
-                        seriesDao.insert(newSeries) // Insert each series
-                    }
-                }
-            }
+            seriesDao.delete(series)  // Delete the series from the database
         }
     }
 
     // Method to delete all workouts from the database
     fun deleteAllWorkouts() {
+        // Launches a coroutine to delete all workouts asynchronously
         viewModelScope.launch {
-            workoutDao.deleteAll()
-        }
-    }
-
-    // Method to update a specific workout in the database
-    fun updateWorkout(workout: Workout) {
-        viewModelScope.launch {
-            workoutDao.update(workout)
+            workoutDao.deleteAll()  // Delete all workouts from the database
         }
     }
 
     // Method to delete a specific workout from the database
     fun deleteWorkout(workout: Workout) {
+        // Launches a coroutine to delete the workout asynchronously
         viewModelScope.launch {
-            workoutDao.delete(workout)
+            workoutDao.delete(workout)  // Delete the workout from the database
         }
     }
 
-    // Method to retrieve a workout by ID and pass it to a callback function
-    fun getWorkoutById(id: Int, callback: (Workout?) -> Unit) {
-        viewModelScope.launch {
-            val workout = workoutDao.getWorkoutById(id)
-            callback(workout)
-        }
-    }
-
-    // Method to retrieve the total workout count and pass it to a callback function
-    fun getWorkoutCount(callback: (Int) -> Unit) {
-        viewModelScope.launch {
-            val count = workoutDao.getWorkoutCount()
-            callback(count)
-        }
-    }
-
-    // Method to retrieve the most recent workout and pass it to a callback function
+    // Method to retrieve the most recent workout from the database and pass it to a callback
     fun getMostRecentWorkout(callback: (Workout?) -> Unit) {
+        // Launches a coroutine to fetch the most recent workout asynchronously
         viewModelScope.launch {
-            val workout = workoutDao.getMostRecentWorkout()
-            callback(workout)
+            val workout = workoutDao.getMostRecentWorkout()  // Fetch the most recent workout
+            callback(workout)  // Pass the workout (or null if not found) to the callback
         }
     }
 
     // Method to retrieve an unfinished workout from the database
     suspend fun getUnfinishedWorkout(): Workout? {
-        return workoutDao.getUnfinishedWorkout()
+        return workoutDao.getUnfinishedWorkout()  // Fetch the unfinished workout (if any)
     }
 
     // Method to retrieve exercises associated with a specific workout ID
     suspend fun getExercisesForWorkout(workoutId: Int): List<Exercise> {
+        // Fetch the exercise IDs associated with the workout
         val exerciseIds = seriesDao.getExerciseIdsForWorkout(workoutId)
+        // Fetch the exercises using the exercise IDs
         return exerciseDao.getExercisesByIds(exerciseIds)
     }
 
-    // Method to retrieve all series for a specific exercise within a workout
+    // Method to retrieve all series (sets) for a specific exercise within a workout
     suspend fun getSeriesForExercise(workoutId: Int, exerciseId: Int): List<Series> {
+        // Fetch all series for the given exercise ID within the specified workout
         return seriesDao.getSeriesForWorkoutAndExercise(workoutId, exerciseId)
     }
 
-    // Method to set workout details such as duration and notes, and mark it as finished
+    // Method to set workout details such as duration, notes, and mark the workout as finished
     fun setWorkoutDetails(workoutId: Int, duration: Long, note: String) {
+        // Launch a coroutine to update workout details asynchronously
         viewModelScope.launch {
-            val workout = workoutDao.getWorkoutById(workoutId)
+            val workout = workoutDao.getWorkoutById(workoutId)  // Retrieve the workout by its ID
             workout?.let {
+                // Set the workout duration, notes, and mark it as finished
                 it.duration = duration
                 it.notes = note
                 it.isFinished = true
-                workoutDao.update(it)
+                workoutDao.update(it)  // Update the workout in the database
             }
         }
     }

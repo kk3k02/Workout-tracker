@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
+// Adapter to manage and display a list of workouts in the RecyclerView
 class History_WorkoutAdapter(
     private val onWorkoutClick: (Int) -> Unit,  // Callback for when a workout item is clicked
     private val onDeleteClick: (Workout) -> Unit  // Callback for delete button click
@@ -33,14 +34,14 @@ class History_WorkoutAdapter(
     // Inflate the layout for each workout list item and return a new ViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkoutViewHolder {
         val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.history_workout_item, parent, false)
-        return WorkoutViewHolder(itemView)
+            .inflate(R.layout.history_workout_item, parent, false)  // Inflate the layout for each workout item
+        return WorkoutViewHolder(itemView)  // Return the ViewHolder with the inflated layout
     }
 
     // Bind data to each item (ViewHolder) in the workout list
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: WorkoutViewHolder, position: Int) {
-        val currentWorkout = workouts[position]
+        val currentWorkout = workouts[position]  // Get the current workout at the given position
 
         // Format the workout date to "dd/MM/yyyy"
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -48,54 +49,54 @@ class History_WorkoutAdapter(
 
         // Format the workout duration in "MM:SS" or show "N/A" if duration is null or zero
         val formattedDuration = if (currentWorkout.duration != null && currentWorkout.duration!! > 0) {
-            formatDuration(currentWorkout.duration!!)
+            formatDuration(currentWorkout.duration!!)  // Format the duration if it's available
         } else {
-            "N/A"
+            "N/A"  // Show "N/A" if duration is null or zero
         }
 
-        // Display the workout date and duration in the TextView
+        // Display the formatted date and duration in the workout info TextView
         holder.workoutInfo.text = "Workout on $formattedDate - Duration: $formattedDuration"
 
-        // Set up the click listener for the workout item
+        // Set up the click listener for the workout item to show workout details
         holder.itemView.setOnClickListener {
-            onWorkoutClick(currentWorkout.uid)  // Pass the workout ID to the click callback
+            onWorkoutClick(currentWorkout.uid)  // Pass the workout ID to the onWorkoutClick callback
         }
 
-        // Set up the click listener for the delete icon
+        // Set up the click listener for the delete icon to remove the workout
         holder.deleteWorkoutIcon.setOnClickListener {
-            onDeleteClick(currentWorkout)  // Pass the workout to the delete callback
+            onDeleteClick(currentWorkout)  // Pass the workout to the onDeleteClick callback
         }
 
-        // Set up the click listener for the note icon
+        // Set up the click listener for the note icon to show the workout's notes
         holder.noteIcon.setOnClickListener {
-            showNotePopup(holder.itemView.context, currentWorkout.notes ?: "No notes available.")
+            showNotePopup(holder.itemView.context, currentWorkout.notes ?: "No notes available.")  // Show note dialog
         }
     }
 
     // Helper function to format duration from milliseconds to "MM:SS"
     @SuppressLint("DefaultLocale")
     private fun formatDuration(durationMillis: Long): String {
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(durationMillis)
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(durationMillis) % 60
-        return String.format("%02d:%02d", minutes, seconds)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(durationMillis)  // Convert milliseconds to minutes
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(durationMillis) % 60  // Get the remaining seconds
+        return String.format("%02d:%02d", minutes, seconds)  // Return formatted string in MM:SS format
     }
 
     // Function to show the workout note in a popup dialog
     private fun showNotePopup(context: Context, note: String) {
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle("Workout Note")
-        builder.setMessage(note)
-        builder.setPositiveButton("Close", null)
-        builder.show()
+        val builder = AlertDialog.Builder(context)  // Create a dialog builder
+        builder.setTitle("Workout Note")  // Set the title for the dialog
+        builder.setMessage(note)  // Set the message to the workout's note
+        builder.setPositiveButton("Close", null)  // Add a "Close" button to dismiss the dialog
+        builder.show()  // Show the dialog
     }
 
     // Return the total number of workouts in the list
-    override fun getItemCount(): Int = workouts.size
+    override fun getItemCount(): Int = workouts.size  // Return the size of the workouts list
 
     // Update the list of workouts and notify the adapter of data changes
     @SuppressLint("NotifyDataSetChanged")
     fun submitList(workoutList: List<Workout>) {
-        workouts = workoutList
-        notifyDataSetChanged()  // Notify adapter to rebind the data
+        workouts = workoutList  // Update the workouts list with new data
+        notifyDataSetChanged()  // Notify the adapter to refresh the data
     }
 }

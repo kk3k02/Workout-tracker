@@ -22,17 +22,19 @@ class WorkoutHistoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workout_history)
 
-        // Initialize RecyclerView and set up adapter for workout list
+        // Initialize RecyclerView and set up the adapter for the workout list
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewWorkouts)
         val adapter = History_WorkoutAdapter(
+            // Define the behavior when a workout item is clicked
             onWorkoutClick = { workoutId ->
-                // Handle click on a workout item - open WorkoutDetailsActivity
+                // Open the WorkoutHistoryDetailsActivity and pass the selected workout ID
                 val intent = Intent(this, WorkoutHistoryDetailsActivity::class.java)
                 intent.putExtra("WORKOUT_ID", workoutId)
                 startActivity(intent)
             },
+            // Define the behavior when the delete button is clicked
             onDeleteClick = { workout ->
-                // Handle workout deletion
+                // Delete the selected workout
                 deleteWorkout(workout)
             }
         )
@@ -41,10 +43,10 @@ class WorkoutHistoryActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Collect only finished workouts from ViewModel and assign it to the adapter
+        // Collect finished workouts from the ViewModel and update the adapter with the data
         lifecycleScope.launch {
             workoutViewModel.finishedWorkouts.collect { workouts ->
-                adapter.submitList(workouts)
+                adapter.submitList(workouts)  // Update the RecyclerView with the list of finished workouts
             }
         }
     }

@@ -14,37 +14,42 @@ import com.kk3k.workouttracker.db.entities.Exercise
 import com.kk3k.workouttracker.db.entities.Series
 import com.kk3k.workouttracker.db.entities.Workout
 
+// Room Database class to manage all the database entities and DAO operations
 @Database(
-    entities = [
-        Workout::class,
-        BodyMeasurement::class,
-        Exercise::class,
-        Series::class
+    entities = [  // List of entities that will be part of the database
+        Workout::class,         // Workout entity
+        BodyMeasurement::class, // BodyMeasurement entity
+        Exercise::class,        // Exercise entity
+        Series::class           // Series entity
     ],
-    version = 4 // Incremented to version 4
+    version = 4 // Incremented version number for the database schema update
 )
-@TypeConverters(Converters::class)
+@TypeConverters(Converters::class)  // Use TypeConverters to handle complex types in Room (e.g., date or custom types)
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun workoutDao(): WorkoutDao
-    abstract fun bodyMeasurementDao(): BodyMeasurementDao
-    abstract fun exerciseDao(): ExerciseDao
-    abstract fun seriesDao(): SeriesDao
+    // Abstract methods to access the DAOs (Data Access Objects) for each entity
+    abstract fun workoutDao(): WorkoutDao  // Provides access to workout-related data
+    abstract fun bodyMeasurementDao(): BodyMeasurementDao  // Provides access to body measurement-related data
+    abstract fun exerciseDao(): ExerciseDao  // Provides access to exercise-related data
+    abstract fun seriesDao(): SeriesDao  // Provides access to series (sets of exercises) data
 
     companion object {
+        // Singleton pattern to ensure only one instance of the database exists
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
+        // Get the instance of the database, creating it if necessary
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
+                // If no instance exists, create a new one
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    AppDatabase::class.java,
-                    "workout_tracker_database"
+                    AppDatabase::class.java,  // Database class
+                    "workout_tracker_database"  // Database name
                 )
-                    .build()
-                INSTANCE = instance
-                instance
+                    .build()  // Build the database instance
+                INSTANCE = instance  // Store the instance for future use
+                instance  // Return the instance
             }
         }
     }

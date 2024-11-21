@@ -75,12 +75,6 @@ class MainActivity : AppCompatActivity() {
             // Uncomment to clean data if needed
             //workoutViewModel.deleteAllWorkouts()  // Clean all workout data
             //exerciseViewModel.deleteAllExercises()  // Clean all exercises
-            //insertSampleData()  // Insert sample data (optional)
-            //logWorkout()  // Log workout data (optional)
-            //logExercises()  // Log exercises data (optional)
-            //logSeries()  // Log series data (optional)
-            //logBodyMeasurements()  // Log body measurements data (optional)
-            //workoutViewModel.deleteAllWorkouts()  // Clean all workouts
         }
     }
 

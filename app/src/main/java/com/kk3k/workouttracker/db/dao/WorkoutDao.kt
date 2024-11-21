@@ -4,6 +4,7 @@ import androidx.room.*
 import com.kk3k.workouttracker.db.entities.Workout
 import kotlinx.coroutines.flow.Flow
 
+// Data Access Object (DAO) for accessing and managing workout data in the database
 @Dao
 interface WorkoutDao {
 
@@ -27,7 +28,7 @@ interface WorkoutDao {
     @Query("DELETE FROM workout")
     suspend fun deleteAll()
 
-    // Retrieves all workouts as a Flow, emitting updates automatically
+    // Retrieves all workouts as a Flow, emitting updates automatically when data changes
     @Query("SELECT * FROM workout")
     fun getAllWorkoutsFlow(): Flow<List<Workout>>
 
@@ -39,7 +40,7 @@ interface WorkoutDao {
     @Query("SELECT COUNT(*) FROM workout")
     suspend fun getWorkoutCount(): Int
 
-    // Retrieves the most recent workout based on the date, or null if no workouts exist
+    // Retrieves the most recent workout based on the date; returns null if no workouts exist
     @Query("SELECT * FROM workout ORDER BY date DESC LIMIT 1")
     suspend fun getMostRecentWorkout(): Workout?
 
@@ -51,7 +52,7 @@ interface WorkoutDao {
     @Query("SELECT * FROM workout WHERE isFinished = 1")
     fun getFinishedWorkouts(): Flow<List<Workout>>
 
-    // Retrieves the most recent unfinished workout, or null if all are finished
+    // Retrieves the most recent unfinished workout, or null if all workouts are finished
     @Query("SELECT * FROM workout WHERE isFinished = 0 LIMIT 1")
     suspend fun getUnfinishedWorkout(): Workout?
 
@@ -63,9 +64,11 @@ interface WorkoutDao {
     @Query("UPDATE workout SET notes = :note WHERE uid = :id")
     suspend fun updateNote(id: Int, note: String)
 
+    // Retrieves the count of finished workouts in the database
     @Query("SELECT COUNT(*) FROM workout WHERE isFinished = 1")
     suspend fun getFinishedWorkoutCount(): Int
 
+    // Retrieves the total duration of finished workouts
     @Query("SELECT SUM(duration) FROM workout WHERE isFinished = 1")
     suspend fun getTotalWorkoutDuration(): Long?
 }

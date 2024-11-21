@@ -7,111 +7,38 @@ import com.kk3k.workouttracker.db.AppDatabase
 import com.kk3k.workouttracker.db.entities.Exercise
 import com.kk3k.workouttracker.db.entities.Series
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
+// ViewModel for managing series (sets) of exercises associated with workouts
 class SeriesViewModel(application: Application) : AndroidViewModel(application) {
-    private val seriesDao = AppDatabase.getDatabase(application).seriesDao()
-    private val exerciseDao = AppDatabase.getDatabase(application).exerciseDao()
+    private val seriesDao = AppDatabase.getDatabase(application).seriesDao()  // DAO for series (sets)
+    private val exerciseDao = AppDatabase.getDatabase(application).exerciseDao()  // DAO for exercises
 
-    // Fetch series for a specific workout with exercise details
+    // Function to fetch series for a specific workout along with exercise details
     fun getSeriesForWorkout(workoutId: Int): Flow<List<Pair<Exercise, List<Series>>>> {
         return seriesDao.getSeriesForWorkout(workoutId).map { seriesList ->
-            // Pobierz unikalne identyfikatory ćwiczeń
+            // Get unique exercise IDs from the series
             val exerciseIds = seriesList.map { it.exerciseId }.distinct()
 
-            // Pobierz ćwiczenia dla tych identyfikatorów
+            // Retrieve exercises corresponding to the unique exercise IDs
             val exercises = exerciseIds.mapNotNull { exerciseId ->
-                exerciseDao.getExerciseById(exerciseId)
+                exerciseDao.getExerciseById(exerciseId)  // Fetch exercise by ID
             }
 
-            // Powiąż ćwiczenia z odpowiadającymi im seriami
+            // Pair each exercise with its corresponding series (sets)
             exercises.map { exercise ->
-                exercise to seriesList.filter { it.exerciseId == exercise.uid }
+                exercise to seriesList.filter { it.exerciseId == exercise.uid }  // Match exercise with its series
             }
         }
     }
 
-    suspend fun getExercisesForWorkout(workoutId: Int): List<Exercise> {
-        // Pobieramy listę unikalnych exercise_id z tabeli Series dla danego workout_id
-        val seriesList = seriesDao.getSeriesForWorkout(workoutId).first()
-
-        // Wyciągamy unikalne identyfikatory ćwiczeń
-        val exerciseIds = seriesList.map { it.exerciseId }.distinct()
-
-        // Pobieramy ćwiczenia z ExerciseDao na podstawie exercise_id
-        val exercises = exerciseIds.mapNotNull { exerciseId ->
-            exerciseDao.getExerciseById(exerciseId)
-        }
-
-        return exercises
-    }
-
-    // Get all sets for a specific exercise in a workout
-    fun getSeriesForExerciseInWorkout(workoutId: Int, exerciseId: Int): Flow<List<Series>> {
-        return seriesDao.getSeriesForExerciseInWorkout(workoutId, exerciseId)
-    }
-
-    // Insert a new set (series)
-    fun insertSeries(series: Series) {
-        viewModelScope.launch {
-            seriesDao.insert(series)
-        }
-    }
-
-    // Insert multiple sets
-    fun insertMultipleSeries(vararg sets: Series) {
-        viewModelScope.launch {
-            seriesDao.insertAll(*sets)
-        }
-    }
-
-    // Update an existing set
-    fun updateSeries(set: Series) {
-        viewModelScope.launch {
-            seriesDao.update(set)
-        }
-    }
-
-    // Delete a specific set
-    fun deleteSeries(set: Series) {
-        viewModelScope.launch {
-            seriesDao.delete(set)
-        }
-    }
-
-    // Delete all sets for a specific workout
-    fun deleteSeriesForWorkout(workoutId: Int) {
-        viewModelScope.launch {
-            seriesDao.deleteSeriesForWorkout(workoutId)
-        }
-    }
-
-    // Delete all sets
+    // Function to delete all series from the database
     fun deleteAllSeries() {
         viewModelScope.launch {
-            seriesDao.deleteAll()
+            // Launch a coroutine to delete all series in the background
+            seriesDao.deleteAll()  // Delete all series using the DAO
         }
     }
 
-    // Get the count of all sets
-    fun getSeriesCount(callback: (Int) -> Unit) {
-        viewModelScope.launch {
-            val count = seriesDao.getSeriesCount()
-            callback(count)
-        }
-    }
-
-    fun insertSampleSeries(seriesViewModel: SeriesViewModel) {
-        for (i in 1..10) {
-            val series = Series(
-                workoutId = i,
-                exerciseId = i,
-                repetitions = 8 + (i % 5),
-                weight = (i * 5).toFloat()
-            )
-            seriesViewModel.insertSeries(series)
-        }
-    }
 }

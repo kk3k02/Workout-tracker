@@ -53,7 +53,7 @@ class BodyStatisticsActivity : AppCompatActivity() {
         // Initially, show nothing in the chart container
         chartContainer.removeAllViews()
 
-        // Set click listeners for the buttons
+        // Set click listeners for the buttons to display different charts or information
         buttonGeneral.setOnClickListener {
             deactivateButtons()
             buttonGeneral.isEnabled = false

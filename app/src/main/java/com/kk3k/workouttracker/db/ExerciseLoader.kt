@@ -14,20 +14,25 @@ import java.io.InputStream
 object ExerciseLoader {
 
     @Volatile
-    private var isInitialized = false
+    private var isInitialized = false  // Flag to track whether exercises have been loaded
 
     // Singleton function to load exercises if not already loaded
     fun loadExercisesIfNeeded(context: Context, exerciseViewModel: ExerciseViewModel) {
+        // Check if exercises are already loaded
         if (!isInitialized) {
-            synchronized(this) {
+            synchronized(this) {  // Synchronize to ensure only one thread can execute the block at a time
+                // Double-check if exercises are not initialized (after acquiring the lock)
                 if (!isInitialized) {
+                    // Launch a coroutine on the IO dispatcher to load exercises in the background
                     (context as? AppCompatActivity)?.lifecycleScope?.launch(Dispatchers.IO) {
                         // Directly use the function from ViewModel to check the exercise count
                         exerciseViewModel.getExerciseCount { count ->
+                            // If no exercises are found, load the default exercises
                             if (count == 0) {
-                                addExercises(exerciseViewModel, context)
+                                addExercises(exerciseViewModel, context)  // Call function to add exercises
                             }
                         }
+                        // Mark the initialization as done
                         isInitialized = true
                     }
                 }
@@ -1023,18 +1028,28 @@ object ExerciseLoader {
         }
     }
 
-    // Helper function to load GIFs as ByteArray
+    // Helper function to load GIFs from resources as a ByteArray
     private fun getGifAsByteArray(context: Context, resourceId: Int): ByteArray? {
         return try {
+            // Open the raw resource (GIF file) using the resource ID
             val inputStream: InputStream = context.resources.openRawResource(resourceId)
+
+            // Create a ByteArrayOutputStream to store the GIF as a byte array
             val byteStream = ByteArrayOutputStream()
+
+            // Create a buffer to read data in chunks
             val buffer = ByteArray(1024)
             var length: Int
+
+            // Read the GIF file in chunks and write the data to the ByteArrayOutputStream
             while (inputStream.read(buffer).also { length = it } != -1) {
                 byteStream.write(buffer, 0, length)
             }
-            byteStream.toByteArray()  // Returning GIF as ByteArray
+
+            // Convert the ByteArrayOutputStream to a byte array and return it
+            byteStream.toByteArray()  // Returning GIF as a ByteArray
         } catch (e: Exception) {
+            // If an error occurs, print the stack trace and return null
             e.printStackTrace()
             null
         }

@@ -27,34 +27,34 @@ class BodyMeasurementActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_body_measurement)
 
-        // Initialize RecyclerView and set its layout manager and adapter
+        // Initialize RecyclerView, set the layout manager, and attach the adapter to display the list of measurements
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewBodyMeasurements)
         val adapter = History_BodyMeasurementAdapter(bodyMeasurementViewModel)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Setup button to open a dialog for adding new measurements
+        // Set up the "Add Measurement" button, which triggers the dialog to add a new body measurement
         val buttonAddMeasurement: Button = findViewById(R.id.buttonAddMeasurement)
         buttonAddMeasurement.setOnClickListener {
-            showAddMeasurementDialog()
+            showAddMeasurementDialog()  // Show the dialog to add a new measurement
         }
 
-        // Subscribe to measurement updates from the ViewModel and update the adapter accordingly
+        // Subscribe to measurement updates from the ViewModel and update the adapter with the latest measurements
         lifecycleScope.launch {
             bodyMeasurementViewModel.allMeasurements.collect { measurements ->
-                adapter.submitList(measurements)  // Update the RecyclerView with the latest measurements
+                adapter.submitList(measurements)  // Update the RecyclerView when measurements change
             }
         }
     }
 
-    // Function to show a dialog that allows the user to add new body measurement entries
+    // Function to show a dialog for adding new body measurement entries
     private fun showAddMeasurementDialog() {
         val builder = AlertDialog.Builder(this)
         val inflater = layoutInflater
         val view = inflater.inflate(R.layout.dialog_add_measurement, null)
         builder.setView(view)
 
-        // Find and initialize input fields from the dialog layout
+        // Find and initialize the input fields from the dialog layout
         val editTextBiceps = view.findViewById<EditText>(R.id.editTextBiceps)
         val editTextTriceps = view.findViewById<EditText>(R.id.editTextTriceps)
         val editTextChest = view.findViewById<EditText>(R.id.editTextChest)
@@ -63,18 +63,17 @@ class BodyMeasurementActivity : AppCompatActivity() {
         val editTextThighs = view.findViewById<EditText>(R.id.editTextThighs)
         val editTextCalves = view.findViewById<EditText>(R.id.editTextCalves)
         val editTextWeight = view.findViewById<EditText>(R.id.editTextWeight)
-        val editTextNote = view.findViewById<EditText>(R.id.editTextNote) // Note input field
+        val editTextNote = view.findViewById<EditText>(R.id.editTextNote)  // Optional note input field
 
-        // Real-time validation listeners for input fields
+        // List of EditTexts for real-time validation
         val editTexts = listOf(editTextBiceps, editTextTriceps, editTextChest, editTextWaist,
             editTextHips, editTextThighs, editTextCalves, editTextWeight)
 
-        // Attach TextWatcher for real-time validation
+        // Attach a TextWatcher to each EditText for real-time input validation
         editTexts.forEach { editText ->
             editText.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
-                    // Validate the field on each text change
-                    validateInputField(editText)
+                    validateInputField(editText)  // Validate the input after the text changes
                 }
 
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -86,14 +85,14 @@ class BodyMeasurementActivity : AppCompatActivity() {
         // Define the behavior for the "Save" button in the dialog
         builder.setPositiveButton("Save") { _, _ ->
 
-            // Validate all fields before saving
+            // Validate all input fields before saving the new measurement
             if (validateInputs(editTextBiceps, editTextTriceps, editTextChest, editTextWaist,
                     editTextHips, editTextThighs, editTextCalves, editTextWeight, editTextNote)) {
 
-                // Create a new measurement object from the input data
+                // Create a new BodyMeasurement object with the input data
                 val newMeasurement = BodyMeasurement(
-                    date = System.currentTimeMillis(),  // Capture the current time as the date
-                    biceps = editTextBiceps.text.toString().toIntOrNull(),  // Parse the input as integers
+                    date = System.currentTimeMillis(),  // Store the current time as the measurement date
+                    biceps = editTextBiceps.text.toString().toIntOrNull(),  // Parse the input to an integer
                     triceps = editTextTriceps.text.toString().toIntOrNull(),
                     chest = editTextChest.text.toString().toIntOrNull(),
                     waist = editTextWaist.text.toString().toIntOrNull(),
@@ -101,42 +100,43 @@ class BodyMeasurementActivity : AppCompatActivity() {
                     thighs = editTextThighs.text.toString().toIntOrNull(),
                     calves = editTextCalves.text.toString().toIntOrNull(),
                     weight = editTextWeight.text.toString().toIntOrNull(),
-                    notes = editTextNote.text.toString()  // Capture the optional note
+                    notes = editTextNote.text.toString()  // Capture any notes entered
                 )
 
-                // Save the new measurement through the ViewModel
+                // Insert the new measurement into the database via the ViewModel
                 lifecycleScope.launch {
                     bodyMeasurementViewModel.insertBodyMeasurement(newMeasurement)
                 }
             } else {
+                // Show an error message if the input is invalid
                 Toast.makeText(this@BodyMeasurementActivity, "Please fix errors before saving", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // Define the behavior for the "Cancel" button
-        builder.setNegativeButton("Cancel", null) // Simply dismiss the dialog on cancel
+        // Define the behavior for the "Cancel" button (dismiss the dialog)
+        builder.setNegativeButton("Cancel", null)
         builder.show()  // Display the dialog to the user
     }
 
-    // Function to validate all the inputs and highlight errors if any
+    // Function to validate all the input fields and highlight errors if any
     private fun validateInputs(vararg fields: EditText): Boolean {
         var isValid = true
-        var atLeastOneValidField = false  // Flag to check if at least one measurement is provided
+        var atLeastOneValidField = false  // Flag to ensure at least one valid field is filled
 
+        // Iterate through each field to check for validity
         fields.forEach { field ->
-            // Reset background to default
-            field.setBackgroundResource(android.R.drawable.edit_text);
+            field.setBackgroundResource(android.R.drawable.edit_text)  // Reset background to default
 
-            // If the field is empty or not a valid number (except for notes)
+            // If the field contains invalid data (empty or non-numeric input)
             if (field.text.isNotEmpty() && (field.id != R.id.editTextNote && !isValidInteger(field.text.toString()))) {
-                field.setBackgroundResource(R.drawable.error_background)  // Set red background for errors
+                field.setBackgroundResource(R.drawable.error_background)  // Highlight the field with an error
                 isValid = false
             } else if (field.text.isNotEmpty() && field.id != R.id.editTextNote) {
-                atLeastOneValidField = true  // Mark if at least one valid measurement is entered
+                atLeastOneValidField = true  // Ensure at least one valid measurement is provided
             }
         }
 
-        // Ensure at least one valid measurement field is filled
+        // Ensure that at least one valid measurement field is filled
         if (!atLeastOneValidField) {
             Toast.makeText(this@BodyMeasurementActivity, "At least one measurement must be filled", Toast.LENGTH_SHORT).show()
             isValid = false
@@ -145,22 +145,22 @@ class BodyMeasurementActivity : AppCompatActivity() {
         return isValid
     }
 
-    // Function to validate an individual input field and change the background color in real-time
+    // Function to validate a single input field and update its background color in real-time
     private fun validateInputField(field: EditText) {
         if (field.id != R.id.editTextNote && field.text.isNotEmpty() && !isValidInteger(field.text.toString())) {
-            field.setBackgroundResource(R.drawable.error_background)  // Set red background for errors
+            field.setBackgroundResource(R.drawable.error_background)  // Highlight with red if invalid
         } else {
-            field.setBackgroundResource(android.R.drawable.edit_text)  // Reset to default if valid
+            field.setBackgroundResource(android.R.drawable.edit_text)  // Reset to default background if valid
         }
     }
 
-    // Helper function to check if a string is a valid integer
+    // Helper function to check if a string can be parsed as a valid integer
     private fun isValidInteger(value: String): Boolean {
         return try {
-            value.toInt() // Check if it's a valid integer
+            value.toInt()  // Attempt to parse the value as an integer
             true
         } catch (e: NumberFormatException) {
-            false
+            false  // Return false if the value is not a valid integer
         }
     }
 }
