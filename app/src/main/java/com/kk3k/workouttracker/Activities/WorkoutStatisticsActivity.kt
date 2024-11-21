@@ -1,29 +1,32 @@
 package com.kk3k.workouttracker.Activities
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.kk3k.workouttracker.R
-import com.kk3k.workouttracker.db.AppDatabase
-import com.kk3k.workouttracker.db.dao.WorkoutDao
-import com.kk3k.workouttracker.db.dao.SeriesDao
-import com.kk3k.workouttracker.db.entities.Exercise
-import com.kk3k.workouttracker.db.TargetMuscle
-import kotlinx.coroutines.launch
-import android.app.AlertDialog
-import android.util.Log
-import android.widget.LinearLayout
-import androidx.activity.viewModels
-import com.kk3k.workouttracker.ViewModels.ExerciseViewModel
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.kk3k.workouttracker.R
+import com.kk3k.workouttracker.ViewModels.ExerciseViewModel
+import com.kk3k.workouttracker.db.AppDatabase
+import com.kk3k.workouttracker.db.TargetMuscle
+import com.kk3k.workouttracker.db.dao.SeriesDao
+import com.kk3k.workouttracker.db.dao.WorkoutDao
+import com.kk3k.workouttracker.db.entities.Exercise
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class WorkoutStatisticsActivity : AppCompatActivity() {
 
@@ -41,7 +44,6 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
 
     // Selected exercise and its ID (we need it for querying the series data)
     private var selectedExerciseId: Int? = null
-    private var workoutId: Int? = null  // Store workout ID, replace with actual logic to get workoutId
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -177,31 +179,93 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
     // Fetch exercise progression chart based on selected exercise and workout
     private fun fetchExerciseProgressionChart(exerciseId: Int) {
         lifecycleScope.launch {
-            workoutId = 1  // Replace with actual logic to get workoutId
-            workoutId?.let { id ->
-                val seriesList = seriesDao.getSeriesForWorkoutAndExercise(id, exerciseId)
+            // Fetch all series for the selected exercise
+            val seriesList = seriesDao.getSeriesForExercise(exerciseId)
 
-                if (seriesList.isEmpty()) {
-                    Log.d("Chart", "No series data found for this exercise")
-                }
-
-                // Map the series data into chart entries (time on X-axis, weight on Y-axis)
-                val entries = seriesList.mapIndexed { index, series ->
-                    Entry(index.toFloat(), series.weight ?: 0f)
-                }
-
-                val lineDataSet = LineDataSet(entries, "Weight Progression")
-                val lineData = LineData(lineDataSet)
-
-                // Create a LineChart, set its data, and refresh it
-                val lineChart = LineChart(this@WorkoutStatisticsActivity)
-                lineChart.data = lineData
-                lineChart.invalidate()
-
-                // Add the chart to the container and remove any previous views
-                chartContainer.removeAllViews()
-                chartContainer.addView(lineChart)
+            // If no series are found, log and return
+            if (seriesList.isEmpty()) {
+                Log.d("Chart", "No series data found for this exercise")
+                return@launch
             }
+
+            // Map for storing total weight per workout date
+            val datesMap = mutableMapOf<Long, Float>()
+
+            // Format for displaying dates as dd/MM/yyyy
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+            for (series in seriesList) {
+                // Calculate the weight for each series (repetitions * weight)
+                val seriesWeight = series.repetitions * (series.weight ?: 0f)
+
+                // Get the workout date using the workoutDao
+                val workout = workoutDao.getWorkoutById(series.workoutId)
+                val workoutDate = workout?.date ?: 0L  // If no date, set to 0L (unknown date)
+
+                // Check if the date is valid (not 0L) and update the total weight for the given workout date
+                if (workoutDate > 0) {
+                    datesMap[workoutDate] = datesMap.getOrDefault(workoutDate, 0f) + seriesWeight
+                }
+            }
+
+            // Sort the workout dates (X axis) and generate the chart
+            val sortedDates = datesMap.keys.sorted()  // Sorting dates in ascending order
+            val entries = mutableListOf<Entry>()  // List to store chart points
+            val formattedDates = mutableListOf<String>()  // List to store formatted dates for X axis
+
+            var firstValue = 0f  // Variable to store the first value for Y axis minimum
+
+            sortedDates.forEachIndexed { index, date ->
+                val totalWeightForDate = datesMap[date] ?: 0f
+                // Add a point to the chart (index as X axis, totalWeightForDate as Y axis)
+                entries.add(Entry(index.toFloat(), totalWeightForDate))
+
+                // Format the date as dd/MM/yyyy and add it to the formattedDates list
+                val formattedDate = dateFormat.format(Date(date))
+                formattedDates.add(formattedDate)
+
+                // Store the first value for Y axis minimum setting
+                if (index == 0) {
+                    firstValue = totalWeightForDate
+                }
+            }
+
+            // Create a dataset for the chart
+            val lineDataSet = LineDataSet(entries, "Total Weight")
+            val lineData = LineData(lineDataSet)
+
+            // Create and update the chart
+            val lineChart = LineChart(this@WorkoutStatisticsActivity)
+            lineChart.data = lineData
+            lineChart.invalidate()  // Refresh the chart
+
+            // Set X and Y axis labels and configurations
+            val xAxis = lineChart.xAxis
+            // Set the X axis to display formatted dates
+            xAxis.valueFormatter = object : com.github.mikephil.charting.formatter.ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    val index = value.toInt()
+                    return formattedDates.getOrElse(index) { "" }
+                }
+            }
+            xAxis.granularity = 1f  // Ensures labels are displayed only once per date
+            xAxis.position = com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM  // Position labels at the bottom of X axis
+
+            // Set the minimum value for Y axis (first value from the series)
+            val yAxis = lineChart.axisLeft
+            yAxis.axisMinimum = firstValue  // Set the first value as the minimum for Y axis
+            yAxis.valueFormatter = object : com.github.mikephil.charting.formatter.ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    return "$value kg"  // Append "kg" to the Y axis labels
+                }
+            }
+
+            // Disable the right Y axis (usually not needed)
+            lineChart.axisRight.isEnabled = false
+
+            // Add the chart to the container
+            chartContainer.removeAllViews()
+            chartContainer.addView(lineChart)
         }
     }
 }
