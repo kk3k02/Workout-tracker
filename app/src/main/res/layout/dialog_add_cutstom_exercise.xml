@@ -23,19 +23,4 @@
         android:lines="3"
         android:gravity="top|start" />
 
-    <!-- Button to Select Image -->
-    <Button
-        android:id="@+id/buttonSelectImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select Image" />
-
-    <!-- Image Preview -->
-    <ImageView
-        android:id="@+id/imageViewPreview"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:layout_marginTop="16dp"
-        android:visibility="gone" />
 </LinearLayout>
