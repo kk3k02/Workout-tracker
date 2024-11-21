@@ -1,61 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
     android:padding="24dp"
     android:background="#F5F5F5">
 
+    <!-- Close Button (X) at the top right corner -->
     <Button
-        android:id="@+id/btnWorkout"
-        android:layout_width="match_parent"
+        android:id="@+id/btnClose"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="WORKOUT"
-        android:textStyle="bold"
+        android:text="X"
+        android:textSize="24sp"
         android:textColor="#FFFFFF"
-        android:backgroundTint="#4CAF50"
-        android:layout_marginBottom="16dp"
-        android:elevation="4dp"
-        android:padding="12dp"
-        android:background="@drawable/rounded_button" />
+        android:backgroundTint="#FF0000"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:padding="12dp" />
 
-    <Button
-        android:id="@+id/btnWorkoutHistory"
+    <!-- Container for the other buttons centered vertically -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="WORKOUT HISTORY"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#2196F3"
-        android:layout_marginBottom="16dp"
-        android:elevation="4dp"
-        android:padding="12dp"
-        android:background="@drawable/rounded_button" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_below="@id/btnClose">
 
-    <Button
-        android:id="@+id/btnBodyMeasurement"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="BODY MEASUREMENT"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#FFC107"
-        android:layout_marginBottom="16dp"
-        android:elevation="4dp"
-        android:padding="12dp"
-        android:background="@drawable/rounded_button" />
+        <!-- Workout Button -->
+        <Button
+            android:id="@+id/btnWorkout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="WORKOUT"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#4CAF50"
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp"
+            android:padding="12dp"
+            android:background="@drawable/rounded_button" />
 
-    <Button
-        android:id="@+id/btnSummary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="SUMMARY"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#F44336"
-        android:elevation="4dp"
-        android:padding="12dp"
-        android:background="@drawable/rounded_button" />
+        <!-- Workout History Button -->
+        <Button
+            android:id="@+id/btnWorkoutHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="WORKOUT HISTORY"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#2196F3"
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp"
+            android:padding="12dp"
+            android:background="@drawable/rounded_button" />
 
-</LinearLayout>
+        <!-- Body Measurement Button -->
+        <Button
+            android:id="@+id/btnBodyMeasurement"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="BODY MEASUREMENT"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#FFC107"
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp"
+            android:padding="12dp"
+            android:background="@drawable/rounded_button" />
+
+        <!-- Summary Button -->
+        <Button
+            android:id="@+id/btnSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SUMMARY"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#F44336"
+            android:elevation="4dp"
+            android:padding="12dp"
+            android:background="@drawable/rounded_button" />
+    </LinearLayout>
+
+</RelativeLayout>
