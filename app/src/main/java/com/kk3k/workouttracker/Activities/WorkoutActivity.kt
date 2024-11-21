@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -199,7 +200,10 @@ class WorkoutActivity : AppCompatActivity() {
             val name = editTextName.text.toString().trim()
             val description = editTextDescription.text.toString().trim()
 
-            if (name.isNotEmpty()) {
+            // Validate that both name and description are provided
+            if (name.isEmpty() || description.isEmpty()) {
+                Toast.makeText(this, "Please provide both the name and description of the exercise.", Toast.LENGTH_SHORT).show()
+            } else {
                 val newExercise = Exercise(
                     name = name,
                     targetMuscle = TargetMuscle.OTHER.name,
