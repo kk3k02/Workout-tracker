@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)  // Set the layout for the activity
+        supportActionBar?.hide() // Hide the ActionBar
 
         // Load exercises if needed using ExerciseLoader
         ExerciseLoader.loadExercisesIfNeeded(this, exerciseViewModel)

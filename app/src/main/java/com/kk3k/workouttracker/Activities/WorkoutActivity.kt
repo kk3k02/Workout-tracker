@@ -46,6 +46,7 @@ class WorkoutActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workout)
+        supportActionBar?.hide() // Hide the ActionBar
 
         // Initialize UI components
         val buttonAddExercise: Button = findViewById(R.id.buttonAddExercise)

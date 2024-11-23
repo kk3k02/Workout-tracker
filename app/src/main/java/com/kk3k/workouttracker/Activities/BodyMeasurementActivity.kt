@@ -26,6 +26,7 @@ class BodyMeasurementActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_body_measurement)
+        supportActionBar?.hide() // Hide the ActionBar
 
         // Initialize RecyclerView, set the layout manager, and attach the adapter to display the list of measurements
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewBodyMeasurements)

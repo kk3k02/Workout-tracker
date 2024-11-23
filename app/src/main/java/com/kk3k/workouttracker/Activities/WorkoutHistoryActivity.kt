@@ -21,6 +21,7 @@ class WorkoutHistoryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workout_history)
+        supportActionBar?.hide() // Hide the ActionBar
 
         // Initialize RecyclerView and set up the adapter for the workout list
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewWorkouts)

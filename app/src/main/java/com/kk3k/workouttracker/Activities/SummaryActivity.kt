@@ -10,6 +10,7 @@ import com.kk3k.workouttracker.R
 class SummaryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportActionBar?.hide() // Hide the ActionBar
 
         // Enable edge-to-edge display, making the app use the full screen area
         enableEdgeToEdge()

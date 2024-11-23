@@ -23,6 +23,7 @@ class WorkoutHistoryDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workout_details)
+        supportActionBar?.hide() // Hide the ActionBar
 
         // Retrieve the workout ID passed through the intent
         val workoutId = intent.getIntExtra("WORKOUT_ID", -1)

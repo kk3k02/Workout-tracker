@@ -50,6 +50,7 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workout_statistics)
+        supportActionBar?.hide() // Hide the ActionBar
 
         // Initialize views
         buttonSelectExercise = findViewById(R.id.btnSelectExercise)
