@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -9,7 +9,14 @@
         android:id="@+id/editTextNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter workout note"
+        android:autofillHints=""
+        android:background="@drawable/edit_text_background_dark"
+        android:hint="@string/workout_note"
+        android:minHeight="48dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#9E9E9E"
         android:maxLines="3"
-        android:inputType="textMultiLine"/>
+        android:inputType="textMultiLine"
+        android:gravity="top|start"
+        tools:ignore="VisualLintTextFieldSize" />
 </LinearLayout>

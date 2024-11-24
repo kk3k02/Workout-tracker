@@ -1,6 +1,7 @@
 package com.kk3k.workouttracker.Adapters
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,8 +60,11 @@ class History_ExerciseAdapter(
                     .inflate(R.layout.history_series_item, holder.expandableLayout, false)  // Inflate layout for each series
 
                 val seriesInfo = seriesView.findViewById<TextView>(R.id.seriesInfo)
+
+                seriesInfo.setTextAppearance(R.style.SeriesInfoTextStyle) // For newer Android versions
+
                 // Display the series details (repetitions and weight)
-                seriesInfo.text = "Set ${index + 1}: Reps: ${series.repetitions}, Weight: ${series.weight ?: "N/A"} kg"
+                seriesInfo.text = "${index + 1} Seria: Powtórzenia: ${series.repetitions}, Obciążenie: ${series.weight ?: "N/A"} kg"
                 holder.expandableLayout.addView(seriesView)  // Add the series view to the expandable layout
             }
         }

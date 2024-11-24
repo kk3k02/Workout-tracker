@@ -1,7 +1,26 @@
 <resources>
     <string name="app_name">Workout tracker</string>
     <string name="triceps">Triceps:</string>
-    <string name="chest">Chest:</string>
+    <string name="chest">Klatka piersiowa:</string>
     <string name="date">Date</string>
     <string name="biceps">Biceps:</string>
+    <string name="weight">WAGA OBCIĄŻENIA</string>
+    <string name="repetitions">LICZBA POWTÓRZEŃ</string>
+    <string name="add_exercise">DODAJ ĆWICZENIE</string>
+    <string name="save_workout">ZAPISZ TRENING</string>
+    <string name="reps_and_weight">Powtórzenia: 10, Obciążenie: 50kg</string>
+    <string name="delete_series">USUŃ SERIĘ</string>
+    <string name="workout_note">WPISZ NOTATKĘ</string>
+    <string name="add_exercise_description">PODAJ OPIS ĆWICZENIA</string>
+    <string name="enter_exercise_name">PODAJ NAZWĘ ĆWICZENIA</string>
+    <string name="add_measurement">DODAJ POMIAR</string>
+    <string name="add_biceps_measurement">BICEPS (CM)</string>
+    <string name="add_triceps_measurement">TRICEPS (CM)</string>
+    <string name="add_chest_measurement">KLATKA PIERSIOWA (CM)</string>
+    <string name="add_waist_measurement">NADGARSTKI (CM)</string>
+    <string name="add_hips_measurement">BIODRA (CM)</string>
+    <string name="add_thighs_measurement">UDA (CM)</string>
+    <string name="add_calves_measurement">ŁYDKI (CM)</string>
+    <string name="add_weight_measurement">WAGA (KG)</string>
+    <string name="add_note_measurement">NOTATKA (OPCJONALNIE)</string>
 </resources>

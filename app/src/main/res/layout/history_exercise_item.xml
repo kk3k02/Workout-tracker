@@ -3,21 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="#E0E0E0"
+    android:background="@drawable/rounded_bg"
     android:padding="16dp"
     android:layout_margin="8dp"
     android:elevation="4dp"
-    android:backgroundTint="@android:color/white"
     android:divider="?android:attr/dividerVertical"
     android:showDividers="middle">
 
-    <!-- Horizontal layout for exercise name and info icon -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <!-- Tile displaying the exercise name -->
         <TextView
             android:id="@+id/exerciseName"
             android:layout_width="0dp"
@@ -25,19 +22,19 @@
             android:layout_weight="1"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="@android:color/black" />
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#121212"
+            android:padding="8dp"/>
 
-        <!-- Info icon to show exercise details (GIF and description) -->
         <ImageView
             android:id="@+id/infoIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_dialog_info"
+            android:layout_width="85dp"
+            android:layout_height="match_parent"
+            android:contentDescription="Info about the exercise"
             android:padding="8dp"
-            android:contentDescription="Info about the exercise" />
+            android:src="@drawable/ic_info_outline_white" />
     </LinearLayout>
 
-    <!-- Expandable section with sets data, initially hidden -->
     <LinearLayout
         android:id="@+id/expandableLayout"
         android:layout_width="match_parent"
@@ -45,7 +42,6 @@
         android:orientation="vertical"
         android:visibility="gone"
         android:padding="8dp"
-        android:background="#B0BEC5"
         android:layout_marginTop="8dp"
         android:elevation="2dp">
     </LinearLayout>

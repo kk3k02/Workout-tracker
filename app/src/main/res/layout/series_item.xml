@@ -1,25 +1,29 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:layout_marginTop="16dp"
+    android:background="@drawable/rounded_bg">
 
-    <!-- TextView for displaying the series information (reps and weight) -->
     <TextView
         android:id="@+id/textViewSeriesInfo"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
         android:layout_weight="1"
-        android:text="Reps: 10, Weight: 50kg"
-        android:textSize="16sp" />
+        android:fontFamily="@font/roboto_italic"
+        android:text="@string/reps_and_weight"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:gravity="center"/>
 
-    <!-- ImageView for the delete (minus) icon to remove the series -->
     <ImageView
         android:id="@+id/iconDeleteSeries"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_delete"
-        android:contentDescription="Delete series"
-        android:padding="8dp" />
+        android:layout_width="41dp"
+        android:layout_height="52dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/delete_series"
+        android:src="@drawable/ic_delete_white"
+        app:tint="#FFFFFF" />
 </LinearLayout>

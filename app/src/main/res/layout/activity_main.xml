@@ -1,87 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
-    android:background="#F5F5F5">
+    android:background="#121212">
 
-    <!-- Close Button (X) at the top right corner -->
     <Button
         android:id="@+id/btnClose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="X"
-        android:textSize="24sp"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#FF0000"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:padding="12dp" />
+        android:background="@drawable/rounded_button_close"
+        android:backgroundTint="#D32F2F"
+        android:padding="12dp"
+        android:text="X"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        app:fontFamily="@font/roboto_bold" />
 
-    <!-- Container for the other buttons centered vertically -->
-    <LinearLayout
+    <GridLayout
+        android:id="@+id/gridLayoutButtons"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_below="@id/btnClose">
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:padding="16dp"
+        android:columnCount="2"
+        android:rowCount="2"
+        android:alignmentMode="alignMargins"
+        android:columnOrderPreserved="false">
 
-        <!-- Workout Button -->
         <Button
             android:id="@+id/btnWorkout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="WORKOUT"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#4CAF50"
-            android:layout_marginBottom="16dp"
+            android:layout_width="0dp"
+            android:layout_height="140dp"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="#388E3C"
             android:elevation="4dp"
-            android:padding="12dp"
-            android:background="@drawable/rounded_button" />
+            android:drawableTop="@drawable/workout"
+            android:text="TRENING"
+            android:textSize="14sp"
+            android:paddingTop="10dp"
+            android:textColor="#FFFFFF"
+            app:fontFamily="@font/roboto_bold" />
 
-        <!-- Workout History Button -->
         <Button
             android:id="@+id/btnWorkoutHistory"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="WORKOUT HISTORY"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#2196F3"
-            android:layout_marginBottom="16dp"
+            android:layout_width="0dp"
+            android:layout_height="140dp"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="#1976D2"
             android:elevation="4dp"
-            android:padding="12dp"
-            android:background="@drawable/rounded_button" />
+            android:drawableTop="@drawable/history"
+            android:text="HISTORIA"
+            android:textSize="14sp"
+            android:paddingTop="10dp"
+            android:textColor="#FFFFFF"
+            app:fontFamily="@font/roboto_bold" />
 
-        <!-- Body Measurement Button -->
         <Button
             android:id="@+id/btnBodyMeasurement"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="BODY MEASUREMENT"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#FFC107"
-            android:layout_marginBottom="16dp"
+            android:layout_width="0dp"
+            android:layout_height="140dp"
+            android:layout_row="1"
+            android:layout_column="0"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="#FFA000"
             android:elevation="4dp"
-            android:padding="12dp"
-            android:background="@drawable/rounded_button" />
+            android:drawableTop="@drawable/measurement"
+            android:text="POMIARY"
+            android:textSize="14sp"
+            android:paddingTop="10dp"
+            android:textColor="#FFFFFF"
+            app:fontFamily="@font/roboto_bold" />
 
-        <!-- Summary Button -->
         <Button
             android:id="@+id/btnSummary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="SUMMARY"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#F44336"
+            android:layout_width="0dp"
+            android:layout_height="140dp"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="#D32F2F"
             android:elevation="4dp"
-            android:padding="12dp"
-            android:background="@drawable/rounded_button" />
-    </LinearLayout>
-
+            android:drawableTop="@drawable/summary"
+            android:text="PODSUMOWANIE"
+            android:textSize="14sp"
+            android:paddingTop="10dp"
+            android:textColor="#FFFFFF"
+            app:fontFamily="@font/roboto_bold" />
+    </GridLayout>
 </RelativeLayout>

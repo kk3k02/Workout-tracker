@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.kk3k.workouttracker.R
@@ -25,7 +25,7 @@ class History_BodyMeasurementAdapter(private val viewModel: BodyMeasurementViewM
         // Define views for each item in the RecyclerView
         val measurementDate: TextView = itemView.findViewById(R.id.measurementDate) // Displays the date of the measurement
         val expandableLayout: View = itemView.findViewById(R.id.expandableLayout) // Layout to show additional measurement details
-        val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton) // Button to delete a measurement
+        val deleteButton: ImageView = itemView.findViewById(R.id.deleteButton) // Button to delete a measurement
         val biceps: TextView = itemView.findViewById(R.id.textViewBiceps) // Displays the biceps measurement
         val triceps: TextView = itemView.findViewById(R.id.textViewTriceps) // Displays the triceps measurement
         val chest: TextView = itemView.findViewById(R.id.textViewChest) // Displays the chest measurement
@@ -54,16 +54,16 @@ class History_BodyMeasurementAdapter(private val viewModel: BodyMeasurementViewM
         val formattedDate = sdf.format(Date(currentMeasurement.date ?: 0L))
 
         // Populate the views with data from the current measurement
-        holder.measurementDate.text = "Date: $formattedDate"  // Set the measurement date
+        holder.measurementDate.text = "Data: $formattedDate"  // Set the measurement date
         holder.biceps.text = "Biceps: ${currentMeasurement.biceps ?: "N/A"} cm"  // Set the biceps measurement
         holder.triceps.text = "Triceps: ${currentMeasurement.triceps ?: "N/A"} cm"  // Set the triceps measurement
-        holder.chest.text = "Chest: ${currentMeasurement.chest ?: "N/A"} cm"  // Set the chest measurement
-        holder.waist.text = "Waist: ${currentMeasurement.waist ?: "N/A"} cm"  // Set the waist measurement
-        holder.hips.text = "Hips: ${currentMeasurement.hips ?: "N/A"} cm"  // Set the hips measurement
-        holder.thighs.text = "Thighs: ${currentMeasurement.thighs ?: "N/A"} cm"  // Set the thighs measurement
-        holder.calves.text = "Calves: ${currentMeasurement.calves ?: "N/A"} cm"  // Set the calves measurement
-        holder.weight.text = "Weight: ${currentMeasurement.weight ?: "N/A"} kg"  // Set the weight measurement
-        holder.note.text = "Note: ${currentMeasurement.notes ?: "N/A"}"  // Set the note associated with the measurement
+        holder.chest.text = "Klatka piersiowa: ${currentMeasurement.chest ?: "N/A"} cm"  // Set the chest measurement
+        holder.waist.text = "Nadgarstki: ${currentMeasurement.waist ?: "N/A"} cm"  // Set the waist measurement
+        holder.hips.text = "Biodra: ${currentMeasurement.hips ?: "N/A"} cm"  // Set the hips measurement
+        holder.thighs.text = "Uda: ${currentMeasurement.thighs ?: "N/A"} cm"  // Set the thighs measurement
+        holder.calves.text = "Łydki: ${currentMeasurement.calves ?: "N/A"} cm"  // Set the calves measurement
+        holder.weight.text = "Waga: ${currentMeasurement.weight ?: "N/A"} kg"  // Set the weight measurement
+        holder.note.text = "Notatka: ${currentMeasurement.notes ?: "N/A"}"  // Set the note associated with the measurement
 
         // Handle the delete button click to delete a body measurement
         holder.deleteButton.setOnClickListener {

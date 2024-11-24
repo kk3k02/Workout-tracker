@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -136,51 +137,87 @@ class WorkoutActivity : AppCompatActivity() {
 
     // Show a dialog for selecting a muscle group
     private fun showMuscleGroupSelectionDialog() {
+        // Create a list of muscle group names from the TargetMuscle enum
         val muscleGroups = TargetMuscle.entries.map { it.name }
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Select Muscle Group")
-        builder.setItems(muscleGroups.toTypedArray()) { _, which ->
+
+        // Create an ArrayAdapter with a custom layout for each item
+        // The layout R.layout.dialog_list_item defines how each list item will appear
+        val adapter = ArrayAdapter(this, R.layout.dialog_list_item, muscleGroups)
+
+        // Create an AlertDialog.Builder with a custom dialog style
+        val builder = AlertDialog.Builder(this, R.style.SelectExerciseDialogStyle)
+
+        // Set the dialog title
+        builder.setTitle("Wybierz partię mięśniową") // "Select Muscle Group"
+
+        // Attach the adapter to the dialog and handle item selection
+        builder.setAdapter(adapter) { _, which ->
+            // Get the selected muscle group based on the clicked position
             val selectedMuscleGroup = TargetMuscle.entries[which]
-            showExerciseSelectionDialog(selectedMuscleGroup)  // Show exercises for the selected muscle group
+
+            // Open a new dialog or screen to display exercises for the selected muscle group
+            showExerciseSelectionDialog(selectedMuscleGroup)
         }
-        builder.setNegativeButton("Cancel", null)
+
+        // Add a "Cancel" button to the dialog
+        builder.setNegativeButton("COFNIJ", null) // "Cancel"
+
+        // Display the dialog
         builder.show()
     }
 
     // Show a dialog to select an exercise from the chosen muscle group
     @SuppressLint("NotifyDataSetChanged")
     private fun showExerciseSelectionDialog(muscleGroup: TargetMuscle) {
+        // A mutable list to hold exercises for the selected muscle group
         val exerciseList = mutableListOf<Exercise>()
 
+        // Launch a coroutine to collect exercises from the ViewModel
         lifecycleScope.launch {
             exerciseViewModel.allExercises.collect { exercises ->
+                // Clear and update the exercise list with exercises matching the selected muscle group
                 exerciseList.clear()
                 exerciseList.addAll(exercises.filter { it.targetMuscle == muscleGroup.name })
-                val exerciseNames = exerciseList.map { it.name }.toTypedArray()
-                val builder = AlertDialog.Builder(this@WorkoutActivity)
-                builder.setTitle("Select Exercise")
-                if (muscleGroup == TargetMuscle.OTHER) {
-                    val options = exerciseNames.toMutableList()
-                    options.add("Add custom exercise")  // Option to add a custom exercise
-                    builder.setItems(options.toTypedArray()) { _, which ->
-                        if (which == exerciseNames.size) {
-                            showAddCustomExerciseDialog()  // Show dialog to add a custom exercise
-                        } else {
-                            val selectedExercise = exerciseList[which]
-                            selectedExercises.add(selectedExercise)  // Add the selected exercise
-                            exerciseAdapter.notifyDataSetChanged()
-                            updateSaveButtonState()
-                        }
-                    }
+
+                // Map exercise names for display in the dialog
+                val exerciseNames = exerciseList.map { it.name }
+
+                // Add "Add Custom Exercise" option for the "OTHER" muscle group
+                val displayNames = if (muscleGroup == TargetMuscle.OTHER) {
+                    exerciseNames + "Dodaj własne ćwiczenie" // "Add Custom Exercise"
                 } else {
-                    builder.setItems(exerciseNames) { _, which ->
+                    exerciseNames
+                }
+
+                // Create an ArrayAdapter with the custom layout
+                val adapter = ArrayAdapter(
+                    this@WorkoutActivity,
+                    R.layout.dialog_list_item, // Custom layout for list items
+                    displayNames
+                )
+
+                // Create an AlertDialog.Builder with the custom dialog style
+                val builder = AlertDialog.Builder(this@WorkoutActivity, R.style.SelectExerciseDialogStyle)
+                builder.setTitle("Wybierz ćwiczenie") // "Select Exercise"
+
+                // Set the adapter to the dialog
+                builder.setAdapter(adapter) { _, which ->
+                    if (muscleGroup == TargetMuscle.OTHER && which == exerciseNames.size) {
+                        // Show dialog to add a custom exercise
+                        showAddCustomExerciseDialog()
+                    } else {
+                        // Add the selected exercise to the list
                         val selectedExercise = exerciseList[which]
-                        selectedExercises.add(selectedExercise)  // Add the selected exercise
-                        exerciseAdapter.notifyDataSetChanged()
-                        updateSaveButtonState()
+                        selectedExercises.add(selectedExercise)
+                        exerciseAdapter.notifyDataSetChanged() // Notify the adapter about data changes
+                        updateSaveButtonState() // Update the save button state
                     }
                 }
-                builder.setNegativeButton("Cancel", null)
+
+                // Add a "Cancel" button to the dialog
+                builder.setNegativeButton("COFNIJ", null) // "Cancel"
+
+                // Display the dialog
                 builder.show()
             }
         }
@@ -188,20 +225,20 @@ class WorkoutActivity : AppCompatActivity() {
 
     // Show a dialog to add a custom exercise
     private fun showAddCustomExerciseDialog() {
-        val builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this, R.style.CustomDialogStyle)
         val view = layoutInflater.inflate(R.layout.dialog_add_cutstom_exercise, null)
         builder.setView(view)
 
         val editTextName = view.findViewById<EditText>(R.id.editTextExerciseName)
         val editTextDescription = view.findViewById<EditText>(R.id.editTextExerciseDescription)
 
-        builder.setPositiveButton("Add") { dialog, _ ->
+        builder.setPositiveButton("DODAJ") { dialog, _ ->
             val name = editTextName.text.toString().trim()
             val description = editTextDescription.text.toString().trim()
 
             // Validate the input
             if (name.isEmpty() || description.isEmpty()) {
-                Toast.makeText(this, "Please provide both the name and description of the exercise.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "PROSZĘ PODAĆ NAZWĘ I OPIS ĆWICZENIA", Toast.LENGTH_SHORT).show()
             } else {
                 val newExercise = Exercise(
                     name = name,
@@ -213,14 +250,13 @@ class WorkoutActivity : AppCompatActivity() {
                 dialog.dismiss()
             }
         }
-        builder.setNegativeButton("Cancel", null)
+        builder.setNegativeButton("COFNIJ", null)
         builder.show()
     }
 
     // Show a dialog to add a note to the workout
     private fun showAddNoteDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Add a Note")
+        val builder = AlertDialog.Builder(this, R.style.CustomDialogStyle)
 
         val view = layoutInflater.inflate(R.layout.dialog_add_note, null)
         val editTextNote = view.findViewById<EditText>(R.id.editTextNote)
@@ -231,7 +267,7 @@ class WorkoutActivity : AppCompatActivity() {
             saveWorkout()  // Save the workout with the note
             showWorkoutSummary()  // Show a summary of the workout
         }
-        builder.setNegativeButton("Cancel", null)
+        builder.setNegativeButton("COFNIJ", null)
         builder.show()
     }
 
@@ -246,31 +282,45 @@ class WorkoutActivity : AppCompatActivity() {
     }
 
     // Show a summary dialog with workout details
+    @SuppressLint("DefaultLocale")
     private fun showWorkoutSummary() {
+        // Calculate the duration in seconds
         val durationSeconds = (endTime - startTime) / 1000
+        // Convert the duration to minutes and seconds
+        val minutes = durationSeconds / 60
+        val seconds = durationSeconds % 60
+        val formattedDuration = String.format("%02d:%02d", minutes, seconds) // Format as MM:SS
+
         val musclesInvolved = selectedExercises.map { it.targetMuscle }.toSet().joinToString(", ")
         val allWeights = seriesMap.values.flatten().mapNotNull { it.weight }
         val minWeight = allWeights.minOrNull() ?: 0f
         val maxWeight = allWeights.maxOrNull() ?: 0f
         val totalWeight = allWeights.sum()
 
+        // Summary text
         val summaryText = """
-            Workout Duration: $durationSeconds seconds
-            Total Exercises: ${selectedExercises.size}
-            Muscles Involved: $musclesInvolved
-            Min Weight: $minWeight kg
-            Max Weight: $maxWeight kg
-            Total Weight: $totalWeight kg
-        """.trimIndent()
+        Czas trwania: $formattedDuration
+        
+        Liczba wykonanych ćwiczeń: ${selectedExercises.size}
+        
+        Zaangażowane mięśnie: $musclesInvolved
+        
+        Min. Obciążenie: $minWeight kg
+        
+        Max. Obciążenie: $maxWeight kg
+        
+        Łączna waga obciążenia: $totalWeight kg
+    """.trimIndent()
 
-        AlertDialog.Builder(this).apply {
-            setTitle("Workout Summary")
-            setMessage(summaryText)
-            setPositiveButton("Close") { dialog, _ ->
-                dialog.dismiss()
-                finish()  // Finish the activity after showing the summary
+        // Create and show the dialog with the custom style
+        AlertDialog.Builder(this, R.style.SummaryDialogTheme).apply {
+            setTitle("Podsumowanie treningu") // Dialog title
+            setMessage(summaryText) // Summary text
+            setPositiveButton("ZAMKNIJ") { dialog, _ ->
+                dialog.dismiss() // Close the dialog
+                finish() // Finish the activity after showing the summary
             }
-            show()
+            show() // Show the dialog
         }
     }
 
@@ -294,14 +344,14 @@ class WorkoutActivity : AppCompatActivity() {
 
     // Show a dialog to add a series to a specific exercise
     private fun showAddSeriesDialog(exercise: Exercise) {
-        val builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this, R.style.CustomDialogStyle)
         val view = layoutInflater.inflate(R.layout.dialog_add_series, null)
         builder.setView(view)
 
         val editTextReps = view.findViewById<EditText>(R.id.editTextReps)
         val editTextWeight = view.findViewById<EditText>(R.id.editTextWeight)
 
-        builder.setPositiveButton("Add") { _, _ ->
+        builder.setPositiveButton("DODAJ") { _, _ ->
             val reps = editTextReps.text.toString().toIntOrNull() ?: 0
             val weight = editTextWeight.text.toString().toFloatOrNull()
             workoutId?.let { id ->
@@ -316,13 +366,13 @@ class WorkoutActivity : AppCompatActivity() {
                 workoutViewModel.insertSeries(newSeries)  // Insert the new series into the database
             } ?: Log.e("WorkoutActivity", "Cannot add series because workoutId is null.")
         }
-        builder.setNegativeButton("Cancel", null)
+        builder.setNegativeButton("COFNIJ", null)
         builder.show()
     }
 
     // Show a dialog with information about an exercise
     private fun showExerciseInfoDialog(exercise: Exercise) {
-        val builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this, R.style.CustomDialogStyle)
         val view = layoutInflater.inflate(R.layout.dialog_exercise_info, null)
 
         val imageView = view.findViewById<ImageView>(R.id.imageViewExercise)
@@ -338,7 +388,7 @@ class WorkoutActivity : AppCompatActivity() {
             imageView.setImageResource(android.R.drawable.ic_dialog_info)  // Default image if none exists
         }
         builder.setView(view)
-        builder.setPositiveButton("Close", null)
+        builder.setPositiveButton("ZAMKNIJ", null)
         builder.show()
     }
 

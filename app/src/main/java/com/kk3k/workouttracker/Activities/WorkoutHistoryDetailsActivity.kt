@@ -1,5 +1,6 @@
 package com.kk3k.workouttracker.Activities
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
@@ -46,31 +47,25 @@ class WorkoutHistoryDetailsActivity : AppCompatActivity() {
         }
     }
 
-    // Function to show a dialog with information about a specific exercise
+    // Show a dialog with information about an exercise
     private fun showExerciseInfoDialog(exercise: Exercise) {
-        // Create and configure the dialog to display exercise details
-        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this, R.style.CustomDialogStyle)
         val view = layoutInflater.inflate(R.layout.dialog_exercise_info, null)
 
-        // Initialize the ImageView and TextViews for displaying exercise info
         val imageView = view.findViewById<ImageView>(R.id.imageViewExercise)
         val textViewName = view.findViewById<TextView>(R.id.textViewExerciseName)
         val textViewDescription = view.findViewById<TextView>(R.id.textViewExerciseDescription)
 
-        // Load the exercise image (GIF if available, or default image)
-        if (exercise.image != null) {
-            Glide.with(this).asGif().load(exercise.image).into(imageView)  // Use Glide to load the exercise image as a GIF
-        } else {
-            imageView.setImageResource(android.R.drawable.ic_dialog_info)  // Use a default image if no image is available
-        }
-
-        // Set the exercise name and description
         textViewName.text = exercise.name
         textViewDescription.text = exercise.description
 
-        // Set up the dialog with the view and a "Close" button
+        if (exercise.image != null && exercise.image!!.isNotEmpty()) {
+            Glide.with(this).load(exercise.image).into(imageView)  // Load the exercise image if available
+        } else {
+            imageView.setImageResource(android.R.drawable.ic_dialog_info)  // Default image if none exists
+        }
         builder.setView(view)
-        builder.setPositiveButton("Close", null)  // Close the dialog on button click
-        builder.show()  // Show the dialog
+        builder.setPositiveButton("ZAMKNIJ", null)
+        builder.show()
     }
 }

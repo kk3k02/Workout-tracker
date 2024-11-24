@@ -50,7 +50,7 @@ class BodyMeasurementActivity : AppCompatActivity() {
 
     // Function to show a dialog for adding new body measurement entries
     private fun showAddMeasurementDialog() {
-        val builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this, R.style.CustomDialogStyle)
         val inflater = layoutInflater
         val view = inflater.inflate(R.layout.dialog_add_measurement, null)
         builder.setView(view)
@@ -67,24 +67,24 @@ class BodyMeasurementActivity : AppCompatActivity() {
         val editTextNote = view.findViewById<EditText>(R.id.editTextNote)  // Optional note input field
 
         // List of EditTexts for real-time validation
-        val editTexts = listOf(editTextBiceps, editTextTriceps, editTextChest, editTextWaist,
-            editTextHips, editTextThighs, editTextCalves, editTextWeight)
-
-        // Attach a TextWatcher to each EditText for real-time input validation
-        editTexts.forEach { editText ->
-            editText.addTextChangedListener(object : TextWatcher {
-                override fun afterTextChanged(s: Editable?) {
-                    validateInputField(editText)  // Validate the input after the text changes
-                }
-
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            })
-        }
+//        val editTexts = listOf(editTextBiceps, editTextTriceps, editTextChest, editTextWaist,
+//            editTextHips, editTextThighs, editTextCalves, editTextWeight)
+//
+//        // Attach a TextWatcher to each EditText for real-time input validation
+//        editTexts.forEach { editText ->
+//            editText.addTextChangedListener(object : TextWatcher {
+//                override fun afterTextChanged(s: Editable?) {
+//                    validateInputField(editText)  // Validate the input after the text changes
+//                }
+//
+//                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+//
+//                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+//            })
+//        }
 
         // Define the behavior for the "Save" button in the dialog
-        builder.setPositiveButton("Save") { _, _ ->
+        builder.setPositiveButton("DODAJ") { _, _ ->
 
             // Validate all input fields before saving the new measurement
             if (validateInputs(editTextBiceps, editTextTriceps, editTextChest, editTextWaist,
@@ -110,12 +110,12 @@ class BodyMeasurementActivity : AppCompatActivity() {
                 }
             } else {
                 // Show an error message if the input is invalid
-                Toast.makeText(this@BodyMeasurementActivity, "Please fix errors before saving", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@BodyMeasurementActivity, "POPRAW DANE PRZED DODANIEM", Toast.LENGTH_SHORT).show()
             }
         }
 
         // Define the behavior for the "Cancel" button (dismiss the dialog)
-        builder.setNegativeButton("Cancel", null)
+        builder.setNegativeButton("COFNIJ", null)
         builder.show()  // Display the dialog to the user
     }
 

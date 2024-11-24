@@ -1,26 +1,30 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Name Input for Exercise -->
     <EditText
         android:id="@+id/editTextExerciseName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter exercise name"
-        android:inputType="text" />
+        android:hint="@string/enter_exercise_name"
+        android:inputType="text"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        android:background="@drawable/edit_text_background_dark"
+        android:layout_marginBottom="5dp"/>
 
-    <!-- Description Input for Exercise -->
     <EditText
         android:id="@+id/editTextExerciseDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter exercise description"
+        android:hint="@string/add_exercise_description"
         android:inputType="textMultiLine"
         android:lines="3"
-        android:gravity="top|start" />
+        android:gravity="top|start"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        android:background="@drawable/edit_text_background_dark" />
 
 </LinearLayout>

@@ -5,29 +5,27 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="16dp"
-    android:background="@color/white">
+    android:background="@color/darkBackground">
 
-    <!-- Button to navigate to Body Statistics -->
     <Button
         android:id="@+id/buttonBodyStatistics"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Body Statistics"
         android:padding="12dp"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:background="@drawable/rounded_button_dark"
+        android:layout_marginBottom="16dp" />
 
-    <!-- Space between buttons -->
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="16dp" />
-
-    <!-- Button to navigate to Workout Statistics -->
     <Button
         android:id="@+id/buttonWorkoutStatistics"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Workout Statistics"
         android:padding="12dp"
-        android:textSize="18sp" />
-
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:background="@drawable/rounded_button_dark"
+        android:layout_marginTop="16dp" />
 </LinearLayout>

@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/darkBackground"> <!-- Dark background for the main container -->
 
     <!-- Horizontal LinearLayout for the General and Chart buttons -->
     <LinearLayout
@@ -19,8 +20,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="General"
-            android:textColor="#FFFFFF"
-            android:background="@color/colorPrimary"
+            android:textColor="@android:color/white"
+            android:background="@drawable/rounded_button_dark"
             android:padding="12dp" />
 
         <!-- Button for Chart -->
@@ -29,8 +30,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Chart"
-            android:textColor="#FFFFFF"
-            android:background="@color/colorPrimary"
+            android:textColor="@android:color/white"
+            android:background="@drawable/rounded_button_dark"
             android:padding="12dp"
             android:layout_marginStart="16dp"/>
     </LinearLayout>
@@ -48,8 +49,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Select Exercise"
-            android:textColor="#FFFFFF"
-            android:background="@color/colorPrimary"
+            android:textColor="@android:color/white"
+            android:background="@drawable/rounded_button_dark"
             android:padding="12dp" />
     </LinearLayout>
 
@@ -60,7 +61,7 @@
         android:layout_height="wrap_content"
         android:text="Selected Exercise: None"
         android:textSize="18sp"
-        android:textColor="#000000"
+        android:textColor="@android:color/white"
         android:layout_marginTop="20dp"
         android:gravity="center_horizontal" />
 
@@ -79,7 +80,7 @@
         android:layout_height="wrap_content"
         android:text="No data available for this exercise."
         android:textSize="18sp"
-        android:textColor="#FF0000"
+        android:textColor="#E57373"
         android:visibility="gone"
         android:layout_marginTop="20dp"
         android:gravity="center_horizontal" />
@@ -100,7 +101,7 @@
             android:layout_height="wrap_content"
             android:text="General Statistics"
             android:textSize="20sp"
-            android:textColor="#333333"
+            android:textColor="@android:color/white"
             android:textStyle="bold"
             android:layout_marginBottom="10dp"/>
 
@@ -111,7 +112,7 @@
             android:layout_height="wrap_content"
             android:text="Number of completed workouts: 0"
             android:textSize="18sp"
-            android:textColor="#4CAF50"
+            android:textColor="#CDDC39"
             android:layout_marginBottom="10dp"/>
 
         <!-- Display Total Duration -->
@@ -121,7 +122,7 @@
             android:layout_height="wrap_content"
             android:text="Total duration of all workouts: 00:00:00"
             android:textSize="18sp"
-            android:textColor="#2196F3"
+            android:textColor="#00BCD4"
             android:layout_marginBottom="10dp"/>
 
         <!-- Display Total Weight -->
@@ -131,7 +132,7 @@
             android:layout_height="wrap_content"
             android:text="Total weight used: 0.00 kg"
             android:textSize="18sp"
-            android:textColor="#FF5722"/>
+            android:textColor="#FF9800"/>
     </LinearLayout>
 
 </LinearLayout>

@@ -1,52 +1,53 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:layout_marginTop="16dp"
+    android:padding="16dp"
+    android:background="@drawable/rounded_corners">
 
-    <!-- Horizontal layout for exercise name and action icons (add, delete, and info) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <!-- TextView to display the exercise name -->
         <TextView
             android:id="@+id/exerciseName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Exercise Name"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/roboto_bold" />
 
-        <!-- Icon for adding a new series (plus icon) -->
         <ImageView
             android:id="@+id/addSeriesIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_input_add"
-            android:contentDescription="Add series" />
+            android:layout_width="41dp"
+            android:layout_height="41dp"
+            android:contentDescription="Add series"
+            android:src="@drawable/ic_add_white"
+            app:tint="#FFFFFF" />
 
-        <!-- Icon for deleting the exercise (trash icon) -->
         <ImageView
             android:id="@+id/deleteExerciseIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_delete"
-            android:contentDescription="Delete exercise" />
+            android:layout_width="41dp"
+            android:layout_height="41dp"
+            android:contentDescription="Delete exercise"
+            android:src="@drawable/ic_delete_white"
+            app:tint="#FFFFFF" />
 
-        <!-- Icon for showing exercise info (info icon) -->
         <ImageView
             android:id="@+id/infoExerciseIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_info_details"
+            android:layout_width="41dp"
+            android:layout_height="41dp"
+            android:layout_marginLeft="3dp"
             android:contentDescription="Exercise Info"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp" />
+            android:src="@drawable/ic_info_outline_white"
+            app:tint="#FFFFFF" />
     </LinearLayout>
 
-    <!-- RecyclerView to display the list of series (sets) for each exercise -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewSeries"
         android:layout_width="match_parent"

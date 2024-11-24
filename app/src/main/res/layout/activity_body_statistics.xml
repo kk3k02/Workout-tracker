@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#121212">
 
-    <!-- Buttons for toggling views -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,7 +19,7 @@
             android:text="General"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:background="@drawable/rounded_button"
+            android:background="@drawable/rounded_button_dark"
             android:textColor="@android:color/white" />
 
         <Button
@@ -30,7 +29,7 @@
             android:text="Weight"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:background="@drawable/rounded_button"
+            android:background="@drawable/rounded_button_dark"
             android:textColor="@android:color/white" />
 
         <Button
@@ -39,15 +38,13 @@
             android:layout_height="wrap_content"
             android:text="Dimensions"
             android:layout_weight="1"
-            android:background="@drawable/rounded_button"
+            android:background="@drawable/rounded_button_dark"
             android:textColor="@android:color/white" />
     </LinearLayout>
 
-    <!-- Container for dynamic views -->
     <FrameLayout
         android:id="@+id/chartContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <!-- Initially empty -->
     </FrameLayout>
 </LinearLayout>

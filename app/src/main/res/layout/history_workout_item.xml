@@ -4,17 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="#E0E0E0"
+    android:background="@drawable/rounded_bg"
     android:padding="16dp"
     android:layout_margin="8dp"
     android:elevation="4dp"
-    android:backgroundTint="@android:color/white"
+    android:backgroundTint="#262626"
     android:divider="?android:attr/dividerVertical"
     android:showDividers="middle"
     android:layout_gravity="center_vertical"
     android:gravity="center_vertical">
 
-    <!-- TextView to display workout information -->
     <TextView
         android:id="@+id/workoutInfo"
         android:layout_width="0dp"
@@ -22,25 +21,26 @@
         android:layout_weight="1"
         android:text="Workout Info"
         android:textSize="16sp"
-        android:textColor="@android:color/black" />
+        android:textColor="#FFFFFF"
+        android:padding="8dp"/>
 
-    <!-- Info button (note icon) to view workout notes -->
     <ImageView
         android:id="@+id/noteIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_menu_info_details"
-        android:padding="8dp"
+        android:layout_width="62dp"
+        android:layout_height="58dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="View notes"
-        app:tint="@android:color/black" />
+        android:padding="8dp"
+        android:src="@drawable/ic_info_outline_white"
+        app:tint="#FFFFFF" />
 
-    <!-- Delete button (X icon) to remove the workout -->
     <ImageView
         android:id="@+id/deleteWorkoutIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_delete"
-        android:padding="8dp"
+        android:layout_width="55dp"
+        android:layout_height="64dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="Delete workout"
-        app:tint="@android:color/holo_red_dark" />
+        android:padding="8dp"
+        android:src="@drawable/ic_delete_white"
+        app:tint="#FF6E40" />
 </LinearLayout>

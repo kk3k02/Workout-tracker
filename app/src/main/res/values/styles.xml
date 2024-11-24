@@ -1,9 +1,76 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-    <!-- Kolory i style aplikacji -->
-    <item name="colorPrimary">@color/colorPrimary</item>
-    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-    <item name="colorAccent">@color/colorAccent</item>
-</style>
+    <!-- Base application theme -->
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <!-- Style for EditText -->
+    <style name="AppEditText" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/edit_text_background</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:padding">12dp</item>
+    </style>
+
+    <!-- Dialog color -->
+    <style name="CustomDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">#FFFFFF</item>
+        <item name="android:background">@drawable/rounded_dialog_bg</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:buttonBarButtonStyle">@style/CustomDialogButtonStyle</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
+    <style name="History_ShowNote" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:background">@drawable/rounded_dialog_bg</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="buttonBarButtonStyle">@style/CustomDialogButtonStyle</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
+    <style name="CustomDialogButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/rounded_button_dark</item> <!-- Tło z zaokrąglonymi rogami -->
+        <item name="android:textColor">#FFFFFF</item> <!-- Kolor tekstu -->
+        <item name="android:layout_marginRight">2dp</item>
+        <item name="android:layout_marginLeft">2dp</item>
+    </style>
+
+
+    <style name="SelectExerciseDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@drawable/rounded_dialog_bg</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:listViewStyle">@style/DialogListItemStyle</item>
+        <item name="android:buttonBarButtonStyle">@style/CustomDialogButtonStyle</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
+    <style name="DialogListItemStyle" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#FFFFFF</item> <!-- Biały tekst -->
+        <item name="android:textSize">16sp</item> <!-- Rozmiar tekstu -->
+        <item name="android:gravity">center_vertical</item> <!-- Wyrównanie w pionie -->
+        <item name="android:padding">16dp</item>
+        <item name="android:divider">@android:color/transparent</item> <!-- Przezroczysty dzielnik -->
+        <item name="android:dividerHeight">10dp</item> <!-- Wysokość dzielnika = odstęp między elementami -->
+    </style>
+
+    <style name="SummaryDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@drawable/rounded_dialog_bg</item> <!-- Tło z zaokrąglonymi rogami -->
+        <item name="android:windowBackground">@android:color/transparent</item> <!-- Przezroczyste tło wokół dialogu -->
+        <item name="android:textColorPrimary">#FFFFFF</item> <!-- Kolor tekstu tytułu -->
+        <item name="android:textColorSecondary">#CCCCCC</item> <!-- Kolor tekstu wiadomości -->
+        <item name="android:buttonBarButtonStyle">@style/CustomDialogButtonStyle</item> <!-- Styl przycisków -->
+        <item name="android:paddingBottom">4dp</item> <!-- Dolny odstęp -->
+    </style>
+
+    <style name="SeriesInfoTextStyle" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">16sp</item> <!-- Rozmiar tekstu -->
+        <item name="android:textColor">#FFFFFF</item> <!-- Kolor tekstu -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:gravity">center_vertical</item> <!-- Wyrównanie tekstu -->
+    </style>
+
+
 </resources>

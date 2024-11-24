@@ -2,73 +2,137 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/rounded_bg">
 
     <EditText
         android:id="@+id/editTextBiceps"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Biceps (cm)"
-        android:inputType="number" />
+        android:layout_marginBottom="10dp"
+        android:autofillHints=""
+        android:background="@drawable/edit_text_background_dark"
+        android:hint="@string/add_biceps_measurement"
+        android:inputType="numberDecimal"
+        android:minHeight="48dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#9E9E9E"
+        tools:ignore="VisualLintTextFieldSize" />
 
     <EditText
         android:id="@+id/editTextTriceps"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Triceps (cm)"
-        android:inputType="number" />
+        android:layout_marginBottom="10dp"
+        android:autofillHints=""
+        android:background="@drawable/edit_text_background_dark"
+        android:hint="@string/add_triceps_measurement"
+        android:inputType="numberDecimal"
+        android:minHeight="48dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#9E9E9E"
+        tools:ignore="VisualLintTextFieldSize"/>
 
     <EditText
         android:id="@+id/editTextChest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Chest (cm)"
-        android:inputType="number" />
+        android:layout_marginBottom="10dp"
+        android:autofillHints=""
+        android:background="@drawable/edit_text_background_dark"
+        android:hint="@string/add_chest_measurement"
+        android:inputType="numberDecimal"
+        android:minHeight="48dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#9E9E9E"
+        tools:ignore="VisualLintTextFieldSize"/>
 
     <EditText
         android:id="@+id/editTextWaist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Waist (cm)"
-        android:inputType="number" />
+        android:layout_marginBottom="10dp"
+        android:autofillHints=""
+        android:background="@drawable/edit_text_background_dark"
+        android:hint="@string/add_waist_measurement"
+        android:inputType="numberDecimal"
+        android:minHeight="48dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#9E9E9E"
+        tools:ignore="VisualLintTextFieldSize"/>
 
     <EditText
         android:id="@+id/editTextHips"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Hips (cm)"
-        android:inputType="number" />
+        android:layout_marginBottom="10dp"
+        android:autofillHints=""
+        android:background="@drawable/edit_text_background_dark"
+        android:hint="@string/add_hips_measurement"
+        android:inputType="numberDecimal"
+        android:minHeight="48dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#9E9E9E"
+        tools:ignore="VisualLintTextFieldSize"/>
 
     <EditText
         android:id="@+id/editTextThighs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Thighs (cm)"
-        android:inputType="number" />
+        android:layout_marginBottom="10dp"
+        android:autofillHints=""
+        android:background="@drawable/edit_text_background_dark"
+        android:hint="@string/add_thighs_measurement"
+        android:inputType="numberDecimal"
+        android:minHeight="48dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#9E9E9E"
+        tools:ignore="VisualLintTextFieldSize"/>
 
     <EditText
         android:id="@+id/editTextCalves"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Calves (cm)"
-        android:inputType="number" />
+        android:layout_marginBottom="10dp"
+        android:autofillHints=""
+        android:background="@drawable/edit_text_background_dark"
+        android:hint="@string/add_calves_measurement"
+        android:inputType="numberDecimal"
+        android:minHeight="48dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#9E9E9E"
+        tools:ignore="VisualLintTextFieldSize"/>
 
     <EditText
         android:id="@+id/editTextWeight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Weight (kg)"
-        android:inputType="number" />
+        android:layout_marginBottom="10dp"
+        android:autofillHints=""
+        android:background="@drawable/edit_text_background_dark"
+        android:hint="@string/add_weight_measurement"
+        android:inputType="numberDecimal"
+        android:gravity="top|start"
+        android:minHeight="48dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#9E9E9E"
+        tools:ignore="VisualLintTextFieldSize"/>
 
     <EditText
         android:id="@+id/editTextNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Note (optional)"
+        android:autofillHints=""
+        android:background="@drawable/edit_text_background_dark"
+        android:hint="@string/add_note_measurement"
+        android:minHeight="48dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#9E9E9E"
+        android:maxLines="3"
         android:inputType="textMultiLine"
-    android:lines="3"
-    android:maxLines="5"
-    android:scrollbars="vertical" />
+        android:gravity="top|start"
+        tools:ignore="VisualLintTextFieldSize"/>
 
 </LinearLayout>

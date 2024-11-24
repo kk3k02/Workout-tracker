@@ -55,7 +55,7 @@ class History_WorkoutAdapter(
         }
 
         // Display the formatted date and duration in the workout info TextView
-        holder.workoutInfo.text = "Workout on $formattedDate - Duration: $formattedDuration"
+        holder.workoutInfo.text = "Trening: $formattedDate - Czas trwania: $formattedDuration"
 
         // Set up the click listener for the workout item to show workout details
         holder.itemView.setOnClickListener {
@@ -69,7 +69,7 @@ class History_WorkoutAdapter(
 
         // Set up the click listener for the note icon to show the workout's notes
         holder.noteIcon.setOnClickListener {
-            showNotePopup(holder.itemView.context, currentWorkout.notes ?: "No notes available.")  // Show note dialog
+            showNotePopup(holder.itemView.context, currentWorkout.notes ?: "Brak notatki.")  // Show note dialog
         }
     }
 
@@ -83,10 +83,10 @@ class History_WorkoutAdapter(
 
     // Function to show the workout note in a popup dialog
     private fun showNotePopup(context: Context, note: String) {
-        val builder = AlertDialog.Builder(context)  // Create a dialog builder
-        builder.setTitle("Workout Note")  // Set the title for the dialog
+        val builder = AlertDialog.Builder(context, R.style.History_ShowNote)  // Create a dialog builder
+        builder.setTitle("NOTATKA Z TRENINGU")  // Set the title for the dialog
         builder.setMessage(note)  // Set the message to the workout's note
-        builder.setPositiveButton("Close", null)  // Add a "Close" button to dismiss the dialog
+        builder.setPositiveButton("ZAMKNIJ", null)  // Add a "Close" button to dismiss the dialog
         builder.show()  // Show the dialog
     }
 

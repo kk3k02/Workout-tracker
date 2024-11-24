@@ -4,29 +4,24 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@android:color/white">
+    android:background="@color/darkBackground">
 
-    <!-- Title or Header (optional) -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Workout History"
+        android:text="HISTORIA TRENINGÓW"
         android:textSize="24sp"
         android:textStyle="bold"
         android:paddingBottom="12dp"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:layout_gravity="center_horizontal" />
 
-    <!-- RecyclerView to display the list of workouts -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewWorkouts"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:clipToPadding="false"
-        android:padding="8dp"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="8dp"
-        android:background="@android:color/white"
+        android:dividerHeight="1dp"
         android:scrollbars="vertical" />
 </LinearLayout>

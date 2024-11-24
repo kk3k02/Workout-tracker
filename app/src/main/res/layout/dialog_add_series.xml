@@ -1,24 +1,36 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/rounded_bg">
 
-    <!-- Weight input field (now on top) -->
     <EditText
         android:id="@+id/editTextWeight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter Weight"
-        android:inputType="numberDecimal" /> <!-- Numeric keyboard with decimal support -->
+        android:layout_marginBottom="10dp"
+        android:autofillHints=""
+        android:background="@drawable/edit_text_background_dark"
+        android:hint="@string/weight"
+        android:inputType="numberDecimal"
+        android:minHeight="48dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#9E9E9E"
+        tools:ignore="VisualLintTextFieldSize" />
 
-    <!-- Repetitions input field (now below the weight) -->
     <EditText
         android:id="@+id/editTextReps"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter Reps"
-        android:inputType="number" /> <!-- Numeric keyboard without decimals (only integer input) -->
+        android:autofillHints=""
+        android:background="@drawable/edit_text_background_dark"
+        android:hint="@string/repetitions"
+        android:inputType="number"
+        android:minHeight="48dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#9E9E9E"
+        tools:ignore="VisualLintTextFieldSize" />
 
 </LinearLayout>

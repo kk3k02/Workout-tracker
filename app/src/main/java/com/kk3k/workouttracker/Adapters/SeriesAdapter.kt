@@ -36,7 +36,7 @@ class SeriesAdapter(
         val series = seriesList[position]  // Get the current series object from the list
 
         // Set the text for reps and weight, display "N/A" if weight is null
-        holder.seriesInfo.text = "Reps: ${series.repetitions}, Weight: ${series.weight ?: "N/A"} kg"
+        holder.seriesInfo.text = "Powtórzenia: ${series.repetitions}, Obciążenie: ${series.weight ?: "N/A"} kg"
 
         // Set the click listener for the delete icon to remove the series from the list
         holder.deleteSeriesIcon.setOnClickListener {

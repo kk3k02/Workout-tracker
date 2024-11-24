@@ -1,0 +1,11 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_list_item"
+    style="@style/DialogListItemStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:textSize="16sp"
+    android:textColor="#FFFFFF"
+    android:gravity="center_vertical"
+    android:fontFamily="@font/roboto_bold"
+    android:background="@drawable/rounded_corners" />
