@@ -3,9 +3,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#FFFFFF">
+    android:background="#121212">
 
     <LinearLayout
+        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -14,6 +15,7 @@
 
         <Button
             android:id="@+id/buttonGeneral"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/body_statistics_general_button"
@@ -24,6 +26,7 @@
 
         <Button
             android:id="@+id/buttonWeightChart"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/body_statistics_weight_button"
@@ -34,6 +37,7 @@
 
         <Button
             android:id="@+id/buttonDimensions"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/body_statistics_dimensions"

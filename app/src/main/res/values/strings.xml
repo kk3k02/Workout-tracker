@@ -28,4 +28,12 @@
     <string name="body_statistics_general_button">OGÓLNE</string>
     <string name="body_statistics_weight_button">WAGA</string>
     <string name="body_statistics_dimensions">WYMIARY</string>
+    <string name="weight_change_placeholder">WAGA</string>
+    <string name="biceps_change_placeholder">BICEPS:</string>
+    <string name="triceps_change_placeholder">TRICEPS:</string>
+    <string name="chest_change_placeholder">KLATKA PIERSIOWA:</string>
+    <string name="waist_change_placeholder">NADGARSTKI::</string>
+    <string name="hips_change_placeholder">BIODRA:</string>
+    <string name="thighs_change_placeholder">UDA:</string>
+    <string name="calves_change_placeholder">ŁYDKI:</string>
 </resources>

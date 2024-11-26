@@ -212,96 +212,61 @@ class BodyStatisticsActivity : AppCompatActivity() {
     // Configure the weight chart to display weight progression over time
     private fun setupWeightChart(chart: LineChart) {
         lifecycleScope.launch {
-            // Collect weight data from the ViewModel
             bodyMeasurementViewModel.allMeasurements.collect { measurements ->
                 if (measurements.isNotEmpty()) {
-                    // Determine the first date and minimum weight for scaling
                     val firstDate = measurements.minOfOrNull { it.date ?: Long.MAX_VALUE }?.toFloat() ?: 0f
                     val minWeight = measurements.mapNotNull { it.weight?.toFloat() }.minOrNull() ?: 0f
 
-                    // Map measurements to chart entries
                     val entries = measurements.mapNotNull { measurement ->
-                        measurement.date?.let { Entry(it.toFloat(), measurement.weight?.toFloat() ?: 0f).apply {
-                            data = measurement // Store the entire measurement object in Entry.data
-                        }}
+                        measurement.date?.let { Entry(it.toFloat(), measurement.weight?.toFloat() ?: 0f) }
                     }
 
-                    // Create dataset for the chart
                     val dataSet = LineDataSet(entries, "Waga użytkownika w czasie").apply {
                         color = Color.BLUE
                         valueTextColor = Color.BLACK
                         lineWidth = 2f
-                        setDrawCircles(true) // Show data points as circles
-                        setCircleColor(Color.RED) // Circle color
-                        circleRadius = 4f // Circle size
-                        setDrawValues(false) // Disable value labels
+                        setDrawCircles(true)
+                        setCircleColor(Color.RED)
+                        circleRadius = 4f
+                        setDrawValues(false)
                     }
 
                     val lineData = LineData(dataSet)
 
-                    // Configure chart appearance
                     chart.apply {
                         data = lineData
                         description = Description().apply { text = "Zmiana Wagi użytkownika" }
 
                         xAxis.apply {
-                            textColor = Color.BLACK
+                            textColor = Color.WHITE
                             position = XAxis.XAxisPosition.BOTTOM
-                            setDrawGridLines(true) // Enable vertical grid lines
+                            setDrawGridLines(true)
                             gridColor = Color.LTGRAY
                             labelCount = 3
-                            valueFormatter = DateAxisValueFormatter() // Format X-axis values as dates
-                            axisMinimum = firstDate // Start X-axis from the first date
+                            valueFormatter = DateAxisValueFormatter()
+                            axisMinimum = firstDate
                             textSize = 12f
                         }
 
                         axisLeft.apply {
-                            textColor = Color.BLACK
-                            setDrawGridLines(true) // Enable horizontal grid lines
+                            textColor = Color.WHITE
+                            setDrawGridLines(true)
                             gridColor = Color.LTGRAY
-                            axisMinimum = minWeight // Start Y-axis from the minimum weight
+                            axisMinimum = minWeight
                             textSize = 12f
                             labelCount = 6
-                            valueFormatter = YAxisValueFormatter("kg") // Add "kg" to labels
+                            valueFormatter = YAxisValueFormatter("kg")
                         }
 
                         axisRight.isEnabled = false
 
                         legend.apply {
-                            textColor = Color.BLACK
+                            textColor = Color.WHITE
                             form = Legend.LegendForm.LINE
                         }
 
                         setNoDataText("Brak dostępnych pomiarów.")
-
-                        // Handle point click events
-                        setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
-                            override fun onValueSelected(e: Entry?, h: Highlight?) {
-                                if (e != null && e.data is BodyMeasurement) {
-                                    val measurement = e.data as BodyMeasurement
-                                    val selectedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(measurement.date ?: 0L)
-
-                                    // Create a message with weight details for the selected point
-                                    val message = """
-                                    Data: $selectedDate
-                                    Waga: ${measurement.weight ?: "N/A"} kg
-                                """.trimIndent()
-
-                                    // Show a dialog with the information
-                                    AlertDialog.Builder(this@BodyStatisticsActivity)
-                                        .setTitle("Szczegóły wagi")
-                                        .setMessage(message)
-                                        .setPositiveButton("OK", null)
-                                        .show()
-                                }
-                            }
-
-                            override fun onNothingSelected() {
-                                // No action needed when nothing is selected
-                            }
-                        })
-
-                        invalidate() // Refresh the chart
+                        invalidate()
                     }
                 } else {
                     chart.clear()
@@ -310,7 +275,6 @@ class BodyStatisticsActivity : AppCompatActivity() {
             }
         }
     }
-
 
     // Configure the body measurements chart to display multiple datasets
     private fun setupBodyMeasurementsChart(chart: LineChart) {
@@ -383,7 +347,7 @@ class BodyStatisticsActivity : AppCompatActivity() {
                         description = Description().apply { text = "Zmiana wymiarów ciała" }
 
                         xAxis.apply {
-                            textColor = Color.BLACK
+                            textColor = Color.WHITE
                             position = XAxis.XAxisPosition.BOTTOM
                             setDrawGridLines(true)
                             gridColor = Color.LTGRAY
@@ -393,7 +357,7 @@ class BodyStatisticsActivity : AppCompatActivity() {
                         }
 
                         axisLeft.apply {
-                            textColor = Color.BLACK
+                            textColor = Color.WHITE
                             setDrawGridLines(true)
                             gridColor = Color.LTGRAY
                             axisMinimum = minMeasurement
@@ -406,7 +370,7 @@ class BodyStatisticsActivity : AppCompatActivity() {
 
                         legend.apply {
                             isEnabled = true
-                            textColor = Color.BLACK
+                            textColor = Color.WHITE
                             form = Legend.LegendForm.LINE
                         }
 
