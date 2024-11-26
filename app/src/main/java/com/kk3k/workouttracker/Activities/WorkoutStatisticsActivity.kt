@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -104,9 +105,9 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
             val totalWeight = seriesDao.getTotalWeightUsed() ?: 0f
 
             // Update UI with fetched statistics
-            findViewById<TextView>(R.id.tvWorkoutCount).text = "Number of completed workouts: $workoutCount"
-            findViewById<TextView>(R.id.tvTotalDuration).text = "Total duration of all workouts: ${formatDuration(totalDuration)}"
-            findViewById<TextView>(R.id.tvTotalWeight).text = "Total weight used: ${formatWeight(totalWeight)}"
+            findViewById<TextView>(R.id.tvWorkoutCount).text = "Liczba wykonanych treningów: $workoutCount"
+            findViewById<TextView>(R.id.tvTotalDuration).text = "Łączny czas trwania treningów: ${formatDuration(totalDuration)}"
+            findViewById<TextView>(R.id.tvTotalWeight).text = "Łączne użyte obciążenie: ${formatWeight(totalWeight)}"
         }
     }
 
@@ -125,19 +126,36 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
         return String.format("%.2f kg", weight)
     }
 
-    // Show muscle group selection dialog
+    // Show a dialog for selecting a muscle group
     private fun showMuscleGroupSelectionDialog() {
+        // Create a list of muscle group names from the TargetMuscle enum
         val muscleGroups = TargetMuscle.entries.map { it.name }
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Select Muscle Group")
-        builder.setItems(muscleGroups.toTypedArray()) { _, which ->
-            // When a muscle group is selected, show the exercise selection dialog
+
+        // Create an ArrayAdapter with the custom layout
+        val adapter = ArrayAdapter(this, R.layout.dialog_list_item, muscleGroups)
+
+        // Create an AlertDialog.Builder with a custom dialog style
+        val builder = AlertDialog.Builder(this, R.style.SelectExerciseDialogStyle)
+
+        // Set the dialog title
+        builder.setTitle("Wybierz partię mięśniową") // "Select Muscle Group"
+
+        // Attach the adapter to the dialog and handle item selection
+        builder.setAdapter(adapter) { _, which ->
+            // Get the selected muscle group based on the clicked position
             val selectedMuscleGroup = TargetMuscle.entries[which]
+
+            // Open a new dialog or screen to display exercises for the selected muscle group
             showExerciseSelectionDialog(selectedMuscleGroup)
         }
-        builder.setNegativeButton("Cancel", null)
+
+        // Add a "Cancel" button to the dialog
+        builder.setNegativeButton("COFNIJ", null) // "Cancel"
+
+        // Display the dialog
         builder.show()
     }
+
 
     // Show exercise selection dialog based on selected muscle group
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
@@ -149,12 +167,21 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
                 exerciseList.clear()
                 exerciseList.addAll(exercises.filter { it.targetMuscle == muscleGroup.name })
 
-                val exerciseNames = exerciseList.map { it.name }.toTypedArray()
-                val builder = AlertDialog.Builder(this@WorkoutStatisticsActivity)
-                builder.setTitle("Select Exercise")
-                builder.setItems(exerciseNames) { _, which ->
+                // Map exercise names for display
+                val exerciseNames = exerciseList.map { it.name }
+
+                // Create an ArrayAdapter with the custom layout
+                val adapter = ArrayAdapter(this@WorkoutStatisticsActivity, R.layout.dialog_list_item, exerciseNames)
+
+                // Create the dialog
+                val builder = AlertDialog.Builder(this@WorkoutStatisticsActivity, R.style.SelectExerciseDialogStyle)
+                builder.setTitle("WYBIERZ ĆWICZENIE") // "SELECT EXERCISE"
+
+                // Attach the adapter to the dialog
+                builder.setAdapter(adapter) { _, which ->
+                    // Handle selection
                     val selectedExercise = exerciseList[which]
-                    selectedExerciseTextView.text = "Selected Exercise: ${selectedExercise.name}"
+                    selectedExerciseTextView.text = "WYBRANE ĆWICZENIE:\n\n ${selectedExercise.name}"
                     selectedExerciseId = selectedExercise.uid
 
                     // Fetch the exercise progression chart for the selected exercise
@@ -162,11 +189,16 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
                         fetchExerciseProgressionChart(exerciseId)
                     }
                 }
-                builder.setNegativeButton("Cancel", null)
+
+                // Add a "Cancel" button
+                builder.setNegativeButton("COFNIJ", null) // "Cancel"
+
+                // Show the dialog
                 builder.show()
             }
         }
     }
+
 
     // Show chart view and hide general stats
     private fun showChartView() {
@@ -183,95 +215,85 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
     // Fetch exercise progression chart based on selected exercise and workout
     private fun fetchExerciseProgressionChart(exerciseId: Int) {
         lifecycleScope.launch {
-            // Fetch all series for the selected exercise
             val seriesList = seriesDao.getSeriesForExercise(exerciseId)
 
-            // If no series are found, log and show "No data" message
             if (seriesList.isEmpty()) {
-                Log.d("Chart", "No series data found for this exercise")
-                noDataMessage.visibility = View.VISIBLE  // Show "No data" message
-                chartContainer.visibility = View.GONE  // Hide the chart container
+                Log.d("Chart", "Brak dostępnych informacji na temat tego ćwiczenia.")
+                noDataMessage.visibility = View.VISIBLE
+                chartContainer.visibility = View.GONE
                 return@launch
             } else {
-                noDataMessage.visibility = View.GONE  // Hide the "No data" message
+                noDataMessage.visibility = View.GONE
             }
 
-            // Map for storing total weight per workout date
             val datesMap = mutableMapOf<Long, Float>()
-
-            // Format for displaying dates as dd/MM/yyyy
             val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
             for (series in seriesList) {
-                // Calculate the weight for each series (repetitions * weight)
                 val seriesWeight = series.repetitions * (series.weight ?: 0f)
-
-                // Get the workout date using the workoutDao
                 val workout = workoutDao.getWorkoutById(series.workoutId)
-                val workoutDate = workout?.date ?: 0L  // If no date, set to 0L (unknown date)
+                val workoutDate = workout?.date ?: 0L
 
-                // Check if the date is valid (not 0L) and update the total weight for the given workout date
                 if (workoutDate > 0) {
                     datesMap[workoutDate] = datesMap.getOrDefault(workoutDate, 0f) + seriesWeight
                 }
             }
 
-            // Sort the workout dates (X axis) and generate the chart
-            val sortedDates = datesMap.keys.sorted()  // Sorting dates in ascending order
-            val entries = mutableListOf<Entry>()  // List to store chart points
-            val formattedDates = mutableListOf<String>()  // List to store formatted dates for X axis
+            val sortedDates = datesMap.keys.sorted()
+            val entries = mutableListOf<Entry>()
+            val formattedDates = mutableListOf<String>()
 
-            var firstValue = 0f  // Variable to store the first value for Y axis minimum
+            var firstValue = 0f
 
             sortedDates.forEachIndexed { index, date ->
                 val totalWeightForDate = datesMap[date] ?: 0f
-                // Add a point to the chart (index as X axis, totalWeightForDate as Y axis)
                 entries.add(Entry(index.toFloat(), totalWeightForDate))
-
-                // Format the date as dd/MM/yyyy and add it to the formattedDates list
                 val formattedDate = dateFormat.format(Date(date))
                 formattedDates.add(formattedDate)
 
-                // Store the first value for Y axis minimum setting
                 if (index == 0) {
                     firstValue = totalWeightForDate
                 }
             }
 
-            // Create a dataset for the chart
-            val lineDataSet = LineDataSet(entries, "Total Weight")
+            val lineDataSet = LineDataSet(entries, "Łączna waga użytego obciążenia")
             val lineData = LineData(lineDataSet)
 
-            // Create and update the chart
             val lineChart = LineChart(this@WorkoutStatisticsActivity)
             lineChart.data = lineData
-            lineChart.invalidate()  // Refresh the chart
+            lineChart.invalidate()
 
-            // Set X and Y axis labels and configurations
+            val legend = lineChart.legend
+            legend.textColor = getColor(R.color.white)
+
             val xAxis = lineChart.xAxis
-            // Set the X axis to display formatted dates
+            xAxis.textColor = getColor(R.color.white)
             xAxis.valueFormatter = object : com.github.mikephil.charting.formatter.ValueFormatter() {
                 override fun getFormattedValue(value: Float): String {
                     val index = value.toInt()
                     return formattedDates.getOrElse(index) { "" }
                 }
             }
-            xAxis.granularity = 1f  // Ensures labels are displayed only once per date
-            xAxis.position = com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM  // Position labels at the bottom of X axis
+            xAxis.granularity = 1f
+            xAxis.position = com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM
 
-            // Set the minimum value for Y axis (first value from the series)
             val yAxis = lineChart.axisLeft
-            yAxis.axisMinimum = firstValue  // Set the first value as the minimum for Y axis
+            yAxis.textColor = getColor(R.color.white)
+            yAxis.axisMinimum = firstValue
             yAxis.valueFormatter = object : com.github.mikephil.charting.formatter.ValueFormatter() {
                 override fun getFormattedValue(value: Float): String {
-                    return "$value kg"  // Append "kg" to the Y axis labels
+                    return "$value kg"
                 }
             }
-
-            // Disable the right Y axis (usually not needed)
             lineChart.axisRight.isEnabled = false
 
-            // Add the chart to the container
+            // Add the description label
+            val description = lineChart.description
+            description.text = "Obciążenie ćwiczenia w czasie"
+            description.textSize = 12f // Set the text size for better visibility
+            description.textColor = getColor(R.color.white) // Set the color for the description
+            description.isEnabled = true
+
             chartContainer.removeAllViews()
             chartContainer.addView(lineChart)
         }

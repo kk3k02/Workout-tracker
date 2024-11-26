@@ -23,4 +23,9 @@
     <string name="add_calves_measurement">ŁYDKI (CM)</string>
     <string name="add_weight_measurement">WAGA (KG)</string>
     <string name="add_note_measurement">NOTATKA (OPCJONALNIE)</string>
+    <string name="body_statistics_button">STATYSTYKI CIAŁA</string>
+    <string name="workout_statistics_button">STATYSTYKI TRENINGÓW</string>
+    <string name="body_statistics_general_button">OGÓLNE</string>
+    <string name="body_statistics_weight_button">WAGA</string>
+    <string name="body_statistics_dimensions">WYMIARY</string>
 </resources>

@@ -3,12 +3,15 @@ package com.kk3k.workouttracker.Activities
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Gravity
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
-import android.view.Gravity
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.lifecycle.lifecycleScope
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
@@ -19,9 +22,12 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.kk3k.workouttracker.R
 import com.kk3k.workouttracker.ViewModels.BodyMeasurementViewModel
+import com.kk3k.workouttracker.db.entities.BodyMeasurement
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -168,18 +174,22 @@ class BodyStatisticsActivity : AppCompatActivity() {
                     // Create the display text for each measurement showing differences
                     val generalTextView = TextView(this@BodyStatisticsActivity).apply {
                         textSize = 18f
-                        setTextColor(Color.BLACK)
+                        setTextColor(Color.WHITE) // Ustaw biały tekst dla ciemnego tła
                         gravity = Gravity.CENTER
+                        setPadding(16, 16, 16, 16) // Dodaj odstępy dla lepszej czytelności
+                        background = ContextCompat.getDrawable(context, R.drawable.rounded_bg) // Opcjonalnie: zaokrąglone tło
+
+                        // Zastosuj formatowanie HTML
                         text = """
-                            Weight: ${if (weightChange >= 0) "+${weightChange.toInt()} kg" else "${weightChange.toInt()} kg"}
-                            Biceps: ${if (bicepsChange >= 0) "+${bicepsChange.toInt()} cm" else "${bicepsChange.toInt()} cm"}
-                            Triceps: ${if (tricepsChange >= 0) "+${tricepsChange.toInt()} cm" else "${tricepsChange.toInt()} cm"}
-                            Chest: ${if (chestChange >= 0) "+${chestChange.toInt()} cm" else "${chestChange.toInt()} cm"}
-                            Waist: ${if (waistChange >= 0) "+${waistChange.toInt()} cm" else "${waistChange.toInt()} cm"}
-                            Hips: ${if (hipsChange >= 0) "+${hipsChange.toInt()} cm" else "${hipsChange.toInt()} cm"}
-                            Thighs: ${if (thighsChange >= 0) "+${thighsChange.toInt()} cm" else "${thighsChange.toInt()} cm"}
-                            Calves: ${if (calvesChange >= 0) "+${calvesChange.toInt()} cm" else "${calvesChange.toInt()} cm"}
-                        """.trimIndent()
+        <b>Waga:</b> ${if (weightChange >= 0) "<font color='#00FF00'>+${weightChange.toInt()} kg</font>" else "<font color='#FF0000'>${weightChange.toInt()} kg</font>"}<br>
+        <b>Biceps:</b> ${if (bicepsChange >= 0) "<font color='#00FF00'>+${bicepsChange.toInt()} cm</font>" else "<font color='#FF0000'>${bicepsChange.toInt()} cm</font>"}<br>
+        <b>Triceps:</b> ${if (tricepsChange >= 0) "<font color='#00FF00'>+${tricepsChange.toInt()} cm</font>" else "<font color='#FF0000'>${tricepsChange.toInt()} cm</font>"}<br>
+        <b>Klatka piersiowa:</b> ${if (chestChange >= 0) "<font color='#00FF00'>+${chestChange.toInt()} cm</font>" else "<font color='#FF0000'>${chestChange.toInt()} cm</font>"}<br>
+        <b>Nadgarstek:</b> ${if (waistChange >= 0) "<font color='#00FF00'>+${waistChange.toInt()} cm</font>" else "<font color='#FF0000'>${waistChange.toInt()} cm</font>"}<br>
+        <b>Biodra:</b> ${if (hipsChange >= 0) "<font color='#00FF00'>+${hipsChange.toInt()} cm</font>" else "<font color='#FF0000'>${hipsChange.toInt()} cm</font>"}<br>
+        <b>Uda:</b> ${if (thighsChange >= 0) "<font color='#00FF00'>+${thighsChange.toInt()} cm</font>" else "<font color='#FF0000'>${thighsChange.toInt()} cm</font>"}<br>
+        <b>Łydki:</b> ${if (calvesChange >= 0) "<font color='#00FF00'>+${calvesChange.toInt()} cm</font>" else "<font color='#FF0000'>${calvesChange.toInt()} cm</font>"}<br>
+    """.trimIndent().let { HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY) } // Konwertuj HTML na format tekstowy
                     }
 
                     // Display the result in the chart container
@@ -187,7 +197,7 @@ class BodyStatisticsActivity : AppCompatActivity() {
                 } else {
                     // If no measurements are available
                     val generalTextView = TextView(this@BodyStatisticsActivity).apply {
-                        text = "No measurements available."
+                        text = "Brak pomiarów."
                         textSize = 18f
                         setTextColor(Color.BLACK)
                         gravity = Gravity.CENTER
@@ -211,11 +221,13 @@ class BodyStatisticsActivity : AppCompatActivity() {
 
                     // Map measurements to chart entries
                     val entries = measurements.mapNotNull { measurement ->
-                        measurement.date?.let { Entry(it.toFloat(), measurement.weight?.toFloat() ?: 0f) }
+                        measurement.date?.let { Entry(it.toFloat(), measurement.weight?.toFloat() ?: 0f).apply {
+                            data = measurement // Store the entire measurement object in Entry.data
+                        }}
                     }
 
                     // Create dataset for the chart
-                    val dataSet = LineDataSet(entries, "Weight Over Time").apply {
+                    val dataSet = LineDataSet(entries, "Waga użytkownika w czasie").apply {
                         color = Color.BLUE
                         valueTextColor = Color.BLACK
                         lineWidth = 2f
@@ -230,13 +242,14 @@ class BodyStatisticsActivity : AppCompatActivity() {
                     // Configure chart appearance
                     chart.apply {
                         data = lineData
-                        description = Description().apply { text = "Weight Progression" }
+                        description = Description().apply { text = "Zmiana Wagi użytkownika" }
 
                         xAxis.apply {
                             textColor = Color.BLACK
                             position = XAxis.XAxisPosition.BOTTOM
                             setDrawGridLines(true) // Enable vertical grid lines
                             gridColor = Color.LTGRAY
+                            labelCount = 3
                             valueFormatter = DateAxisValueFormatter() // Format X-axis values as dates
                             axisMinimum = firstDate // Start X-axis from the first date
                             textSize = 12f
@@ -259,61 +272,123 @@ class BodyStatisticsActivity : AppCompatActivity() {
                             form = Legend.LegendForm.LINE
                         }
 
-                        setNoDataText("No weight data available.")
+                        setNoDataText("Brak dostępnych pomiarów.")
+
+                        // Handle point click events
+                        setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+                            override fun onValueSelected(e: Entry?, h: Highlight?) {
+                                if (e != null && e.data is BodyMeasurement) {
+                                    val measurement = e.data as BodyMeasurement
+                                    val selectedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(measurement.date ?: 0L)
+
+                                    // Create a message with weight details for the selected point
+                                    val message = """
+                                    Data: $selectedDate
+                                    Waga: ${measurement.weight ?: "N/A"} kg
+                                """.trimIndent()
+
+                                    // Show a dialog with the information
+                                    AlertDialog.Builder(this@BodyStatisticsActivity)
+                                        .setTitle("Szczegóły wagi")
+                                        .setMessage(message)
+                                        .setPositiveButton("OK", null)
+                                        .show()
+                                }
+                            }
+
+                            override fun onNothingSelected() {
+                                // No action needed when nothing is selected
+                            }
+                        })
+
                         invalidate() // Refresh the chart
                     }
                 } else {
-                    chart.clear() // Clear the chart if no data is available
-                    chart.setNoDataText("No weight data available.")
+                    chart.clear()
+                    chart.setNoDataText("Brak dostępnych pomiarów wagi.")
                 }
             }
         }
     }
 
+
     // Configure the body measurements chart to display multiple datasets
     private fun setupBodyMeasurementsChart(chart: LineChart) {
         lifecycleScope.launch {
-            // Collect body measurements data from the ViewModel
             bodyMeasurementViewModel.allMeasurements.collect { measurements ->
                 if (measurements.isNotEmpty()) {
-                    // Determine the minimum measurement value for scaling
                     val minMeasurement = measurements.flatMap {
                         listOfNotNull(it.biceps, it.triceps, it.chest, it.waist, it.hips, it.thighs, it.calves)
                     }.minOrNull()?.toFloat() ?: 0f
 
                     val dataSets = mutableListOf<LineDataSet>()
 
-                    // Create datasets for different body parts
-                    val bicepsEntries = measurements.mapNotNull { it.date?.let { date -> Entry(date.toFloat(), it.biceps?.toFloat() ?: 0f) } }
-                    val tricepsEntries = measurements.mapNotNull { it.date?.let { date -> Entry(date.toFloat(), it.triceps?.toFloat() ?: 0f) } }
-                    val chestEntries = measurements.mapNotNull { it.date?.let { date -> Entry(date.toFloat(), it.chest?.toFloat() ?: 0f) } }
-                    val waistEntries = measurements.mapNotNull { it.date?.let { date -> Entry(date.toFloat(), it.waist?.toFloat() ?: 0f) } }
-                    val hipsEntries = measurements.mapNotNull { it.date?.let { date -> Entry(date.toFloat(), it.hips?.toFloat() ?: 0f) } }
-                    val thighsEntries = measurements.mapNotNull { it.date?.let { date -> Entry(date.toFloat(), it.thighs?.toFloat() ?: 0f) } }
-                    val calvesEntries = measurements.mapNotNull { it.date?.let { date -> Entry(date.toFloat(), it.calves?.toFloat() ?: 0f) } }
+                    // Mapowanie danych dla wymiarów ciała
+                    val bicepsEntries = measurements.mapNotNull { measurement ->
+                        measurement.date?.let { date -> Entry(date.toFloat(), measurement.biceps?.toFloat() ?: 0f).apply {
+                            data = measurement // Przechowujemy cały obiekt BodyMeasurement w Entry.data
+                        }}
+                    }
 
-                    // Add datasets for the chart
+                    val tricepsEntries = measurements.mapNotNull { measurement ->
+                        measurement.date?.let { date -> Entry(date.toFloat(), measurement.triceps?.toFloat() ?: 0f).apply {
+                            data = measurement
+                        }}
+                    }
+
+                    val chestEntries = measurements.mapNotNull { measurement ->
+                        measurement.date?.let { date -> Entry(date.toFloat(), measurement.chest?.toFloat() ?: 0f).apply {
+                            data = measurement
+                        }}
+                    }
+
+                    // Dodajemy inne wymiary (waist, hips, thighs, calves) w podobny sposób
+                    val waistEntries = measurements.mapNotNull { measurement ->
+                        measurement.date?.let { date -> Entry(date.toFloat(), measurement.waist?.toFloat() ?: 0f).apply {
+                            data = measurement
+                        }}
+                    }
+
+                    val hipsEntries = measurements.mapNotNull { measurement ->
+                        measurement.date?.let { date -> Entry(date.toFloat(), measurement.hips?.toFloat() ?: 0f).apply {
+                            data = measurement
+                        }}
+                    }
+
+                    val thighsEntries = measurements.mapNotNull { measurement ->
+                        measurement.date?.let { date -> Entry(date.toFloat(), measurement.thighs?.toFloat() ?: 0f).apply {
+                            data = measurement
+                        }}
+                    }
+
+                    val calvesEntries = measurements.mapNotNull { measurement ->
+                        measurement.date?.let { date -> Entry(date.toFloat(), measurement.calves?.toFloat() ?: 0f).apply {
+                            data = measurement
+                        }}
+                    }
+
+                    // Tworzymy zestawy danych dla wykresu
                     dataSets.add(createDataSet(bicepsEntries, "Biceps", Color.RED))
                     dataSets.add(createDataSet(tricepsEntries, "Triceps", Color.GREEN))
-                    dataSets.add(createDataSet(chestEntries, "Chest", Color.BLUE))
-                    dataSets.add(createDataSet(waistEntries, "Waist", Color.YELLOW))
-                    dataSets.add(createDataSet(hipsEntries, "Hips", Color.MAGENTA))
-                    dataSets.add(createDataSet(thighsEntries, "Thighs", Color.CYAN))
-                    dataSets.add(createDataSet(calvesEntries, "Calves", Color.GRAY))
+                    dataSets.add(createDataSet(chestEntries, "Klatka piersiowa", Color.BLUE))
+                    dataSets.add(createDataSet(waistEntries, "Nadgarstki", Color.YELLOW))
+                    dataSets.add(createDataSet(hipsEntries, "Biodra", Color.MAGENTA))
+                    dataSets.add(createDataSet(thighsEntries, "Uda", Color.CYAN))
+                    dataSets.add(createDataSet(calvesEntries, "Łydki", Color.GRAY))
 
                     val lineData = LineData(dataSets as List<ILineDataSet>)
 
-                    // Configure chart appearance
                     chart.apply {
                         data = lineData
-                        description = Description().apply { text = "Body Measurements Progression" }
+                        description = Description().apply { text = "Zmiana wymiarów ciała" }
 
                         xAxis.apply {
                             textColor = Color.BLACK
                             position = XAxis.XAxisPosition.BOTTOM
                             setDrawGridLines(true)
                             gridColor = Color.LTGRAY
-                            valueFormatter = DateAxisValueFormatter() // Format X-axis values as dates
+                            labelCount = 3
+                            valueFormatter = DateAxisValueFormatter() // Formatowanie dat na osi X
                             textSize = 12f
                         }
 
@@ -321,10 +396,10 @@ class BodyStatisticsActivity : AppCompatActivity() {
                             textColor = Color.BLACK
                             setDrawGridLines(true)
                             gridColor = Color.LTGRAY
-                            axisMinimum = minMeasurement // Start Y-axis from the minimum measurement
+                            axisMinimum = minMeasurement
                             textSize = 12f
                             labelCount = 6
-                            valueFormatter = YAxisValueFormatter("cm") // Add "cm" to labels
+                            valueFormatter = YAxisValueFormatter("cm") // Jednostka "cm"
                         }
 
                         axisRight.isEnabled = false
@@ -335,16 +410,51 @@ class BodyStatisticsActivity : AppCompatActivity() {
                             form = Legend.LegendForm.LINE
                         }
 
-                        setNoDataText("No measurement data available.")
-                        invalidate() // Refresh the chart
+                        setNoDataText("Brak dostępnych pomiarów.")
+
+                        // Obsługa kliknięć na punkty wykresu
+                        setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+                            override fun onValueSelected(e: Entry?, h: Highlight?) {
+                                if (e != null && e.data is BodyMeasurement) {
+                                    val measurement = e.data as BodyMeasurement
+                                    val selectedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(measurement.date ?: 0L)
+
+                                    // Tworzymy wiadomość z wszystkimi wymiarami dla danego punktu
+                                    val message = """
+                                    Data: $selectedDate
+                                    Biceps: ${measurement.biceps ?: "N/A"} cm
+                                    Triceps: ${measurement.triceps ?: "N/A"} cm
+                                    Klatka piersiowa: ${measurement.chest ?: "N/A"} cm
+                                    Nadgarstek: ${measurement.waist ?: "N/A"} cm
+                                    Biodra: ${measurement.hips ?: "N/A"} cm
+                                    Uda: ${measurement.thighs ?: "N/A"} cm
+                                    Łydki: ${measurement.calves ?: "N/A"} cm
+                                """.trimIndent()
+
+                                    // Wyświetlamy dialog z informacjami
+                                    AlertDialog.Builder(this@BodyStatisticsActivity)
+                                        .setTitle("Szczegóły pomiarów")
+                                        .setMessage(message)
+                                        .setPositiveButton("OK", null)
+                                        .show()
+                                }
+                            }
+
+                            override fun onNothingSelected() {
+                                // Nic nie robi, gdy nic nie jest wybrane
+                            }
+                        })
+
+                        invalidate() // Odśwież wykres
                     }
                 } else {
-                    chart.clear() // Clear the chart if no data is available
-                    chart.setNoDataText("No measurement data available.")
+                    chart.clear()
+                    chart.setNoDataText("Brak dostępnych pomiarów.")
                 }
             }
         }
     }
+
 
     // Helper function to create a dataset for a specific body part
     private fun createDataSet(entries: List<Entry>, label: String, color: Int): LineDataSet {

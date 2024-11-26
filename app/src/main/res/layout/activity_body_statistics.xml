@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#121212">
+    android:background="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
             android:id="@+id/buttonGeneral"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="General"
+            android:text="@string/body_statistics_general_button"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:background="@drawable/rounded_button_dark"
@@ -26,7 +26,7 @@
             android:id="@+id/buttonWeightChart"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Weight"
+            android:text="@string/body_statistics_weight_button"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:background="@drawable/rounded_button_dark"
@@ -36,7 +36,7 @@
             android:id="@+id/buttonDimensions"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Dimensions"
+            android:text="@string/body_statistics_dimensions"
             android:layout_weight="1"
             android:background="@drawable/rounded_button_dark"
             android:textColor="@android:color/white" />

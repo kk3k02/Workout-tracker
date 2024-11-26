@@ -9,23 +9,27 @@
 
     <Button
         android:id="@+id/buttonBodyStatistics"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="Body Statistics"
+        android:text="@string/body_statistics_button"
         android:padding="12dp"
         android:textSize="18sp"
         android:textColor="@android:color/white"
         android:background="@drawable/rounded_button_dark"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        android:drawableStart="@drawable/body_statistics"
+        android:drawablePadding="8dp" />
 
     <Button
         android:id="@+id/buttonWorkoutStatistics"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="Workout Statistics"
+        android:text="@string/workout_statistics_button"
         android:padding="12dp"
         android:textSize="18sp"
         android:textColor="@android:color/white"
         android:background="@drawable/rounded_button_dark"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        android:drawableStart="@drawable/workout"
+        android:drawablePadding="8dp" />
 </LinearLayout>
