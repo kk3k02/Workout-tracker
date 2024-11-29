@@ -1,8 +1,6 @@
 package com.kk3k.workouttracker.Activities
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -14,8 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kk3k.workouttracker.Adapters.History_BodyMeasurementAdapter
 import com.kk3k.workouttracker.R
-import com.kk3k.workouttracker.db.entities.BodyMeasurement
 import com.kk3k.workouttracker.ViewModels.BodyMeasurementViewModel
+import com.kk3k.workouttracker.db.entities.BodyMeasurement
 import kotlinx.coroutines.launch
 
 class BodyMeasurementActivity : AppCompatActivity() {
@@ -26,7 +24,7 @@ class BodyMeasurementActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_body_measurement)
-        supportActionBar?.hide() // Hide the ActionBar
+        supportActionBar?.hide() // Hide the ActionBar for a clean UI
 
         // Initialize RecyclerView, set the layout manager, and attach the adapter to display the list of measurements
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewBodyMeasurements)
@@ -65,23 +63,6 @@ class BodyMeasurementActivity : AppCompatActivity() {
         val editTextCalves = view.findViewById<EditText>(R.id.editTextCalves)
         val editTextWeight = view.findViewById<EditText>(R.id.editTextWeight)
         val editTextNote = view.findViewById<EditText>(R.id.editTextNote)  // Optional note input field
-
-        // List of EditTexts for real-time validation
-//        val editTexts = listOf(editTextBiceps, editTextTriceps, editTextChest, editTextWaist,
-//            editTextHips, editTextThighs, editTextCalves, editTextWeight)
-//
-//        // Attach a TextWatcher to each EditText for real-time input validation
-//        editTexts.forEach { editText ->
-//            editText.addTextChangedListener(object : TextWatcher {
-//                override fun afterTextChanged(s: Editable?) {
-//                    validateInputField(editText)  // Validate the input after the text changes
-//                }
-//
-//                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-//
-//                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-//            })
-//        }
 
         // Define the behavior for the "Save" button in the dialog
         builder.setPositiveButton("DODAJ") { _, _ ->
@@ -164,4 +145,44 @@ class BodyMeasurementActivity : AppCompatActivity() {
             false  // Return false if the value is not a valid integer
         }
     }
+
+    // Function to populate the database with sample measurements for testing or demonstration purposes
+    private fun addSampleMeasurements() {
+        lifecycleScope.launch {
+            val sampleMeasurements = listOf(
+                // Example measurements to pre-populate the database
+                BodyMeasurement(
+                    date = System.currentTimeMillis() - 30 * 86400000L, // 30 days ago
+                    biceps = 34,
+                    triceps = 32,
+                    chest = 100,
+                    waist = 88,
+                    hips = 95,
+                    thighs = 60,
+                    calves = 40,
+                    weight = 75,
+                    notes = "First measurement: training start"
+                ),
+                BodyMeasurement(
+                    date = System.currentTimeMillis(), // Today
+                    biceps = 41,
+                    triceps = 35,
+                    chest = 109,
+                    waist = 87,
+                    hips = 97,
+                    thighs = 67,
+                    calves = 46,
+                    weight = 79,
+                    notes = "Tenth measurement: progress"
+                )
+                // Additional measurements omitted for brevity
+            )
+
+            // Add each measurement to the database
+            sampleMeasurements.forEach { measurement ->
+                bodyMeasurementViewModel.insertBodyMeasurement(measurement)
+            }
+        }
+    }
+
 }

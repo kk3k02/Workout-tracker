@@ -1,5 +1,6 @@
 package com.kk3k.workouttracker.Activities
 
+// Import necessary packages
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
@@ -31,87 +32,85 @@ import java.util.Locale
 
 class WorkoutStatisticsActivity : AppCompatActivity() {
 
-    // Declare UI components
-    private lateinit var buttonSelectExercise: Button  // Button to select an exercise
-    private lateinit var chartContainer: FrameLayout  // FrameLayout to display chart
-    private lateinit var noDataMessage: TextView  // TextView to show when there is no data
-    private lateinit var workoutDao: WorkoutDao  // DAO for workout data
-    private lateinit var seriesDao: SeriesDao  // DAO for series data
+    // UI components for the activity
+    private lateinit var buttonSelectExercise: Button  // Button to open muscle group selection dialog
+    private lateinit var chartContainer: FrameLayout  // Container for displaying charts
+    private lateinit var noDataMessage: TextView  // Message displayed when no data is available
+    private lateinit var workoutDao: WorkoutDao  // DAO for accessing workout data
+    private lateinit var seriesDao: SeriesDao  // DAO for accessing series data
 
-    // Declare viewModel to interact with exercise data
+    // ViewModel for managing exercise data
     private val exerciseViewModel: ExerciseViewModel by viewModels()
 
-    // Declare TextView to display the selected exercise
+    // TextView to display the name of the selected exercise
     private lateinit var selectedExerciseTextView: TextView
 
-    // Selected exercise and its ID (we need it for querying the series data)
+    // Stores the ID of the currently selected exercise
     private var selectedExerciseId: Int? = null
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workout_statistics)
-        supportActionBar?.hide() // Hide the ActionBar
+        supportActionBar?.hide() // Hide the ActionBar for a cleaner UI
 
-        // Initialize views
+        // Initialize UI components
         buttonSelectExercise = findViewById(R.id.btnSelectExercise)
         chartContainer = findViewById(R.id.chartContainer)
-        noDataMessage = findViewById(R.id.tvNoDataMessage)  // Add the TextView for the "No Data" message
+        noDataMessage = findViewById(R.id.tvNoDataMessage)  // TextView for "No Data" message
         selectedExerciseTextView = findViewById(R.id.tvSelectedExercise)
 
-        // Initialize workoutDao and seriesDao to access the database
+        // Access the database and initialize DAOs
         val workoutDatabase = AppDatabase.getDatabase(this)
         workoutDao = workoutDatabase.workoutDao()
-        seriesDao = workoutDatabase.seriesDao()  // Initialize SeriesDao
+        seriesDao = workoutDatabase.seriesDao()
 
-        // Initially hide the selected exercise TextView and the Select Exercise button
+        // Initially hide components until they are needed
         selectedExerciseTextView.visibility = View.GONE
         buttonSelectExercise.visibility = View.GONE
-        noDataMessage.visibility = View.GONE  // Initially hide the "No Data" message
+        noDataMessage.visibility = View.GONE
 
-        // Set click listener for the "Select Exercise" button
+        // Set up click listener for the "Select Exercise" button
         buttonSelectExercise.setOnClickListener {
-            showMuscleGroupSelectionDialog()  // When clicked, show dialog to select muscle group
+            showMuscleGroupSelectionDialog() // Opens muscle group selection dialog
         }
 
-        // Set click listeners for "General" and "Chart" buttons
+        // Set up click listeners for the "General" and "Chart" buttons
         findViewById<Button>(R.id.btnGeneral).setOnClickListener {
-            showGeneralContent()  // Show general statistics
-            showGeneralStatsView()  // Show the general statistics view
-            selectedExerciseTextView.visibility = View.GONE  // Hide selected exercise info when General is clicked
-            buttonSelectExercise.visibility = View.GONE  // Hide the Select Exercise button
+            showGeneralContent()  // Display general workout statistics
+            showGeneralStatsView()  // Show the general stats layout
+            selectedExerciseTextView.visibility = View.GONE  // Hide exercise info when showing general stats
+            buttonSelectExercise.visibility = View.GONE  // Hide "Select Exercise" button in general view
         }
 
         findViewById<Button>(R.id.btnChart).setOnClickListener {
-            showChartView()  // Show chart view
-            selectedExerciseTextView.visibility = View.VISIBLE  // Show selected exercise info when Chart is clicked
-            buttonSelectExercise.visibility = View.VISIBLE  // Show Select Exercise button when Chart is clicked
+            showChartView()  // Display the chart layout
+            selectedExerciseTextView.visibility = View.VISIBLE  // Show selected exercise info
+            buttonSelectExercise.visibility = View.VISIBLE  // Show "Select Exercise" button
         }
 
-        // Initially show the general content
+        // Initially show general workout statistics by default
         showGeneralContent()
         showGeneralStatsView()
     }
 
-    // Show general content in the container (e.g., total workouts, duration, weight)
+    // Display general statistics such as total workouts, duration, and weight
     @SuppressLint("SetTextI18n")
     private fun showGeneralContent() {
         lifecycleScope.launch {
-            // Get the count of finished workouts from the database
-            val workoutCount = workoutDao.getFinishedWorkoutCount()
-            // Get the total duration of all finished workouts
-            val totalDuration = workoutDao.getTotalWorkoutDuration() ?: 0L
-            // Get the total weight used in all series (weight * repetitions)
-            val totalWeight = seriesDao.getTotalWeightUsed() ?: 0f
+            // Fetch statistics from the database
+            val workoutCount = workoutDao.getFinishedWorkoutCount() // Number of completed workouts
+            val totalDuration = workoutDao.getTotalWorkoutDuration() ?: 0L // Total workout duration
+            val totalWeight = seriesDao.getTotalWeightUsed() ?: 0f // Total weight lifted
 
-            // Update UI with fetched statistics
+            // Update the UI with the fetched statistics
             findViewById<TextView>(R.id.tvWorkoutCount).text = "Liczba wykonanych treningów: $workoutCount"
             findViewById<TextView>(R.id.tvTotalDuration).text = "Łączny czas trwania treningów: ${formatDuration(totalDuration)}"
             findViewById<TextView>(R.id.tvTotalWeight).text = "Łączne użyte obciążenie: ${formatWeight(totalWeight)}"
         }
     }
 
-    // Format duration in milliseconds into a human-readable format (HH:mm:ss)
+    // Format duration in milliseconds into a human-readable string (HH:mm:ss)
     @SuppressLint("DefaultLocale")
     private fun formatDuration(durationInMillis: Long): String {
         val hours = (durationInMillis / 3600000) % 24
@@ -120,118 +119,100 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
-    // Format weight into a human-readable format (e.g., kg)
+    // Format weight into a readable string with two decimal places
     @SuppressLint("DefaultLocale")
     private fun formatWeight(weight: Float): String {
         return String.format("%.2f kg", weight)
     }
 
-    // Show a dialog for selecting a muscle group
+    // Display a dialog for selecting a muscle group
     private fun showMuscleGroupSelectionDialog() {
-        // Create a list of muscle group names from the TargetMuscle enum
+        // Retrieve the names of all muscle groups
         val muscleGroups = TargetMuscle.entries.map { it.name }
 
-        // Create an ArrayAdapter with the custom layout
+        // Create an ArrayAdapter for displaying muscle groups in a list
         val adapter = ArrayAdapter(this, R.layout.dialog_list_item, muscleGroups)
 
-        // Create an AlertDialog.Builder with a custom dialog style
+        // Build and display the selection dialog
         val builder = AlertDialog.Builder(this, R.style.SelectExerciseDialogStyle)
-
-        // Set the dialog title
-        builder.setTitle("Wybierz partię mięśniową") // "Select Muscle Group"
-
-        // Attach the adapter to the dialog and handle item selection
+        builder.setTitle("Wybierz partię mięśniową") // Set dialog title
         builder.setAdapter(adapter) { _, which ->
-            // Get the selected muscle group based on the clicked position
-            val selectedMuscleGroup = TargetMuscle.entries[which]
-
-            // Open a new dialog or screen to display exercises for the selected muscle group
-            showExerciseSelectionDialog(selectedMuscleGroup)
+            val selectedMuscleGroup = TargetMuscle.entries[which] // Get selected muscle group
+            showExerciseSelectionDialog(selectedMuscleGroup) // Show exercises for the selected group
         }
-
-        // Add a "Cancel" button to the dialog
-        builder.setNegativeButton("COFNIJ", null) // "Cancel"
-
-        // Display the dialog
-        builder.show()
+        builder.setNegativeButton("COFNIJ", null) // Add cancel button
+        builder.show() // Show the dialog
     }
 
-
-    // Show exercise selection dialog based on selected muscle group
+    // Display a dialog for selecting an exercise within the chosen muscle group
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     private fun showExerciseSelectionDialog(muscleGroup: TargetMuscle) {
         val exerciseList = mutableListOf<Exercise>()
 
         lifecycleScope.launch {
             exerciseViewModel.allExercises.collect { exercises ->
+                // Filter exercises based on the selected muscle group
                 exerciseList.clear()
                 exerciseList.addAll(exercises.filter { it.targetMuscle == muscleGroup.name })
 
-                // Map exercise names for display
+                // Map exercise names for displaying in the dialog
                 val exerciseNames = exerciseList.map { it.name }
 
-                // Create an ArrayAdapter with the custom layout
+                // Create an adapter for the exercise list
                 val adapter = ArrayAdapter(this@WorkoutStatisticsActivity, R.layout.dialog_list_item, exerciseNames)
 
-                // Create the dialog
+                // Build and display the exercise selection dialog
                 val builder = AlertDialog.Builder(this@WorkoutStatisticsActivity, R.style.SelectExerciseDialogStyle)
-                builder.setTitle("WYBIERZ ĆWICZENIE") // "SELECT EXERCISE"
-
-                // Attach the adapter to the dialog
+                builder.setTitle("WYBIERZ ĆWICZENIE") // Dialog title
                 builder.setAdapter(adapter) { _, which ->
-                    // Handle selection
-                    val selectedExercise = exerciseList[which]
-                    selectedExerciseTextView.text = "WYBRANE ĆWICZENIE:\n\n ${selectedExercise.name}"
-                    selectedExerciseId = selectedExercise.uid
+                    val selectedExercise = exerciseList[which] // Get the selected exercise
+                    selectedExerciseTextView.text = "WYBRANE ĆWICZENIE:\n\n ${selectedExercise.name}" // Update UI
+                    selectedExerciseId = selectedExercise.uid // Save the ID of the selected exercise
 
-                    // Fetch the exercise progression chart for the selected exercise
+                    // Fetch and display progression data for the selected exercise
                     selectedExerciseId?.let { exerciseId ->
                         fetchExerciseProgressionChart(exerciseId)
                     }
                 }
-
-                // Add a "Cancel" button
-                builder.setNegativeButton("COFNIJ", null) // "Cancel"
-
-                // Show the dialog
-                builder.show()
+                builder.setNegativeButton("COFNIJ", null) // Add cancel button
+                builder.show() // Show the dialog
             }
         }
     }
 
-
-    // Show chart view and hide general stats
+    // Display the chart layout and hide general statistics
     private fun showChartView() {
-        findViewById<LinearLayout>(R.id.generalStatsContainer).visibility = View.GONE
-        chartContainer.visibility = View.VISIBLE
+        findViewById<LinearLayout>(R.id.generalStatsContainer).visibility = View.GONE // Hide general stats
+        chartContainer.visibility = View.VISIBLE // Show chart container
     }
 
-    // Show general stats and hide chart
+    // Display general statistics and hide the chart layout
     private fun showGeneralStatsView() {
-        findViewById<LinearLayout>(R.id.generalStatsContainer).visibility = View.VISIBLE
-        chartContainer.visibility = View.GONE
+        findViewById<LinearLayout>(R.id.generalStatsContainer).visibility = View.VISIBLE // Show general stats
+        chartContainer.visibility = View.GONE // Hide chart container
     }
 
-    // Fetch exercise progression chart based on selected exercise and workout
+    // Fetch and display a progression chart for the selected exercise
     private fun fetchExerciseProgressionChart(exerciseId: Int) {
         lifecycleScope.launch {
-            val seriesList = seriesDao.getSeriesForExercise(exerciseId)
+            val seriesList = seriesDao.getSeriesForExercise(exerciseId) // Fetch series data for the exercise
 
             if (seriesList.isEmpty()) {
-                Log.d("Chart", "Brak dostępnych informacji na temat tego ćwiczenia.")
-                noDataMessage.visibility = View.VISIBLE
-                chartContainer.visibility = View.GONE
+                Log.d("Chart", "Brak dostępnych informacji na temat tego ćwiczenia.") // Log no data available
+                noDataMessage.visibility = View.VISIBLE // Show "No Data" message
+                chartContainer.visibility = View.GONE // Hide chart container
                 return@launch
             } else {
-                noDataMessage.visibility = View.GONE
+                noDataMessage.visibility = View.GONE // Hide "No Data" message
             }
 
+            // Map workout dates to total weights lifted
             val datesMap = mutableMapOf<Long, Float>()
             val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
             for (series in seriesList) {
-                val seriesWeight = series.repetitions * (series.weight ?: 0f)
-                val workout = workoutDao.getWorkoutById(series.workoutId)
+                val seriesWeight = series.repetitions * (series.weight ?: 0f) // Calculate total weight for the series
+                val workout = workoutDao.getWorkoutById(series.workoutId) // Fetch workout data
                 val workoutDate = workout?.date ?: 0L
 
                 if (workoutDate > 0) {
@@ -239,12 +220,12 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
                 }
             }
 
+            // Prepare data for the chart
             val sortedDates = datesMap.keys.sorted()
             val entries = mutableListOf<Entry>()
             val formattedDates = mutableListOf<String>()
 
             var firstValue = 0f
-
             sortedDates.forEachIndexed { index, date ->
                 val totalWeightForDate = datesMap[date] ?: 0f
                 entries.add(Entry(index.toFloat(), totalWeightForDate))
@@ -252,48 +233,50 @@ class WorkoutStatisticsActivity : AppCompatActivity() {
                 formattedDates.add(formattedDate)
 
                 if (index == 0) {
-                    firstValue = totalWeightForDate
+                    firstValue = totalWeightForDate // Save the first value for reference
                 }
             }
 
-            val lineDataSet = LineDataSet(entries, "Łączna waga użytego obciążenia")
+            // Create and configure the chart
+            val lineDataSet = LineDataSet(entries, "Łączna waga użytego obciążenia") // Dataset for the chart
             val lineData = LineData(lineDataSet)
 
             val lineChart = LineChart(this@WorkoutStatisticsActivity)
             lineChart.data = lineData
-            lineChart.invalidate()
+            lineChart.invalidate() // Refresh the chart with new data
 
+            // Configure chart appearance
             val legend = lineChart.legend
-            legend.textColor = getColor(R.color.white)
+            legend.textColor = getColor(R.color.white) // Set legend text color
 
             val xAxis = lineChart.xAxis
-            xAxis.textColor = getColor(R.color.white)
+            xAxis.textColor = getColor(R.color.white) // Set x-axis text color
             xAxis.valueFormatter = object : com.github.mikephil.charting.formatter.ValueFormatter() {
                 override fun getFormattedValue(value: Float): String {
                     val index = value.toInt()
-                    return formattedDates.getOrElse(index) { "" }
+                    return formattedDates.getOrElse(index) { "" } // Format x-axis labels as dates
                 }
             }
             xAxis.granularity = 1f
             xAxis.position = com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM
 
             val yAxis = lineChart.axisLeft
-            yAxis.textColor = getColor(R.color.white)
-            yAxis.axisMinimum = firstValue
+            yAxis.textColor = getColor(R.color.white) // Set y-axis text color
             yAxis.valueFormatter = object : com.github.mikephil.charting.formatter.ValueFormatter() {
                 override fun getFormattedValue(value: Float): String {
-                    return "$value kg"
+                    return "$value kg" // Format y-axis labels as weights
                 }
             }
-            lineChart.axisRight.isEnabled = false
+            lineChart.axisRight.isEnabled = false // Disable right y-axis
 
-            // Add the description label
+            // Configure chart description
             val description = lineChart.description
-            description.text = "Obciążenie ćwiczenia w czasie"
-            description.textSize = 12f // Set the text size for better visibility
-            description.textColor = getColor(R.color.white) // Set the color for the description
+            description.text = "Obciążenie ćwiczenia w czasie" // Description text
+            description.textSize = 12f // Set description text size
+            description.textColor = getColor(R.color.white) // Set description text color
             description.isEnabled = true
 
+            // Display the chart in the container
             chartContainer.removeAllViews()
             chartContainer.addView(lineChart)
         }

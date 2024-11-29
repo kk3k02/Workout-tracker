@@ -24,15 +24,17 @@ import com.kk3k.workouttracker.db.TargetMuscle
 import com.kk3k.workouttracker.db.entities.Exercise
 import com.kk3k.workouttracker.db.entities.Series
 import com.kk3k.workouttracker.db.entities.Workout
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 class WorkoutActivity : AppCompatActivity() {
 
-    // ViewModels to interact with workout and exercise data
+    // ViewModels for accessing and modifying workout and exercise data
     private val workoutViewModel: WorkoutViewModel by viewModels()
     private val exerciseViewModel: ExerciseViewModel by viewModels()
 
-    // Lists and maps to store selected exercises and their series
+    // Selected exercises and their corresponding series
     private val selectedExercises = mutableListOf<Exercise>()
     private val seriesMap = mutableMapOf<Int, MutableList<Series>>()
     private lateinit var exerciseAdapter: ExerciseAdapter
@@ -47,75 +49,75 @@ class WorkoutActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workout)
-        supportActionBar?.hide() // Hide the ActionBar
+        supportActionBar?.hide() // Hide the ActionBar for a cleaner UI
 
         // Initialize UI components
         val buttonAddExercise: Button = findViewById(R.id.buttonAddExercise)
         buttonSaveWorkout = findViewById(R.id.buttonSaveWorkout)
         val recyclerView: RecyclerView = findViewById(R.id.recyclerViewExercises)
 
-        // Set up the RecyclerView with the adapter and layout manager
+        // Configure the RecyclerView with an adapter and layout manager
         exerciseAdapter = ExerciseAdapter(
             selectedExercises,
             seriesMap,
-            onExerciseDelete = { exercise -> removeExercise(exercise) },
-            onAddSeries = { exercise -> showAddSeriesDialog(exercise) },
-            onDeleteSeries = { series -> removeSeries(series) },
-            onInfoClick = { exercise -> showExerciseInfoDialog(exercise) }
+            onExerciseDelete = { exercise -> removeExercise(exercise) }, // Callback for removing exercises
+            onAddSeries = { exercise -> showAddSeriesDialog(exercise) }, // Callback for adding series
+            onDeleteSeries = { series -> removeSeries(series) },         // Callback for removing series
+            onInfoClick = { exercise -> showExerciseInfoDialog(exercise) } // Callback for showing exercise details
         )
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = LinearLayoutManager(this) // Linear layout for listing exercises
         recyclerView.adapter = exerciseAdapter
 
-        // Disable the save button initially; it will be enabled when there's data
+        // Initially disable the save button; it will be enabled later when exercises are added
         buttonSaveWorkout.isEnabled = false
 
-        // Track the start time of the workout session
+        // Track the start time of the workout
         startTime = System.currentTimeMillis()
 
-        // Set event listeners for buttons
+        // Set up click listeners for buttons
         buttonAddExercise.setOnClickListener {
-            // Show the muscle group selection dialog when the "Add Exercise" button is clicked
-            showMuscleGroupSelectionDialog()
+            showMuscleGroupSelectionDialog() // Show dialog for selecting a muscle group
         }
         buttonSaveWorkout.setOnClickListener {
-            // Show the note input dialog when the "Save Workout" button is clicked
-            showAddNoteDialog()
+            showAddNoteDialog() // Show dialog for adding notes to the workout
         }
 
-        // Load or create a workout when the activity is created
+        // Load an existing workout or create a new one
         loadOrCreateWorkout()
     }
 
-    // Load the existing unfinished workout or create a new one
+    // Load an unfinished workout if it exists, or create a new workout
     private fun loadOrCreateWorkout() {
         lifecycleScope.launch {
-            val unfinishedWorkout = workoutViewModel.getUnfinishedWorkout()
+            val unfinishedWorkout = workoutViewModel.getUnfinishedWorkout() // Check for any unfinished workout
             if (unfinishedWorkout != null) {
                 workoutId = unfinishedWorkout.uid
-                loadWorkoutData(unfinishedWorkout)  // Load data for the unfinished workout
+                loadWorkoutData(unfinishedWorkout) // Load data for the unfinished workout
             } else {
-                createNewWorkout()  // Create a new workout if no unfinished one is found
+                createNewWorkout() // Create a new workout if none exists
             }
         }
     }
 
-    // Load data for an existing workout, including exercises and series
+    // Load data (exercises and series) associated with an existing workout
     @SuppressLint("NotifyDataSetChanged")
     private suspend fun loadWorkoutData(workout: Workout) {
-        workoutId = workout.uid
+        workoutId = workout.uid // Set the workout ID
         val exercises = workoutViewModel.getExercisesForWorkout(workoutId!!)
-        selectedExercises.addAll(exercises)  // Add the exercises to the list
+        selectedExercises.addAll(exercises) // Add the workout's exercises to the list
 
+        // Load and map series for each exercise
         exercises.forEach { exercise ->
             val seriesList = workoutViewModel.getSeriesForExercise(workoutId!!, exercise.uid)
-            seriesMap[exercise.uid] = seriesList.toMutableList()  // Add the series for each exercise
+            seriesMap[exercise.uid] = seriesList.toMutableList()
         }
 
-        exerciseAdapter.notifyDataSetChanged()  // Notify the adapter to refresh the RecyclerView
-        updateSaveButtonState()  // Update the save button state based on selected exercises
+        // Refresh the adapter and update the save button state
+        exerciseAdapter.notifyDataSetChanged()
+        updateSaveButtonState()
     }
 
-    // Create a new workout if no unfinished one exists
+    // Create a new workout if no unfinished workout exists
     private fun createNewWorkout() {
         lifecycleScope.launch {
             val workout = Workout(
@@ -125,7 +127,7 @@ class WorkoutActivity : AppCompatActivity() {
                 isFinished = false
             )
 
-            workoutViewModel.insertWorkout(workout)  // Insert the new workout into the database
+            workoutViewModel.insertWorkout(workout) // Insert the workout into the database
             workoutViewModel.getMostRecentWorkout { recentWorkout ->
                 workoutId = recentWorkout?.uid
                 if (workoutId == null) {
@@ -135,89 +137,57 @@ class WorkoutActivity : AppCompatActivity() {
         }
     }
 
-    // Show a dialog for selecting a muscle group
+    // Show a dialog to select a muscle group
     private fun showMuscleGroupSelectionDialog() {
-        // Create a list of muscle group names from the TargetMuscle enum
-        val muscleGroups = TargetMuscle.entries.map { it.name }
-
-        // Create an ArrayAdapter with a custom layout for each item
-        // The layout R.layout.dialog_list_item defines how each list item will appear
+        val muscleGroups = TargetMuscle.entries.map { it.getDisplayName() } // List of muscle group names
         val adapter = ArrayAdapter(this, R.layout.dialog_list_item, muscleGroups)
 
-        // Create an AlertDialog.Builder with a custom dialog style
         val builder = AlertDialog.Builder(this, R.style.SelectExerciseDialogStyle)
+        builder.setTitle("Wybierz partię mięśniową") // Title for the dialog
 
-        // Set the dialog title
-        builder.setTitle("Wybierz partię mięśniową") // "Select Muscle Group"
-
-        // Attach the adapter to the dialog and handle item selection
         builder.setAdapter(adapter) { _, which ->
-            // Get the selected muscle group based on the clicked position
-            val selectedMuscleGroup = TargetMuscle.entries[which]
-
-            // Open a new dialog or screen to display exercises for the selected muscle group
-            showExerciseSelectionDialog(selectedMuscleGroup)
+            val selectedMuscleGroup = TargetMuscle.entries[which] // Get the selected muscle group
+            showExerciseSelectionDialog(selectedMuscleGroup) // Show exercises for the selected group
         }
 
-        // Add a "Cancel" button to the dialog
-        builder.setNegativeButton("COFNIJ", null) // "Cancel"
-
-        // Display the dialog
+        builder.setNegativeButton("COFNIJ", null) // Cancel button
         builder.show()
     }
 
     // Show a dialog to select an exercise from the chosen muscle group
     @SuppressLint("NotifyDataSetChanged")
     private fun showExerciseSelectionDialog(muscleGroup: TargetMuscle) {
-        // A mutable list to hold exercises for the selected muscle group
         val exerciseList = mutableListOf<Exercise>()
 
-        // Launch a coroutine to collect exercises from the ViewModel
         lifecycleScope.launch {
             exerciseViewModel.allExercises.collect { exercises ->
-                // Clear and update the exercise list with exercises matching the selected muscle group
+                // Filter exercises for the selected muscle group
                 exerciseList.clear()
                 exerciseList.addAll(exercises.filter { it.targetMuscle == muscleGroup.name })
 
-                // Map exercise names for display in the dialog
-                val exerciseNames = exerciseList.map { it.name }
-
-                // Add "Add Custom Exercise" option for the "OTHER" muscle group
+                val exerciseNames = exerciseList.map { it.name } // Names for display
                 val displayNames = if (muscleGroup == TargetMuscle.OTHER) {
-                    exerciseNames + "Dodaj własne ćwiczenie" // "Add Custom Exercise"
+                    exerciseNames + "Dodaj własne ćwiczenie" // Add custom exercise option
                 } else {
                     exerciseNames
                 }
 
-                // Create an ArrayAdapter with the custom layout
-                val adapter = ArrayAdapter(
-                    this@WorkoutActivity,
-                    R.layout.dialog_list_item, // Custom layout for list items
-                    displayNames
-                )
-
-                // Create an AlertDialog.Builder with the custom dialog style
+                val adapter = ArrayAdapter(this@WorkoutActivity, R.layout.dialog_list_item, displayNames)
                 val builder = AlertDialog.Builder(this@WorkoutActivity, R.style.SelectExerciseDialogStyle)
-                builder.setTitle("Wybierz ćwiczenie") // "Select Exercise"
+                builder.setTitle("Wybierz ćwiczenie")
 
-                // Set the adapter to the dialog
                 builder.setAdapter(adapter) { _, which ->
                     if (muscleGroup == TargetMuscle.OTHER && which == exerciseNames.size) {
-                        // Show dialog to add a custom exercise
-                        showAddCustomExerciseDialog()
+                        showAddCustomExerciseDialog() // Show dialog to add custom exercise
                     } else {
-                        // Add the selected exercise to the list
                         val selectedExercise = exerciseList[which]
-                        selectedExercises.add(selectedExercise)
-                        exerciseAdapter.notifyDataSetChanged() // Notify the adapter about data changes
-                        updateSaveButtonState() // Update the save button state
+                        selectedExercises.add(selectedExercise) // Add the selected exercise
+                        exerciseAdapter.notifyDataSetChanged() // Refresh the UI
+                        updateSaveButtonState()
                     }
                 }
 
-                // Add a "Cancel" button to the dialog
-                builder.setNegativeButton("COFNIJ", null) // "Cancel"
-
-                // Display the dialog
+                builder.setNegativeButton("COFNIJ", null) // Cancel button
                 builder.show()
             }
         }
@@ -236,7 +206,7 @@ class WorkoutActivity : AppCompatActivity() {
             val name = editTextName.text.toString().trim()
             val description = editTextDescription.text.toString().trim()
 
-            // Validate the input
+            // Ensure valid input
             if (name.isEmpty() || description.isEmpty()) {
                 Toast.makeText(this, "PROSZĘ PODAĆ NAZWĘ I OPIS ĆWICZENIA", Toast.LENGTH_SHORT).show()
             } else {
@@ -244,93 +214,105 @@ class WorkoutActivity : AppCompatActivity() {
                     name = name,
                     targetMuscle = TargetMuscle.OTHER.name,
                     description = description,
-                    image = null // No image logic in this case
+                    image = null // No image provided for custom exercises
                 )
-                exerciseViewModel.insertExercise(newExercise)  // Insert the custom exercise into the database
+                exerciseViewModel.insertExercise(newExercise) // Insert the new exercise into the database
                 dialog.dismiss()
             }
         }
-        builder.setNegativeButton("COFNIJ", null)
+        builder.setNegativeButton("COFNIJ", null) // Cancel button
         builder.show()
     }
 
     // Show a dialog to add a note to the workout
     private fun showAddNoteDialog() {
         val builder = AlertDialog.Builder(this, R.style.CustomDialogStyle)
-
         val view = layoutInflater.inflate(R.layout.dialog_add_note, null)
         val editTextNote = view.findViewById<EditText>(R.id.editTextNote)
 
         builder.setView(view)
         builder.setPositiveButton("OK") { _, _ ->
-            workoutNote = editTextNote.text.toString()  // Get the note from the user
-            saveWorkout()  // Save the workout with the note
-            showWorkoutSummary()  // Show a summary of the workout
+            workoutNote = editTextNote.text.toString() // Save the workout note
+            saveWorkout() // Save workout details
+            showWorkoutSummary() // Display a summary of the workout
         }
-        builder.setNegativeButton("COFNIJ", null)
+        builder.setNegativeButton("COFNIJ", null) // Cancel button
         builder.show()
     }
 
-    // Save the workout data including duration and note
+    // Save workout details such as duration and note
     private fun saveWorkout() {
         endTime = System.currentTimeMillis()
         val duration = endTime - startTime
 
         workoutId?.let { id ->
-            workoutViewModel.setWorkoutDetails(id, duration, workoutNote)  // Save workout details
+            workoutViewModel.setWorkoutDetails(id, duration, workoutNote) // Save to database
         } ?: Log.e("WorkoutActivity", "Cannot save workout because workoutId is null.")
     }
 
-    // Show a summary dialog with workout details
+    // Display a summary of the workout session
     @SuppressLint("DefaultLocale")
     private fun showWorkoutSummary() {
-        // Calculate the duration in seconds
+        // Calculate workout duration in seconds
         val durationSeconds = (endTime - startTime) / 1000
-        // Convert the duration to minutes and seconds
         val minutes = durationSeconds / 60
         val seconds = durationSeconds % 60
-        val formattedDuration = String.format("%02d:%02d", minutes, seconds) // Format as MM:SS
+        val formattedDuration = String.format("%02d:%02d", minutes, seconds)
 
-        val musclesInvolved = selectedExercises.map { it.targetMuscle }.toSet().joinToString(", ")
+        // Generate summary details
+        val musclesInvolved = selectedExercises.map {
+            when (it.targetMuscle) {
+                "BICEPS" -> "BICEPS"
+                "TRICEPS" -> "TRICEPS"
+                "SHOULDERS" -> "RAMIONA"
+                "CHEST" -> "KLATKA PIERSIOWA"
+                "BACK" -> "PLECY"
+                "FOREARMS" -> "PRZEDRAMIONA"
+                "ABS" -> "BRZUCH"
+                "LEGS" -> "NOGI"
+                "CALVES" -> "ŁYDKI"
+                else -> "INNE"
+            }
+        }.toSet().joinToString(", ")
+
         val allWeights = seriesMap.values.flatten().mapNotNull { it.weight }
         val minWeight = allWeights.minOrNull() ?: 0f
         val maxWeight = allWeights.maxOrNull() ?: 0f
         val totalWeight = allWeights.sum()
 
-        // Summary text
         val summaryText = """
-        Czas trwania: $formattedDuration
-        
-        Liczba wykonanych ćwiczeń: ${selectedExercises.size}
-        
-        Zaangażowane mięśnie: $musclesInvolved
-        
-        Min. Obciążenie: $minWeight kg
-        
-        Max. Obciążenie: $maxWeight kg
-        
-        Łączna waga obciążenia: $totalWeight kg
-    """.trimIndent()
+            Czas trwania: $formattedDuration
+            
+            Liczba wykonanych ćwiczeń: ${selectedExercises.size}
+            
+            Zaangażowane mięśnie: $musclesInvolved
+            
+            Min. Obciążenie: $minWeight kg
+            
+            Max. Obciążenie: $maxWeight kg
+            
+            Łączna waga obciążenia: $totalWeight kg
+        """.trimIndent()
 
-        // Create and show the dialog with the custom style
+        // Display the summary in a dialog
         AlertDialog.Builder(this, R.style.SummaryDialogTheme).apply {
-            setTitle("Podsumowanie treningu") // Dialog title
-            setMessage(summaryText) // Summary text
+            setTitle("Podsumowanie treningu")
+            setMessage(summaryText)
             setPositiveButton("ZAMKNIJ") { dialog, _ ->
                 dialog.dismiss() // Close the dialog
-                finish() // Finish the activity after showing the summary
+                finish() // End the activity
             }
-            show() // Show the dialog
+            show()
         }
     }
 
-    // Remove an exercise from the selected exercises list
+    // Remove an exercise from the list of selected exercises
     @SuppressLint("NotifyDataSetChanged")
     private fun removeExercise(exercise: Exercise) {
         selectedExercises.remove(exercise)
         seriesMap.remove(exercise.uid)
-        exerciseAdapter.notifyDataSetChanged()  // Notify adapter of data change
-        updateSaveButtonState()  // Update save button state
+        exerciseAdapter.notifyDataSetChanged() // Refresh the UI
+        updateSaveButtonState()
     }
 
     // Remove a series from the workout
@@ -338,7 +320,7 @@ class WorkoutActivity : AppCompatActivity() {
         seriesMap[series.exerciseId]?.remove(series)
         exerciseAdapter.updateSeries(series.exerciseId, seriesMap[series.exerciseId] ?: mutableListOf())
         workoutId?.let {
-            workoutViewModel.deleteSeries(series)  // Delete the series from the database
+            workoutViewModel.deleteSeries(series) // Remove from database
         } ?: Log.e("WorkoutActivity", "Cannot delete series because workoutId is null.")
     }
 
@@ -363,14 +345,14 @@ class WorkoutActivity : AppCompatActivity() {
                 )
                 seriesMap[exercise.uid]?.add(newSeries) ?: run { seriesMap[exercise.uid] = mutableListOf(newSeries) }
                 exerciseAdapter.updateSeries(exercise.uid, seriesMap[exercise.uid] ?: mutableListOf())
-                workoutViewModel.insertSeries(newSeries)  // Insert the new series into the database
+                workoutViewModel.insertSeries(newSeries) // Insert into the database
             } ?: Log.e("WorkoutActivity", "Cannot add series because workoutId is null.")
         }
-        builder.setNegativeButton("COFNIJ", null)
+        builder.setNegativeButton("COFNIJ", null) // Cancel button
         builder.show()
     }
 
-    // Show a dialog with information about an exercise
+    // Show details of a specific exercise in a dialog
     private fun showExerciseInfoDialog(exercise: Exercise) {
         val builder = AlertDialog.Builder(this, R.style.CustomDialogStyle)
         val view = layoutInflater.inflate(R.layout.dialog_exercise_info, null)
@@ -379,21 +361,70 @@ class WorkoutActivity : AppCompatActivity() {
         val textViewName = view.findViewById<TextView>(R.id.textViewExerciseName)
         val textViewDescription = view.findViewById<TextView>(R.id.textViewExerciseDescription)
 
-        textViewName.text = exercise.name
-        textViewDescription.text = exercise.description
+        textViewName.text = exercise.name // Display the exercise name
+        textViewDescription.text = exercise.description // Display the exercise description
 
         if (exercise.image != null && exercise.image!!.isNotEmpty()) {
-            Glide.with(this).load(exercise.image).into(imageView)  // Load the exercise image if available
+            Glide.with(this).load(exercise.image).into(imageView) // Load exercise image if available
         } else {
-            imageView.setImageResource(android.R.drawable.ic_dialog_info)  // Default image if none exists
+            imageView.setImageResource(android.R.drawable.ic_dialog_info) // Default image
         }
         builder.setView(view)
-        builder.setPositiveButton("ZAMKNIJ", null)
+        builder.setPositiveButton("ZAMKNIJ", null) // Close button
         builder.show()
     }
 
-    // Update the state of the "Save Workout" button based on the selected exercises
+    // Update the state of the "Save Workout" button
     private fun updateSaveButtonState() {
-        buttonSaveWorkout.isEnabled = selectedExercises.isNotEmpty()  // Enable the button if there are selected exercises
+        buttonSaveWorkout.isEnabled = selectedExercises.isNotEmpty() // Enable if there are exercises
+    }
+
+    // Add pre-defined sample workouts and exercises for testing purposes
+    private fun addSampleWorkouts() {
+        lifecycleScope.launch {
+            // Get all exercises from the database
+            val allExercises = exerciseViewModel.allExercises.firstOrNull() ?: emptyList()
+
+            // Ensure there are enough exercises to create sample workouts
+            if (allExercises.size < 4) {
+                Log.e("WorkoutActivity", "Not enough exercises in the database.")
+                return@launch
+            }
+
+            // Select the first 4 exercises for the sample workouts
+            val exercisesToUse = allExercises.take(4)
+
+            // Define sample workouts
+            val workouts = listOf(
+                Workout(uid = 1, date = System.currentTimeMillis(), duration = 3600000L, notes = "Workout 1: Chest and Back", isFinished = true),
+                Workout(uid = 2, date = System.currentTimeMillis() - 86400000L, duration = 4500000L, notes = "Workout 2: Legs", isFinished = true),
+                Workout(uid = 3, date = System.currentTimeMillis() - 2 * 86400000L, duration = 4200000L, notes = "Workout 3: Arms", isFinished = true),
+                Workout(uid = 4, date = System.currentTimeMillis() - 3 * 86400000L, duration = 3900000L, notes = "Workout 4: Cardio", isFinished = true),
+                Workout(uid = 5, date = System.currentTimeMillis() - 4 * 86400000L, duration = 3600000L, notes = "Workout 5: Full Body", isFinished = true),
+                Workout(uid = 6, date = System.currentTimeMillis() - 5 * 86400000L, duration = 4200000L, notes = "Workout 6: Mobility and Stability", isFinished = true),
+                Workout(uid = 7, date = System.currentTimeMillis() - 6 * 86400000L, duration = 3300000L, notes = "Workout 7: Back and Biceps", isFinished = true),
+                Workout(uid = 8, date = System.currentTimeMillis() - 7 * 86400000L, duration = 4500000L, notes = "Workout 8: Max Strength", isFinished = true),
+                Workout(uid = 9, date = System.currentTimeMillis() - 8 * 86400000L, duration = 3000000L, notes = "Workout 9: Chest and Triceps", isFinished = true),
+                Workout(uid = 10, date = System.currentTimeMillis() - 9 * 86400000L, duration = 3600000L, notes = "Workout 10: Functional Training", isFinished = true)
+            )
+
+            // Add each workout and associate exercises with series
+            workouts.forEach { workout ->
+                workoutViewModel.insertWorkout(workout)
+
+                exercisesToUse.forEach { exercise ->
+                    val numberOfSeries = Random.nextInt(3, 6) // Random number of series (3-5)
+                    repeat(numberOfSeries) {
+                        val series = Series(
+                            workoutId = workout.uid, // Use pre-defined workout ID
+                            exerciseId = exercise.uid,
+                            repetitions = Random.nextInt(5, 12), // Random repetitions (5-12)
+                            weight = Random.nextInt(8, 25).toFloat() // Random weight (8-25 kg)
+                        )
+                        workoutViewModel.insertSeries(series) // Insert the series into the database
+                    }
+                }
+            }
+        }
     }
 }
